@@ -4,7 +4,10 @@ import java.util.ArrayList;
 
 public class Clinitian {
     private String name,username,password;
+    private int contactNo;
     private ArrayList<Patient> patients;
-    private String displayName;
+    private int yourmom;
+    private double mew;
+    private short jhelp;
 
 }
