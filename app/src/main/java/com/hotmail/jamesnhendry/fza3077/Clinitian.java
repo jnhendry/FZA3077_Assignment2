@@ -5,5 +5,6 @@ import java.util.ArrayList;
 public class Clinitian {
     private String name,username,password;
     private ArrayList<Patient> patients;
+    private  String displayName;
 
 }
