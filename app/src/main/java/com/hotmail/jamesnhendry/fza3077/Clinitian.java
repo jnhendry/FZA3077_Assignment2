@@ -10,4 +10,5 @@ public class Clinitian {
     private double mew;
     private short jhelp;
 
+
 }
