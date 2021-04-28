@@ -1,0 +1,36 @@
+Index: app/src/main/java/com/hotmail/jamesnhendry/fza3077/Clinitian.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.hotmail.jamesnhendry.fza3077;\n\nimport java.util.ArrayList;\n\npublic class Clinitian {\n    private String name,username,password;\n    private int contactNo;\n    private ArrayList<Patient> patients;\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/hotmail/jamesnhendry/fza3077/Clinitian.java	(revision 0a315348bf35c9841a9f4d76363036e7c6bfad03)
++++ app/src/main/java/com/hotmail/jamesnhendry/fza3077/Clinitian.java	(date 1619617182000)
+@@ -4,7 +4,7 @@
+ 
+ public class Clinitian {
+     private String name,username,password;
+-    private int contactNo;
+     private ArrayList<Patient> patients;
++    private String displayName;
+ 
+ }
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"VcsDirectoryMappings\">\n    <mapping directory=\"\" vcs=\"Git\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/vcs.xml	(revision 0a315348bf35c9841a9f4d76363036e7c6bfad03)
++++ .idea/vcs.xml	(date 1619617182000)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="VcsDirectoryMappings">
+-    <mapping directory="" vcs="Git" />
++    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+   </component>
+ </project>
+\ No newline at end of file
