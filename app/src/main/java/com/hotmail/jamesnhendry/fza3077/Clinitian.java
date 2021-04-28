@@ -8,7 +8,7 @@ public class Clinitian {
     private ArrayList<Patient> patients;
     private int yourmom;
     private double mew;
-   private String helpmefuckpleaseworkdammmit;
+   
 
 
 }
