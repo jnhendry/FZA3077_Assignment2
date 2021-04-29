@@ -7,7 +7,7 @@
     tools:context=".ClinitianHome">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView2"
+        android:id="@+id/recyclPatients"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="25dp"
@@ -19,7 +19,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/recycVisit"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="25dp"
@@ -38,8 +38,8 @@
         android:text="Patients"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/recyclerView2"
-        app:layout_constraintStart_toStartOf="@+id/recyclerView2"
+        app:layout_constraintEnd_toEndOf="@+id/recyclPatients"
+        app:layout_constraintStart_toStartOf="@+id/recyclPatients"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.13" />
 
@@ -52,8 +52,8 @@
         android:text="Next Visit"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/recyclerView"
-        app:layout_constraintStart_toStartOf="@+id/recyclerView"
+        app:layout_constraintEnd_toEndOf="@+id/recycVisit"
+        app:layout_constraintStart_toStartOf="@+id/recycVisit"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.13" />
 
