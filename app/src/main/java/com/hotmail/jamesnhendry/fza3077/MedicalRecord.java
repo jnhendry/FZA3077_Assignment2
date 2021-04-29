@@ -22,6 +22,22 @@ public class MedicalRecord {
         age = visit.getAge();
     }
 
+    public MedicalRecord(String dateUpdated, String patientUsername, int age, double bloodpressure,
+                         double reynoldsRiskScore, double cReactive, double apolprotB, double apolprotA, double lipProteinA, boolean smoker, boolean famhist, Visit visit) {
+        this.dateUpdated = dateUpdated;
+        this.patientUsername = patientUsername;
+        this.age = age;
+        this.bloodpressure = bloodpressure;
+        this.reynoldsRiskScore = reynoldsRiskScore;
+        this.cReactive = cReactive;
+        this.apolprotB = apolprotB;
+        this.apolprotA = apolprotA;
+        this.lipProteinA = lipProteinA;
+        this.smoker = smoker;
+        this.famhist = famhist;
+        this.visit = visit;
+    }
+
     public double calculateReynoldsRiskScore(){
         double A = (((0.0785)*(age)+(3.271)*Math.log(bloodpressure)+(0.202)*Math.log(cReactive)+(0.00820)*(apolprotB)));
         A=A-(0.00769)*(apolprotA+0.134);
