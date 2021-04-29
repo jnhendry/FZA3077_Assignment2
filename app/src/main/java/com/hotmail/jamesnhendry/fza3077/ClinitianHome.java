@@ -24,25 +24,26 @@ public class ClinitianHome extends AppCompatActivity {
         setContentView(R.layout.activity_clinitian_home);
         final Intent intent = getIntent();
         String clinitian = intent.getStringExtra("clinitian") ;
-        Clinitian cl = gson.fromJson(clinitian,Clinitian.class);
-
-
+        final Clinitian cl = gson.fromJson(clinitian,Clinitian.class);
 
         edtClinitianName = findViewById(R.id.txtclinitianname);
-
         edtClinitianName.setText(cl.getName());
 
         recyclPatients = findViewById(R.id.recyclPatients);
-
         recyclPatients.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
         patientAdapter = new patientAdapter(getApplicationContext(), cl.getPatients());
+
         recyclPatients.setAdapter(patientAdapter);
+
         patientAdapter.setonItemClicklistener(new patientAdapter.onItemClickListener() {
             @Override
             public void onItemClicked(int position) {
                 Intent intent1 = new Intent(getApplicationContext(),PatientHome.class);
-                String patientDetails = null;//put something here
+                String patientDetails = gson.toJson(cl);//put something here
+                int pos = position;
                 intent1.putExtra("patientdetails",patientDetails);
+                intent1.putExtra("position",pos);
                 startActivity(intent1);
             }
         });

@@ -19,12 +19,20 @@ public class PatientHome extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_home);
-
+        txtPatientName = findViewById(R.id.txtPatientName);
         Intent intent = getIntent();
         String patient = intent.getStringExtra("patient") ;
-        Patient pa = gson.fromJson(patient,Patient.class);
-        txtPatientName = findViewById(R.id.txtPatientName);
-        txtPatientName.setText(pa.getName());
+        if(patient!=null) {
+            Patient pa = gson.fromJson(patient, Patient.class);
+            txtPatientName.setText(pa.getName());
+        }else{
+            String clinitian = intent.getStringExtra("patientdetails");
+            int pos = intent.getIntExtra("position",0);
+            Clinitian cl = gson.fromJson(clinitian,Clinitian.class);
+            if(cl!=null) {
+                txtPatientName.setText(cl.getPatients().get(pos).getName());
+            }
+        }
 
 
 
