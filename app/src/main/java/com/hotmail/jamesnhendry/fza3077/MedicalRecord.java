@@ -27,6 +27,23 @@ public class MedicalRecord {
         this.famhist = famhist;
     }
 
+    public MedicalRecord(String dateUpdated, String time, String clinitianName, String patientName, String clinitiannotes,
+                         int age, double bloodpressure, double cReactive, double apolprotB, double apolprotA, double lipProteinA, boolean smoker, boolean famhist) {
+        this.dateUpdated = dateUpdated;
+        this.time = time;
+        this.clinitianName = clinitianName;
+        this.patientName = patientName;
+        this.clinitiannotes = clinitiannotes;
+        this.age = age;
+        this.bloodpressure = bloodpressure;
+        this.cReactive = cReactive;
+        this.apolprotB = apolprotB;
+        this.apolprotA = apolprotA;
+        this.lipProteinA = lipProteinA;
+        this.smoker = smoker;
+        this.famhist = famhist;
+    }
+
     public String getDateUpdated() {
         return dateUpdated;
     }

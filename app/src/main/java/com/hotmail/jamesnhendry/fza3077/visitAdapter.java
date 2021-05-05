@@ -17,6 +17,10 @@ public class visitAdapter extends RecyclerView.Adapter<visitAdapter.subholder>{
     private onItemClickListener mListener;
     Context cr;
 
+    public visitAdapter(ArrayList<Visit> list, Context cr) {
+        this.list = list;
+        this.cr = cr;
+    }
 
     public void setonItemClicklistener(onItemClickListener listener) {
         mListener = listener;

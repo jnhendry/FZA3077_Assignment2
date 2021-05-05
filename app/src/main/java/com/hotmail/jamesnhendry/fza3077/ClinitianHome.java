@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -29,7 +28,7 @@ public class ClinitianHome extends AppCompatActivity {
         edtClinitianName = findViewById(R.id.txtclinitianname);
         edtClinitianName.setText(cl.getName());
 
-        recyclPatients = findViewById(R.id.recyclPatients);
+        recyclPatients = findViewById(R.id.recyclMedicalRecord);
         recyclPatients.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
         patientAdapter = new patientAdapter(getApplicationContext(), cl.getPatients());

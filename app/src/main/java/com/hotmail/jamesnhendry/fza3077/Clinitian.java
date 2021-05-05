@@ -5,13 +5,33 @@ import java.util.ArrayList;
 public class Clinitian {
     private String name,username,password;
     private ArrayList<Patient> patients;
+    private ArrayList<Visit> pastVisits;
+    private ArrayList<Visit> futureVisits;
 
 
-    public Clinitian(String name, String username, String password, ArrayList<Patient> patients) {
+    public ArrayList<Visit> getPastVisits() {
+        return pastVisits;
+    }
+
+    public void setPastVisits(ArrayList<Visit> pastVisits) {
+        this.pastVisits = pastVisits;
+    }
+
+    public ArrayList<Visit> getFutureVisits() {
+        return futureVisits;
+    }
+
+    public void setFutureVisits(ArrayList<Visit> futureVisits) {
+        this.futureVisits = futureVisits;
+    }
+
+    public Clinitian(String name, String username, String password, ArrayList<Patient> patients, ArrayList<Visit> pv, ArrayList<Visit> fv) {
         this.name = name;
         this.username = username;
         this.password = password;
         this.patients = patients;
+        this.pastVisits = pv;
+        this.futureVisits = fv;
     }
 
     public String getName() {

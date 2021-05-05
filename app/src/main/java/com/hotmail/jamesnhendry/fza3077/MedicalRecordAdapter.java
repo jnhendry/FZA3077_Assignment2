@@ -66,7 +66,7 @@ public class MedicalRecordAdapter extends RecyclerView.Adapter<MedicalRecordAdap
                 holder.txtClinitian.setText(list.get(position).getClinitianName());
                 holder.txtDate.setText(list.get(position).getDateUpdated());
                 holder.txtPatientName.setText(list.get(position).getPatientName());
-                holder.txtPatientAge.setText(list.get(position).getAge());
+                //holder.txtPatientAge.setText(list.get(position).getAge());
                 holder.txtBloodp.setText(bloodp);
                 holder.txtCreact.setText(cRact);
                 holder.txtapolprotB.setText(apolB);

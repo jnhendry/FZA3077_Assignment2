@@ -18,6 +18,14 @@ public class Visit {
         this.patientUsername = patientUsername;
     }
 
+    public Visit(String date, String time, String clinitianUsername, String patientUsername, MedicalRecord medicalRecord) {
+        this.date = date;
+        this.time = time;
+        this.clinitianUsername = clinitianUsername;
+        this.patientUsername = patientUsername;
+        this.medicalRecord = medicalRecord;
+    }
+
     public Visit(MedicalRecord medicalRecord) {
         this.medicalRecord = medicalRecord;
     }
