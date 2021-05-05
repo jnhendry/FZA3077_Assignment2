@@ -10,8 +10,6 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 public class PatientHome extends AppCompatActivity {
@@ -31,7 +29,7 @@ public class PatientHome extends AppCompatActivity {
         recyclFutureVisit = findViewById(R.id.recycFuturevisit);
         recyclFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-        recyclVisit = findViewById(R.id.recycVisit);
+        recyclVisit = findViewById(R.id.recycVisitclinitian);
         recyclVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
         recyclMedRec = findViewById(R.id.recyclMedicalRecord);

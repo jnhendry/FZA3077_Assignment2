@@ -13,8 +13,9 @@ import com.google.gson.Gson;
 public class ClinitianHome extends AppCompatActivity {
 
     private Gson gson = new Gson();
-    private RecyclerView recyclPatients;
+    private RecyclerView recyclPatients,recycvisit;
     private patientAdapter patientAdapter;
+    private visitAdapter visitAdapter;
     private TextView edtClinitianName;
 
     @Override
@@ -30,10 +31,15 @@ public class ClinitianHome extends AppCompatActivity {
 
         recyclPatients = findViewById(R.id.recyclMedicalRecord);
         recyclPatients.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        recycvisit = findViewById(R.id.recycVisitclinitian);
+        recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
 
         patientAdapter = new patientAdapter(getApplicationContext(), cl.getPatients());
+        visitAdapter = new visitAdapter(cl.getFutureVisits(),getApplicationContext());
 
         recyclPatients.setAdapter(patientAdapter);
+        recycvisit.setAdapter(visitAdapter);
 
         patientAdapter.setonItemClicklistener(new patientAdapter.onItemClickListener() {
             @Override
