@@ -1,7 +1,7 @@
 package com.hotmail.jamesnhendry.fza3077;
 
 public class MedicalRecord {
-    private String dateUpdated,time,clinitianUsername,patientUsername,clinitiannotes;
+    private String dateUpdated,time,clinitianName,patientName,clinitiannotes;
     private int age;
     private double bloodpressure,reynoldsRiskScore,cReactive,apolprotB,apolprotA,lipProteinA;
     private boolean smoker;
@@ -13,8 +13,8 @@ public class MedicalRecord {
                          double apolprotA, double lipProteinA, boolean smoker, boolean famhist) {
         this.dateUpdated = dateUpdated;
         this.time = time;
-        this.clinitianUsername = clinitianUsername;
-        this.patientUsername = patientUsername;
+        this.clinitianName = clinitianUsername;
+        this.patientName = patientUsername;
         this.clinitiannotes = clinitiannotes;
         this.age = age;
         this.bloodpressure = bloodpressure;
@@ -43,20 +43,20 @@ public class MedicalRecord {
         this.time = time;
     }
 
-    public String getClinitianUsername() {
-        return clinitianUsername;
+    public String getClinitianName() {
+        return clinitianName;
     }
 
-    public void setClinitianUsername(String clinitianUsername) {
-        this.clinitianUsername = clinitianUsername;
+    public void setClinitianName(String clinitianName) {
+        this.clinitianName = clinitianName;
     }
 
-    public String getPatientUsername() {
-        return patientUsername;
+    public String getPatientName() {
+        return patientName;
     }
 
-    public void setPatientUsername(String patientUsername) {
-        this.patientUsername = patientUsername;
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
     }
 
     public String getClinitiannotes() {
