@@ -60,25 +60,25 @@ public class MainActivity extends AppCompatActivity {
 
     public void setPC(){
         patients.clear();
-        patients.add(new Patient("fgib1","James Hendry","jhen01","jhen01"));
-        patients.add(new Patient("fgib1","Matthew Mcdaniel","mmcd01","mmcd01"));
-        patients.add(new Patient("fgib1","Jason Henrick","jhen02","jhen02"));
-        patients.add(new Patient("fgib1","Feddy Knight","fkni01","fkni01"));
-        patients.add(new Patient("fgib1","Jack Worthall","jwor01","jwor01"));
+        patients.add(new Patient("fgib1","James Hendry","jhen01","jhen01","0833003093","Male"));
+        patients.add(new Patient("fgib1","Matthew Mcdaniel","mmcd01","mmcd01","0833002793","Male"));
+        patients.add(new Patient("fgib1","Jason Henrick","jhen02","jhen02","0833235493","Male"));
+        patients.add(new Patient("fgib1","Feddy Knight","fkni01","fkni01","0833065763","Male"));
+        patients.add(new Patient("fgib1","Jack Worthall","jwor01","jwor01","0833087693","Male"));
 
 
-        patients.add(new Patient("char01","Bolívar Adelardi","bade01","bade01"));
-        patients.add(new Patient("char01","Vihaan Mondy","vmon01","vmon01"));
-        patients.add(new Patient("char01","Heidemarie Wendell","hwen01","hwen01"));
-        patients.add(new Patient("char01","Wiley Farkas","wfar01","wfar01"));
-        patients.add(new Patient("char01","Lelio McKinley","lmck01","lmck01"));
+        patients.add(new Patient("char01","Bolívar Adelardi","bade01","bade01","0765003093","Female"));
+        patients.add(new Patient("char01","Vihaan Mondy","vmon01","vmon01","0833034593","Female"));
+        patients.add(new Patient("char01","Heidemarie Wendell","hwen01","hwen01","0612003093","Female"));
+        patients.add(new Patient("char01","Wiley Farkas","wfar01","wfar01","0833004567","Male"));
+        patients.add(new Patient("char01","Lelio McKinley","lmck01","lmck01","0833985493","Male"));
 
 
-        patients.add(new Patient("dmat01","Viljo Ek","vek001","vek001"));
-        patients.add(new Patient("dmat01","Agneza Pereira","aper01","aper01"));
-        patients.add(new Patient("dmat01","Munyaradzi Nigel","mnig01","mnig01"));
-        patients.add(new Patient("dmat01","Ruslan Clement","rcle01","rcle01"));
-        patients.add(new Patient("dmat01","Elvio Abrahams","eabr01","eabr01"));
+        patients.add(new Patient("dmat01","Viljo Ek","vek001","vek001","0833098793","Female"));
+        patients.add(new Patient("dmat01","Agneza Pereira","aper01","aper01","0723003093","Female"));
+        patients.add(new Patient("dmat01","Munyaradzi Nigel","mnig01","mnig01","0633003093","Male"));
+        patients.add(new Patient("dmat01","Ruslan Clement","rcle01","rcle01","0453003093","Female"));
+        patients.add(new Patient("dmat01","Elvio Abrahams","eabr01","eabr01","0736003093","Male"));
 
 
         clinitians.clear();
