@@ -1,31 +1,21 @@
 package com.hotmail.jamesnhendry.fza3077;
 
 public class MedicalRecord {
-    String dateUpdated, patientUsername;
+    private String dateUpdated,time,clinitianUsername,patientUsername,clinitiannotes;
     private int age;
     private double bloodpressure,reynoldsRiskScore,cReactive,apolprotB,apolprotA,lipProteinA;
     private boolean smoker;
     private boolean famhist;
-    private Visit visit;
 
-    public MedicalRecord(Visit visit) {
-        this.visit = visit;
-        bloodpressure = visit.getBloodpressure();
-         cReactive = visit.getcReactive();
-         apolprotB = visit.getApolprotB();
-         apolprotA = visit.getApolprotA();
-         lipProteinA = visit.getLipProteinA();
-        smoker = visit.isSmoker();
-        famhist = visit.isFamhist();
-        dateUpdated = visit.getDate();
-        patientUsername = visit.getPatientUsername();
-        age = visit.getAge();
-    }
 
-    public MedicalRecord(String dateUpdated, String patientUsername, int age, double bloodpressure,
-                         double reynoldsRiskScore, double cReactive, double apolprotB, double apolprotA, double lipProteinA, boolean smoker, boolean famhist, Visit visit) {
+    public MedicalRecord(String dateUpdated, String time, String clinitianUsername, String patientUsername, String clinitiannotes,
+                         int age, double bloodpressure, double reynoldsRiskScore, double cReactive, double apolprotB,
+                         double apolprotA, double lipProteinA, boolean smoker, boolean famhist) {
         this.dateUpdated = dateUpdated;
+        this.time = time;
+        this.clinitianUsername = clinitianUsername;
         this.patientUsername = patientUsername;
+        this.clinitiannotes = clinitiannotes;
         this.age = age;
         this.bloodpressure = bloodpressure;
         this.reynoldsRiskScore = reynoldsRiskScore;
@@ -35,7 +25,118 @@ public class MedicalRecord {
         this.lipProteinA = lipProteinA;
         this.smoker = smoker;
         this.famhist = famhist;
-        this.visit = visit;
+    }
+
+    public String getDateUpdated() {
+        return dateUpdated;
+    }
+
+    public void setDateUpdated(String dateUpdated) {
+        this.dateUpdated = dateUpdated;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getClinitianUsername() {
+        return clinitianUsername;
+    }
+
+    public void setClinitianUsername(String clinitianUsername) {
+        this.clinitianUsername = clinitianUsername;
+    }
+
+    public String getPatientUsername() {
+        return patientUsername;
+    }
+
+    public void setPatientUsername(String patientUsername) {
+        this.patientUsername = patientUsername;
+    }
+
+    public String getClinitiannotes() {
+        return clinitiannotes;
+    }
+
+    public void setClinitiannotes(String clinitiannotes) {
+        this.clinitiannotes = clinitiannotes;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public double getBloodpressure() {
+        return bloodpressure;
+    }
+
+    public void setBloodpressure(double bloodpressure) {
+        this.bloodpressure = bloodpressure;
+    }
+
+    public double getReynoldsRiskScore() {
+        return reynoldsRiskScore;
+    }
+
+    public void setReynoldsRiskScore(double reynoldsRiskScore) {
+        this.reynoldsRiskScore = reynoldsRiskScore;
+    }
+
+    public double getcReactive() {
+        return cReactive;
+    }
+
+    public void setcReactive(double cReactive) {
+        this.cReactive = cReactive;
+    }
+
+    public double getApolprotB() {
+        return apolprotB;
+    }
+
+    public void setApolprotB(double apolprotB) {
+        this.apolprotB = apolprotB;
+    }
+
+    public double getApolprotA() {
+        return apolprotA;
+    }
+
+    public void setApolprotA(double apolprotA) {
+        this.apolprotA = apolprotA;
+    }
+
+    public double getLipProteinA() {
+        return lipProteinA;
+    }
+
+    public void setLipProteinA(double lipProteinA) {
+        this.lipProteinA = lipProteinA;
+    }
+
+    public boolean isSmoker() {
+        return smoker;
+    }
+
+    public void setSmoker(boolean smoker) {
+        this.smoker = smoker;
+    }
+
+    public boolean isFamhist() {
+        return famhist;
+    }
+
+    public void setFamhist(boolean famhist) {
+        this.famhist = famhist;
     }
 
     public double calculateReynoldsRiskScore(){
