@@ -52,6 +52,7 @@ public class ClinitianHome extends AppCompatActivity {
                 startActivity(intent1);
             }
         });
+        //ok
 
 
 
