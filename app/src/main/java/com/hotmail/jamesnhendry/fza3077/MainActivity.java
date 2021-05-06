@@ -1,14 +1,21 @@
 package com.hotmail.jamesnhendry.fza3077;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -22,11 +29,44 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Visit> pastVisits = new ArrayList<>();
     private ArrayList<Visit> futureVisits = new ArrayList<>();
     private ArrayList<MedicalRecord> medicalRecords = new ArrayList<>();
+    private FirebaseAuth mAuth;
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //TODO
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        //updateUI(currentUser);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        mAuth = FirebaseAuth.getInstance();
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(EmailPasswordActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            updateUI(null);
+                        }
+                    }
+                });
+
         setPC();
 
         btnLogin = findViewById(R.id.btnLogin);
@@ -85,9 +125,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         clinitians.clear();
-        clinitians.add(new Clinitian("Fred Gibbs","fgib1","fgib1",patients,pastVisits,futureVisits));
-        clinitians.add(new Clinitian("Charlie Harrison","char01","char01",patients,pastVisits,futureVisits));
-        clinitians.add(new Clinitian("Daniel Matthews","dmat01","dmat01",patients,pastVisits,futureVisits));
+        clinitians.add(new Clinitian("Fred Gibbs","fgib1","fgib1",patients,pastVisits));
+        clinitians.add(new Clinitian("Charlie Harrison","char01","char01",patients,pastVisits));
+        clinitians.add(new Clinitian("Daniel Matthews","dmat01","dmat01",patients,pastVisits));
 
 
         //want to implement either a MONGODB or just use firebase NOSQL because fok this is getting annoying.
@@ -104,10 +144,12 @@ public class MainActivity extends AppCompatActivity {
         pastVisits.add(new Visit("24/07","15:30","Fred Gibbs","James Hendry",medicalRecords.get(0)));
         pastVisits.add(new Visit("25/07","15:30","Fred Gibbs","James Hendry",medicalRecords.get(1)));
         pastVisits.add(new Visit("26/07","15:30","Fred Gibbs","James Hendry",medicalRecords.get(2)));
-        futureVisits.clear();
-        futureVisits.add(new Visit("29/08","15:30","Fred Gibbs","James Hendry"));
-        futureVisits.add(new Visit("01/09","15:30","Fred Gibbs","James Hendry"));
-        futureVisits.add(new Visit("27/09","15:30","Fred Gibbs","James Hendry"));
+        pastVisits.add(new Visit("29/08","15:30","Fred Gibbs","James Hendry"));
+        pastVisits.add(new Visit("01/09","15:30","Fred Gibbs","James Hendry"));
+        pastVisits.add(new Visit("27/09","15:30","Fred Gibbs","James Hendry"));
+
+
+
 
     }
 
