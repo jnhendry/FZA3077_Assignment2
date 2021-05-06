@@ -7,25 +7,15 @@ public class MedicalRecord {
     private boolean smoker;
     private boolean famhist;
 
-
-    public MedicalRecord(String dateUpdated, String time, String clinitianUsername, String patientUsername, String clinitiannotes,
-                         int age, double bloodpressure, double reynoldsRiskScore, double cReactive, double apolprotB,
-                         double apolprotA, double lipProteinA, boolean smoker, boolean famhist) {
-        this.dateUpdated = dateUpdated;
-        this.time = time;
-        this.clinitianName = clinitianUsername;
-        this.patientName = patientUsername;
-        this.clinitiannotes = clinitiannotes;
-        this.age = age;
-        this.bloodpressure = bloodpressure;
-        this.reynoldsRiskScore = reynoldsRiskScore;
-        this.cReactive = cReactive;
-        this.apolprotB = apolprotB;
-        this.apolprotA = apolprotA;
-        this.lipProteinA = lipProteinA;
-        this.smoker = smoker;
-        this.famhist = famhist;
+    public int getAge() {
+        return age;
     }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+
 
     public MedicalRecord(String dateUpdated, String time, String clinitianName, String patientName, String clinitiannotes,
                          int age, double bloodpressure, double cReactive, double apolprotB, double apolprotA, double lipProteinA, boolean smoker, boolean famhist) {
@@ -84,13 +74,7 @@ public class MedicalRecord {
         this.clinitiannotes = clinitiannotes;
     }
 
-    public int getAge() {
-        return age;
-    }
 
-    public void setAge(int age) {
-        this.age = age;
-    }
 
     public double getBloodpressure() {
         return bloodpressure;

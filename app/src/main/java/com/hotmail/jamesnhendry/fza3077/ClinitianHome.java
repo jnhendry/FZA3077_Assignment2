@@ -17,6 +17,7 @@ public class ClinitianHome extends AppCompatActivity {
     private patientAdapter patientAdapter;
     private visitAdapter visitAdapter;
     private TextView edtClinitianName;
+    private  Clinitian cl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,22 +25,11 @@ public class ClinitianHome extends AppCompatActivity {
         setContentView(R.layout.activity_clinitian_home);
         final Intent intent = getIntent();
         String clinitian = intent.getStringExtra("clinitian") ;
-        final Clinitian cl = gson.fromJson(clinitian,Clinitian.class);
+        cl = gson.fromJson(clinitian,Clinitian.class);
 
         edtClinitianName = findViewById(R.id.txtclinitianname);
         edtClinitianName.setText(cl.getName());
 
-        recyclPatients = findViewById(R.id.recyclMedicalRecord);
-        recyclPatients.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        recycvisit = findViewById(R.id.recycVisitclinitian);
-        recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-
-
-        patientAdapter = new patientAdapter(getApplicationContext(), cl.getPatients());
-        visitAdapter = new visitAdapter(cl.getFutureVisits(),getApplicationContext());
-
-        recyclPatients.setAdapter(patientAdapter);
-        recycvisit.setAdapter(visitAdapter);
 
         patientAdapter.setonItemClicklistener(new patientAdapter.onItemClickListener() {
             @Override
@@ -56,5 +46,18 @@ public class ClinitianHome extends AppCompatActivity {
 
 
 
+    }
+
+    public void setRecycle(){
+        recyclPatients = findViewById(R.id.recyclMedicalRecord);
+        recyclPatients.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        patientAdapter = new patientAdapter(getApplicationContext(), cl.getPatients());
+        recyclPatients.setAdapter(patientAdapter);
+
+
+        recycvisit = findViewById(R.id.recycVisitclinitian);
+        recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        visitAdapter = new visitAdapter(cl.getFutureVisits(),getApplicationContext());
+        recycvisit.setAdapter(visitAdapter);
     }
 }

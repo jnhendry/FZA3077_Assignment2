@@ -63,10 +63,12 @@ public class MedicalRecordAdapter extends RecyclerView.Adapter<MedicalRecordAdap
         }else{
             famist = "No";
         }
+
+        String age = list.get(position).getAge()+"";
                 holder.txtClinitian.setText(list.get(position).getClinitianName());
                 holder.txtDate.setText(list.get(position).getDateUpdated());
                 holder.txtPatientName.setText(list.get(position).getPatientName());
-                //holder.txtPatientAge.setText(list.get(position).getAge());
+                holder.txtPatientAge.setText(age);
                 holder.txtBloodp.setText(bloodp);
                 holder.txtCreact.setText(cRact);
                 holder.txtapolprotB.setText(apolB);
@@ -96,7 +98,7 @@ public class MedicalRecordAdapter extends RecyclerView.Adapter<MedicalRecordAdap
             txtClinitian = itemView.findViewById(R.id.txtClinitianMR);
             txtDate = itemView.findViewById(R.id.txtDateMR);
             txtPatientName = itemView.findViewById(R.id.txtPatientMR);
-            txtPatientAge = itemView.findViewById(R.id.txtPatientAgeMR);
+            txtPatientAge = itemView.findViewById(R.id.txtAge);
             txtBloodp = itemView.findViewById(R.id.txtBloodPressureMR);
             txtCreact = itemView.findViewById(R.id.txtCreactiveMR);
             txtapolprotB = itemView.findViewById(R.id.txtApolBMR);
