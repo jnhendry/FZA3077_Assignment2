@@ -47,56 +47,39 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        mAuth = FirebaseAuth.getInstance();
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(EmailPasswordActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            updateUI(null);
-                        }
-                    }
-                });
-
-        setPC();
-
         btnLogin = findViewById(R.id.btnLogin);
         edtUsername = findViewById(R.id.edtUsername);
         edtPassword = findViewById(R.id.edtPassword);
 
+
+        mAuth = FirebaseAuth.getInstance();
+
+
+        setPC();
+
+
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for(Patient pat:patients){
-                    if((pat.getUsername().equalsIgnoreCase(edtUsername.getText().toString()))&&(pat.getPassword().equalsIgnoreCase(edtPassword.getText().toString()))){
-                        Intent intent = new Intent(getApplicationContext(),PatientHome.class);
-                        String patientinfo = gson.toJson(pat);
-                        intent.putExtra("patient",patientinfo);
-                        startActivity(intent);
-                    }
-                }
-                for(Clinitian cl:clinitians){
-                    if((cl.getUsername().equalsIgnoreCase(edtUsername.getText().toString()))&&(cl.getPassword().equalsIgnoreCase(edtPassword.getText().toString()))){
-                        Intent intent = new Intent(getApplicationContext(),ClinitianHome.class);
-                        String clinitianinfo = gson.toJson(cl);
-                        intent.putExtra("clinitian",clinitianinfo);
-                        startActivity(intent);
-                    }
-                }
+                mAuth.signInWithEmailAndPassword(edtUsername.getText().toString(), edtPassword.getText().toString())
+                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if(task.isSuccessful()) {
+                                    // Sign in success, update UI with the signed-in user's information
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                   // updateUI(user);
+                                } else {
+                                    // If sign in fails, display a message to the user.
 
-
-
+                                    Toast.makeText(MainActivity.this, "Authentication failed.",
+                                            Toast.LENGTH_SHORT).show();
+                                    updateUI(null);
+                                }
+                            }
+                        });
             }
-
         });
     }
 
