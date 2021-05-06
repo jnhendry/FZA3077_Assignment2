@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "signinwithemail:success");
                     FirebaseUser user = mAuth.getCurrentUser();
 
-
                 }else{
                     Log.w(TAG, "signinwithemail:failure",task.getException() );
                     Toast.makeText(getApplicationContext(),"authentication failed",Toast.LENGTH_SHORT).show();
