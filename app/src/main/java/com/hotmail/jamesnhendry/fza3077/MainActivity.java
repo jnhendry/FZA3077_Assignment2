@@ -75,7 +75,10 @@ public class MainActivity extends AppCompatActivity {
     public void signin(){
         edtUsername = findViewById(R.id.edtUsername);
         edtPassword = findViewById(R.id.edtPassword);
-        mAuth.signInWithEmailAndPassword(edtUsername.getText().toString(),edtPassword.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        String email,password;
+        email = edtUsername.getText().toString();
+        password = edtPassword.getText().toString();
+        mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){

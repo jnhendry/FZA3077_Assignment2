@@ -57,7 +57,7 @@ public class ClinitianHome extends AppCompatActivity {
 
         recycvisit = findViewById(R.id.recycVisitclinitian);
         recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        visitAdapter = new visitAdapter(cl.getFutureVisits(),getApplicationContext());
+       // visitAdapter = new visitAdapter(cl.getFutureVisits(),getApplicationContext());
         recycvisit.setAdapter(visitAdapter);
     }
 }
