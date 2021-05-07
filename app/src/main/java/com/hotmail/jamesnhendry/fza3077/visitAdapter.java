@@ -40,10 +40,9 @@ public class visitAdapter extends RecyclerView.Adapter<visitAdapter.subholder>{
 
     @Override
     public void onBindViewHolder(@NonNull subholder holder, int position) {
-                holder.txtVisitDate.setText(list.get(position).getDate());
-                holder.txtVisitTime.setText(list.get(position).getTime());
-                holder.txtVisitClinitian.setText(list.get(position).getClinitianUsername());
-                holder.txtVisitPatient.setText(list.get(position).getPatientUsername());
+                holder.txtVisitDate.setText(list.get(position).getDate().toString());
+                holder.txtVisitClinitian.setText(list.get(position).getClinitianID());
+                holder.txtVisitPatient.setText(list.get(position).getPatientID());
 
         String medicalrecord;
 

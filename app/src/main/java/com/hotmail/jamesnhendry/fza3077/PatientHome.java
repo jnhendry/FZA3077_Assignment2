@@ -1,5 +1,6 @@
 package com.hotmail.jamesnhendry.fza3077;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,6 +9,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -20,6 +28,11 @@ public class PatientHome extends AppCompatActivity {
     ArrayList<MedicalRecord> medtemp = new ArrayList<>();
     MedicalRecord med;
     RecyclerView recyclFutureVisit,recyclVisit,recyclMedRec;
+    private FirebaseAuth mAuth;
+    private ArrayList<Visit> visits = new ArrayList<>();
+
+    FirebaseFirestore db;
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +48,16 @@ public class PatientHome extends AppCompatActivity {
         recyclMedRec = findViewById(R.id.recyclMedicalRecord);
         recyclMedRec.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-
         txtPatientName = findViewById(R.id.txtPatientName);
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+        populateArray();
+
+
+
+/*
+
         Intent intent = getIntent();
         String patient = intent.getStringExtra("patient") ;
         if(patient!=null) {
@@ -75,6 +96,40 @@ public class PatientHome extends AppCompatActivity {
             }
         }
 
+
+*/
+
+
+
+
+    }
+
+
+    private void populateArray() {
+
+
+        db.collection("Visits").whereEqualTo("PatientID",user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if(error!=null){
+                    return;
+                }
+
+                for(DocumentSnapshot documentSnapshot:value) {
+                    Visit pat = new Visit(documentSnapshot.get("ClinitianID").toString(),documentSnapshot.get("Date").toString(),documentSnapshot.get("PatientID").toString(),documentSnapshot.get("medicalrecord",MedicalRecord.class));
+                    visits.add(pat);
+                    medtemp.add(pat.getMedicalRecord());
+                }
+
+                recyclMedRec = findViewById(R.id.recyclMedicalRecord);
+                recyclMedRec.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                MedicalRecordAdapter medicalRecordAdapter = new MedicalRecordAdapter(getApplicationContext(), medtemp);
+                recyclMedRec.setAdapter(medicalRecordAdapter);
+
+                System.out.println(medtemp.get(0).getBloodpressure());
+
+            }
+        });
 
 
 
