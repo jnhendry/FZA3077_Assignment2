@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void setPC(){
-        patients.clear();
+     /*   patients.clear();
         patients.add(new Patient("fgib1","James Hendry","jhen01","jhen01","0833003093","Male",pastVisits,futureVisits));
         patients.add(new Patient("fgib1","Matthew Mcdaniel","mmcd01","mmcd01","0833002793","Male",pastVisits,futureVisits));
         patients.add(new Patient("fgib1","Jason Henrick","jhen02","jhen02","0833235493","Male",pastVisits,futureVisits));
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
         pastVisits.add(new Visit("27/09","15:30","Fred Gibbs","James Hendry"));
 
 
-
+*/
 
     }
 

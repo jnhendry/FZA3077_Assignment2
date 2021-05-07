@@ -1,5 +1,6 @@
 package com.hotmail.jamesnhendry.fza3077;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,7 +9,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClinitianHome extends AppCompatActivity {
 
@@ -18,17 +31,35 @@ public class ClinitianHome extends AppCompatActivity {
     private visitAdapter visitAdapter;
     private TextView edtClinitianName;
     private  Clinitian cl;
+    private FirebaseAuth mAuth;
+    private ArrayList<Patient> patients = new ArrayList<>();
+    FirebaseFirestore db;
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clinitian_home);
-        final Intent intent = getIntent();
-        String clinitian = intent.getStringExtra("clinitian") ;
-        cl = gson.fromJson(clinitian,Clinitian.class);
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+
 
         edtClinitianName = findViewById(R.id.txtclinitianname);
-//        edtClinitianName.setText(cl.getName());
+        DocumentReference snap = db.collection("Clinitian").document(user.getUid());
+
+        snap.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists()){
+                    edtClinitianName.setText(documentSnapshot.get("name").toString());
+                }
+            }
+        });
+
+        populateArray();
+//        System.out.println(patients.get(0).getName());
+
 
 
       /*  patientAdapter.setonItemClicklistener(new patientAdapter.onItemClickListener() {
@@ -48,16 +79,42 @@ public class ClinitianHome extends AppCompatActivity {
 
     }
 
+    private void populateArray() {
+
+
+        db.collection("Patients").whereEqualTo("ClinitianID",user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if(error!=null){
+                    return;
+                }
+
+                    for(DocumentSnapshot documentSnapshot:value) {
+                        Patient pat = new Patient(documentSnapshot.get("name").toString(),documentSnapshot.get("phone").toString(),documentSnapshot.get("sex").toString());
+                        patients.add(pat);
+                    }
+                recyclPatients = findViewById(R.id.recyclMedicalRecord);
+                recyclPatients.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                patientAdapter = new patientAdapter(getApplicationContext(), patients);
+                recyclPatients.setAdapter(patientAdapter);
+
+            }
+        });
+
+
+
+
+
+
+    }
+
     public void setRecycle(){
-        recyclPatients = findViewById(R.id.recyclMedicalRecord);
-        recyclPatients.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        patientAdapter = new patientAdapter(getApplicationContext(), cl.getPatients());
-        recyclPatients.setAdapter(patientAdapter);
 
 
-        recycvisit = findViewById(R.id.recycVisitclinitian);
-        recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+       // recycvisit = findViewById(R.id.recycVisitclinitian);
+        //recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
        // visitAdapter = new visitAdapter(cl.getFutureVisits(),getApplicationContext());
-        recycvisit.setAdapter(visitAdapter);
+        //recycvisit.setAdapter(visitAdapter);
     }
 }

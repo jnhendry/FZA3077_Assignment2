@@ -8,15 +8,13 @@ public class Patient {
     private ArrayList<Visit> futureVisits;
 
 
-    public Patient(String clinitianUsername, String name, String username, String password, String phoneNumber, String sex, ArrayList<Visit> pastVisits, ArrayList<Visit> futureVisits) {
-        this.clinitianUsername = clinitianUsername;
+    public Patient() {
+    }
+
+    public Patient(String name, String phoneNumber, String sex) {
         this.name = name;
-        this.username = username;
-        this.password = password;
         this.phoneNumber = phoneNumber;
         this.sex = sex;
-        this.pastVisits = pastVisits;
-        this.futureVisits = futureVisits;
     }
 
     public String getClinitianUsername() {
