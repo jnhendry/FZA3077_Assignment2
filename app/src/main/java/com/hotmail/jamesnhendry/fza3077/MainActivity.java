@@ -12,10 +12,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 
@@ -33,6 +37,10 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Visit> futureVisits = new ArrayList<>();
     private ArrayList<MedicalRecord> medicalRecords = new ArrayList<>();
     private FirebaseAuth mAuth;
+    private DocumentReference userpatient;
+    private DocumentReference userClinitian;
+    FirebaseFirestore db;
+    FirebaseUser user;
 
 
     @Override
@@ -49,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+       db = FirebaseFirestore.getInstance();
 
 
         btnLogin = findViewById(R.id.btnLogin);
@@ -83,16 +91,41 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     Log.d(TAG, "signinwithemail:success");
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    Toast.makeText(getApplicationContext(),"Authentication Successful",Toast.LENGTH_SHORT).show();
+                     user = mAuth.getCurrentUser();
+                      userpatient = db.document("Patients/"+user.getUid());
+                      userClinitian = db.document("Clinitian/"+user.getUid());
+
+
+                    userClinitian.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if(documentSnapshot.exists()) {
+                                Toast.makeText(MainActivity.this, "DOC!", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(MainActivity.this, ClinitianHome.class);
+                                startActivity(intent);
+                            }
+                        }
+                    });
+                    userpatient.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if(documentSnapshot.exists()) {
+                                Toast.makeText(MainActivity.this, "MARTY!", Toast.LENGTH_SHORT).show();
+
+                                Intent intent = new Intent(MainActivity.this, PatientHome.class);
+                                startActivity(intent);
+                            }
+                        }
+                    });
 
                 }else{
                     Log.w(TAG, "signinwithemail:failure",task.getException() );
-                    Toast.makeText(getApplicationContext(),"authentication failed",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"authentication failed, check email and/or password or create a new Account",Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
+
 
 
     public void setPC(){

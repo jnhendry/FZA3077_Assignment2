@@ -28,10 +28,10 @@ public class ClinitianHome extends AppCompatActivity {
         cl = gson.fromJson(clinitian,Clinitian.class);
 
         edtClinitianName = findViewById(R.id.txtclinitianname);
-        edtClinitianName.setText(cl.getName());
+//        edtClinitianName.setText(cl.getName());
 
 
-        patientAdapter.setonItemClicklistener(new patientAdapter.onItemClickListener() {
+      /*  patientAdapter.setonItemClicklistener(new patientAdapter.onItemClickListener() {
             @Override
             public void onItemClicked(int position) {
                 Intent intent1 = new Intent(getApplicationContext(),PatientHome.class);
@@ -42,7 +42,7 @@ public class ClinitianHome extends AppCompatActivity {
                 startActivity(intent1);
             }
         });
-
+*/
 
 
 
