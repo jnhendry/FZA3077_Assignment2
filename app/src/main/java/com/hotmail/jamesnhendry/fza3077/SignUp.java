@@ -32,6 +32,7 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 openFragment(signUpPatients);
+                btnPatient.setAlpha(1);
                 btnCllinitian.setAlpha((float) 0.3);
             }
         });
@@ -40,6 +41,8 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 openFragment(signUpClinitian);
+                btnPatient.setAlpha((float) 0.3);
+                btnCllinitian.setAlpha(1);
             }
         });
 
