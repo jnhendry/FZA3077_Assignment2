@@ -1,5 +1,6 @@
 package com.hotmail.jamesnhendry.fza3077;
 
+import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.DatePicker;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
@@ -29,9 +32,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.SimpleTimeZone;
 import java.util.concurrent.Executor;
@@ -61,6 +68,7 @@ public class signupPatient extends Fragment {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private long dateselected;
+
     public signupPatient() {
         // Required empty public constructor
     }
@@ -105,6 +113,10 @@ public class signupPatient extends Fragment {
 
         db = FirebaseFirestore.getInstance();
 
+        getClinicians();
+
+
+
         edtName = view.findViewById(R.id.edtPatientNameSU);
         edtSurname = view.findViewById(R.id.edtPatientSurnameSU);
         edtDate = view.findViewById(R.id.edtDOB);
@@ -117,6 +129,8 @@ public class signupPatient extends Fragment {
         spnSuburb = view.findViewById(R.id.spnSuburb);
         spnClinitian = view.findViewById(R.id.spnClinitian);
         mAuth = FirebaseAuth.getInstance();
+
+
 
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
@@ -157,6 +171,39 @@ public class signupPatient extends Fragment {
 
 
 
+
+
+
+
+    }
+
+    public void getClinicians(){
+        final ArrayList <String> clinicians = new ArrayList<String>();
+
+        db.collection("Clinitian").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                ArrayList<String> theClinicians =  new ArrayList<String>();
+                theClinicians.add("Clinitian");
+                if (task.isSuccessful()){
+                    for(QueryDocumentSnapshot document : task.getResult()){
+
+                        HashMap <String, Object> map = (HashMap) document.getData();
+
+
+
+                        theClinicians.add(map.get("firstName") + " " + map.get("lastName"));
+                    }
+
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                        getContext(), android.R.layout.simple_spinner_item, theClinicians);
+
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spnClinitian.setAdapter(adapter);
+            }
+
+        });
 
 
 
