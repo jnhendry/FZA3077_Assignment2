@@ -15,5 +15,17 @@
         <item>General Practitioner</item>
         <item>Specialist</item>
     </string-array>
+    <string-array name="Suburbs">
+        <item>Suburb</item>
+        <item>Roodepoort</item>
+        <item>Sandton</item>
+        <item>Rosebank</item>
+        <item>Krugersdorp</item>
+        <item>Randburg</item>
+        <item>Soweto</item>
+        <item>Randfontein</item>
+        <item>Kosmo</item>
+        <item>Florida</item>
+    </string-array>
 
 </resources>

@@ -64,10 +64,10 @@
                 android:id="@+id/spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:entries="@array/spinGender"
+                android:entries="@array/Suburbs"
                 app:layout_constraintBottom_toBottomOf="@+id/edtDOB"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.063"
+                app:layout_constraintHorizontal_bias="0.04"
                 app:layout_constraintStart_toEndOf="@+id/edtDOB"
                 app:layout_constraintTop_toTopOf="@+id/edtDOB"
                 app:layout_constraintVertical_bias="0.0" />
