@@ -23,10 +23,11 @@ public class SignUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup);
         ft = getSupportFragmentManager().beginTransaction();
-        openFragment(signUpPatients);
 
         btnPatient = findViewById(R.id.btntogglePatientSU);
         btnCllinitian = findViewById(R.id.btnToggleClinitianSU);
+
+
 
         btnPatient.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,12 +47,13 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
+        btnPatient.callOnClick();
 
     }
 
     public void openFragment(Fragment fragment) {
         ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.frmContain, fragment);
+        ft.replace(R.id.frmcontain, fragment);
         ft.commit();
     }
 }
