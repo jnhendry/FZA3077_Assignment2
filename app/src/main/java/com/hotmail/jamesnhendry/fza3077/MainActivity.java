@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private DocumentReference userClinitian;
     FirebaseFirestore db;
     FirebaseUser user;
+    private TextView txtSignup;
 
 
     @Override
@@ -61,6 +63,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         btnLogin = findViewById(R.id.btnLogin);
+        txtSignup = findViewById(R.id.txtSignUp);
+
+        txtSignup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(),SignUp.class);
+                startActivity(intent);
+            }
+        });
 
 
 
