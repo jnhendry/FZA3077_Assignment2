@@ -105,7 +105,7 @@
                 app:layout_constraintGuide_percent="0.5" />
 
             <EditText
-                android:id="@+id/edtEmail"
+                android:id="@+id/edtEmailPatientSU"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -128,10 +128,10 @@
                 android:hint="Password"
                 android:inputType="textPassword"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/edtEmail"
+                app:layout_constraintEnd_toEndOf="@+id/edtEmailPatientSU"
                 app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintStart_toStartOf="@+id/edtEmail"
-                app:layout_constraintTop_toBottomOf="@+id/edtEmail"
+                app:layout_constraintStart_toStartOf="@+id/edtEmailPatientSU"
+                app:layout_constraintTop_toBottomOf="@+id/edtEmailPatientSU"
                 app:layout_constraintVertical_bias="0.1" />
 
             <EditText
@@ -149,7 +149,7 @@
                 app:layout_constraintVertical_bias="0.1" />
 
             <Button
-                android:id="@+id/btnLogin"
+                android:id="@+id/btnSignUp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -172,7 +172,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/guideline5"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="@+id/edtPasswordReSU"
-                app:layout_constraintTop_toBottomOf="@+id/btnLogin"
+                app:layout_constraintTop_toBottomOf="@+id/btnSignUp"
                 app:layout_constraintVertical_bias="0.1" />
 
             <TextView
@@ -187,7 +187,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/edtPasswordReSU"
                 app:layout_constraintHorizontal_bias="0.05"
                 app:layout_constraintStart_toStartOf="@+id/guideline5"
-                app:layout_constraintTop_toBottomOf="@+id/btnLogin"
+                app:layout_constraintTop_toBottomOf="@+id/btnSignUp"
                 app:layout_constraintVertical_bias="0.1" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

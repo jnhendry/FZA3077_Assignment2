@@ -9,6 +9,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,7 +29,10 @@ public class signupPatient extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private EditText edtName,edtSurname,edtEmail,edtPassword,edtPass2,edtDate;
+    private TextView txtLogin;
+    private Spinner spnGender,spnSuburb,spnClinitian;
+    private Button btnSignUp;
     public signupPatient() {
         // Required empty public constructor
     }
@@ -68,6 +75,13 @@ public class signupPatient extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        edtName = view.findViewById(R.id.edtPatientNameSU);
+        edtSurname = view.findViewById(R.id.edtPatientSurnameSU);
+        edtDate = view.findViewById(R.id.edtDOB);
+        edtEmail = view.findViewById(R.id.edtEmailPatientSU);
+        edtPassword = view.findViewById(R.id.edtPasswordSU);
+        edtPass2 = view.findViewById(R.id.edtPasswordReSU);
+        btnSignUp = view.findViewById(R.id.btnSignUp);
 
 
     }
