@@ -1,11 +1,13 @@
 package com.hotmail.jamesnhendry.fza3077;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.concurrent.Executor;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +37,7 @@ public class signupPatient extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "SignUp";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -33,6 +46,8 @@ public class signupPatient extends Fragment {
     private TextView txtLogin;
     private Spinner spnGender,spnSuburb,spnClinitian;
     private Button btnSignUp;
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
     public signupPatient() {
         // Required empty public constructor
     }
@@ -75,6 +90,8 @@ public class signupPatient extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        db = FirebaseFirestore.getInstance();
+
         edtName = view.findViewById(R.id.edtPatientNameSU);
         edtSurname = view.findViewById(R.id.edtPatientSurnameSU);
         edtDate = view.findViewById(R.id.edtDOB);
@@ -82,7 +99,43 @@ public class signupPatient extends Fragment {
         edtPassword = view.findViewById(R.id.edtPasswordSU);
         edtPass2 = view.findViewById(R.id.edtPasswordReSU);
         btnSignUp = view.findViewById(R.id.btnSignUp);
+        txtLogin = view.findViewById(R.id.txtSignIn);
+        spnGender = view.findViewById(R.id.spnGender);
+        spnSuburb = view.findViewById(R.id.spnSuburb);
+        spnClinitian = view.findViewById(R.id.spnClinitian);
+        mAuth = FirebaseAuth.getInstance();
+
+        if(edtPassword.getText().toString().equals(edtPass2.getText().toString())){
+            String email,password;
+            email = edtEmail.getText().toString();
+            password = edtPassword.getText().toString();
+            SignUpemail(email,password);
+        }
 
 
+
+
+
+
+
+    }
+
+    public void SignUpemail(String email,String password){
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Intent intent = new Intent(getContext(),PatientHome.class);
+                            startActivity(intent);
+                        } else{
+                            Log.w(TAG, "signinwithemail:failure",task.getException() );
+                            Toast.makeText(getActivity().getApplicationContext(),"authentication failed, check email and/or password or create a new Account",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }

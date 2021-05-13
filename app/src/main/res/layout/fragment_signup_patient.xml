@@ -53,15 +53,15 @@
                 android:ems="10"
                 android:hint="DOB"
                 android:inputType="date"
-                app:layout_constraintBottom_toBottomOf="@+id/spinner2"
+                app:layout_constraintBottom_toBottomOf="@+id/spnGender"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.05"
-                app:layout_constraintStart_toEndOf="@+id/spinner2"
-                app:layout_constraintTop_toTopOf="@+id/spinner2"
+                app:layout_constraintStart_toEndOf="@+id/spnGender"
+                app:layout_constraintTop_toTopOf="@+id/spnGender"
                 app:layout_constraintVertical_bias="1.0" />
 
             <Spinner
-                android:id="@+id/spinner"
+                android:id="@+id/spnSuburb"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:entries="@array/Suburbs"
@@ -73,7 +73,7 @@
                 app:layout_constraintVertical_bias="0.0" />
 
             <Spinner
-                android:id="@+id/spinner2"
+                android:id="@+id/spnGender"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_marginTop="32dp"
@@ -86,15 +86,15 @@
                 app:layout_constraintVertical_bias="0.005" />
 
             <Spinner
-                android:id="@+id/spinner3"
+                android:id="@+id/spnClinitian"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:entries="@array/spinGender"
-                app:layout_constraintBottom_toBottomOf="@+id/spinner"
+                app:layout_constraintBottom_toBottomOf="@+id/spnSuburb"
                 app:layout_constraintEnd_toEndOf="@+id/edtPatientSurnameSU"
                 app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/spinner"
-                app:layout_constraintTop_toTopOf="@+id/spinner"
+                app:layout_constraintStart_toEndOf="@+id/spnSuburb"
+                app:layout_constraintTop_toTopOf="@+id/spnSuburb"
                 app:layout_constraintVertical_bias="0.0" />
 
             <androidx.constraintlayout.widget.Guideline
@@ -113,9 +113,9 @@
                 android:hint="Email"
                 android:inputType="textEmailAddress"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/spinner3"
+                app:layout_constraintEnd_toEndOf="@+id/spnClinitian"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/spinner2"
+                app:layout_constraintStart_toStartOf="@+id/spnGender"
                 app:layout_constraintTop_toBottomOf="@+id/edtDOB"
                 app:layout_constraintVertical_bias="0.1" />
 
