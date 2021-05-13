@@ -6,144 +6,151 @@
     android:layout_height="match_parent"
     tools:context=".signupClinitian">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline00"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
 
-        <EditText
-            android:id="@+id/edtClinitianNameSU"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:ems="10"
-            android:hint="First Name"
-            android:inputType="textPersonName"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline00"
-            app:layout_constraintHorizontal_bias="0.85"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.05" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/edtClinitianSurnamesu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:ems="10"
-            android:hint="Surname"
-            android:inputType="textPersonName"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.15"
-            app:layout_constraintStart_toStartOf="@+id/guideline00"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.05" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline00"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
 
-        <Spinner
-            android:id="@+id/spnClinitianSpeciality"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="32dp"
-            android:entries="@array/Clinitianspin"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/edtClinitianSurnamesu"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/edtClinitianNameSU"
-            app:layout_constraintTop_toBottomOf="@+id/edtClinitianNameSU"
-            app:layout_constraintVertical_bias="0.0" />
+            <EditText
+                android:id="@+id/edtClinitianNameSU"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:ems="10"
+                android:hint="First Name"
+                android:inputType="textPersonName"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline00"
+                app:layout_constraintHorizontal_bias="0.85"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.05" />
 
-        <EditText
-            android:id="@+id/edtEmailClinitianSU"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:ems="10"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/spnClinitianSpeciality"
-            app:layout_constraintStart_toStartOf="@+id/spnClinitianSpeciality"
-            app:layout_constraintTop_toBottomOf="@+id/spnClinitianSpeciality"
-            app:layout_constraintVertical_bias="0.0" />
+            <EditText
+                android:id="@+id/edtClinitianSurnamesu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:hint="Surname"
+                android:inputType="textPersonName"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.15"
+                app:layout_constraintStart_toStartOf="@+id/guideline00"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.05" />
 
-        <EditText
-            android:id="@+id/edtClinitianPasswordSU"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:ems="10"
-            android:hint="Password"
-            android:inputType="textPassword"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/edtEmailClinitianSU"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="@+id/edtEmailClinitianSU"
-            app:layout_constraintTop_toBottomOf="@+id/edtEmailClinitianSU"
-            app:layout_constraintVertical_bias="0.0" />
+            <Spinner
+                android:id="@+id/spnClinitianSpeciality"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="32dp"
+                android:entries="@array/Clinitianspin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/edtClinitianSurnamesu"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/edtClinitianNameSU"
+                app:layout_constraintTop_toBottomOf="@+id/edtClinitianNameSU"
+                app:layout_constraintVertical_bias="0.0" />
 
-        <EditText
-            android:id="@+id/edtPasswordresu"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:ems="10"
-            android:hint="Re-enter Password"
-            android:inputType="textPassword"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/edtClinitianPasswordSU"
-            app:layout_constraintStart_toStartOf="@+id/edtClinitianPasswordSU"
-            app:layout_constraintTop_toBottomOf="@+id/edtClinitianPasswordSU"
-            app:layout_constraintVertical_bias="0.0" />
+            <EditText
+                android:id="@+id/edtEmailClinitianSU"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:ems="10"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/spnClinitianSpeciality"
+                app:layout_constraintStart_toStartOf="@+id/spnClinitianSpeciality"
+                app:layout_constraintTop_toBottomOf="@+id/spnClinitianSpeciality"
+                app:layout_constraintVertical_bias="0.0" />
 
-        <Button
-            android:id="@+id/btnSignUpClinitian"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="@color/colorPrimary"
-            android:text="Sign Up"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/edtPasswordresu"
-            app:layout_constraintStart_toStartOf="@+id/edtPasswordresu"
-            app:layout_constraintTop_toBottomOf="@+id/edtPasswordresu"
-            app:layout_constraintVertical_bias="0.0" />
+            <EditText
+                android:id="@+id/edtClinitianPasswordSU"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:ems="10"
+                android:hint="Password"
+                android:inputType="textPassword"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/edtEmailClinitianSU"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="@+id/edtEmailClinitianSU"
+                app:layout_constraintTop_toBottomOf="@+id/edtEmailClinitianSU"
+                app:layout_constraintVertical_bias="0.0" />
 
-        <TextView
-            android:id="@+id/textView23"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="Already have an account?"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline00"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="@+id/edtPasswordresu"
-            app:layout_constraintTop_toBottomOf="@+id/btnSignUpClinitian"
-            app:layout_constraintVertical_bias="0.1" />
+            <EditText
+                android:id="@+id/edtPasswordresu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:ems="10"
+                android:hint="Re-enter Password"
+                android:inputType="textPassword"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/edtClinitianPasswordSU"
+                app:layout_constraintStart_toStartOf="@+id/edtClinitianPasswordSU"
+                app:layout_constraintTop_toBottomOf="@+id/edtClinitianPasswordSU"
+                app:layout_constraintVertical_bias="0.0" />
 
-        <TextView
-            android:id="@+id/txtSignInClinitianSU"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="Sign In."
-            android:textColor="@color/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/edtPasswordresu"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/guideline00"
-            app:layout_constraintTop_toBottomOf="@+id/btnSignUpClinitian"
-            app:layout_constraintVertical_bias="0.1" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/btnSignUpClinitian"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="Sign Up"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/edtPasswordresu"
+                app:layout_constraintStart_toStartOf="@+id/edtPasswordresu"
+                app:layout_constraintTop_toBottomOf="@+id/edtPasswordresu"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/textView23"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Already have an account?"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline00"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="@+id/edtPasswordresu"
+                app:layout_constraintTop_toBottomOf="@+id/btnSignUpClinitian"
+                app:layout_constraintVertical_bias="0.1" />
+
+            <TextView
+                android:id="@+id/txtSignInClinitianSU"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Sign In."
+                android:textColor="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/edtPasswordresu"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/guideline00"
+                app:layout_constraintTop_toBottomOf="@+id/btnSignUpClinitian"
+                app:layout_constraintVertical_bias="0.1" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
 </FrameLayout>
