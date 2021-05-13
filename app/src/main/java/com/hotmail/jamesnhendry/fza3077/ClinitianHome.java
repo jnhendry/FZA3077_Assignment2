@@ -40,6 +40,7 @@ public class ClinitianHome extends AppCompatActivity {
     private ArrayList<Patient> patients = new ArrayList<>();
     FirebaseFirestore db;
     FirebaseUser user;
+    private long difference_In_Years;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,8 +112,8 @@ public class ClinitianHome extends AppCompatActivity {
 
                             long difference = d2.getTime() - d1.getTime();
 
-                            long difference_In_Years
-                                    = (difference
+
+                                  difference_In_Years  = (difference
                                     / (1000l * 60 * 60 * 24 * 365));
 
                             System.out.println("Difference: " +difference_In_Years);
@@ -124,7 +125,7 @@ public class ClinitianHome extends AppCompatActivity {
 
 
 
-                        Patient pat = new Patient(documentSnapshot.get("name").toString(),documentSnapshot.get("suburb").toString(),documentSnapshot.get("gender").toString());
+                        Patient pat = new Patient(documentSnapshot.get("name").toString(),difference_In_Years+"",documentSnapshot.get("gender").toString());
                         patients.add(pat);
                     }
                 recyclPatients = findViewById(R.id.recyclMedicalRecord);

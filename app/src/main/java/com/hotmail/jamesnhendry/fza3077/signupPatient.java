@@ -37,6 +37,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,6 +45,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.SimpleTimeZone;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -154,8 +156,10 @@ public class signupPatient extends Fragment {
                     @Override
                     public void onPositiveButtonClick(Object selection) {
                         dateselected = (long) selection;
-                        String dateString = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH).format(selection);
+                        String dateString = new SimpleDateFormat("dd-mm-yyyy", Locale.ENGLISH).format(selection);
                         edtDate.setText(dateString);
+
+
 
                     }
                 });
