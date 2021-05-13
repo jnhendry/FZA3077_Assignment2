@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -12,18 +13,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.SimpleTimeZone;
 import java.util.concurrent.Executor;
 
 /**
@@ -42,12 +52,15 @@ public class signupPatient extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private EditText edtName,edtSurname,edtEmail,edtPassword,edtPass2,edtDate;
+    private EditText edtName,edtSurname,edtEmail,edtPassword,edtPass2;
+    private Button edtDate;
     private TextView txtLogin;
     private Spinner spnGender,spnSuburb,spnClinitian;
     private Button btnSignUp;
+
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+    private long dateselected;
     public signupPatient() {
         // Required empty public constructor
     }
@@ -105,12 +118,42 @@ public class signupPatient extends Fragment {
         spnClinitian = view.findViewById(R.id.spnClinitian);
         mAuth = FirebaseAuth.getInstance();
 
-        if(edtPassword.getText().toString().equals(edtPass2.getText().toString())){
-            String email,password;
-            email = edtEmail.getText().toString();
-            password = edtPassword.getText().toString();
-            SignUpemail(email,password);
-        }
+
+        btnSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(edtPassword.getText().toString().equals(edtPass2.getText().toString())){
+                    String email,password;
+                    email = edtEmail.getText().toString();
+                    password = edtPassword.getText().toString();
+                    SignUpemail(email,password);
+                }
+            }
+        });
+
+
+
+        edtDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                 MaterialDatePicker datePicker = MaterialDatePicker.Builder.datePicker().setTitleText("Select date of Birth").setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR).build();
+                datePicker.show(getFragmentManager(),"Date");
+
+                datePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener() {
+                    @Override
+                    public void onPositiveButtonClick(Object selection) {
+                        dateselected = (long) selection;
+                        String dateString = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH).format(selection);
+                        edtDate.setText(dateString);
+
+
+
+                    }
+                });
+            }
+        });
+
 
 
 
@@ -129,6 +172,13 @@ public class signupPatient extends Fragment {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            String docname = user.getUid();
+                            String name = edtName.getText().toString() + " " + edtSurname.getText().toString();
+                            String gender = spnGender.getSelectedItem().toString();
+                            String suburb = spnSuburb.getSelectedItem().toString();
+                            String clinitian = spnClinitian.getSelectedItem().toString();
+
+
                             Intent intent = new Intent(getContext(),PatientHome.class);
                             startActivity(intent);
                         } else{

@@ -7,10 +7,12 @@
     tools:context=".signupPatient">
 
     <ScrollView
+        android:id="@+id/scrollviewpatient"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cltest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -19,7 +21,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="32dp"
                 android:ems="10"
                 android:hint="First Name"
                 android:inputType="textPersonName"
@@ -32,30 +34,32 @@
 
             <EditText
                 android:id="@+id/edtPatientSurnameSU"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:ems="10"
                 android:hint="Surname"
                 android:inputType="textPersonName"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.15"
-                app:layout_constraintStart_toStartOf="@+id/guideline5"
+                app:layout_constraintEnd_toEndOf="@+id/spnClinitian"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/spnSuburb"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.05" />
 
-            <EditText
+            <Button
                 android:id="@+id/edtDOB"
-                android:layout_width="75dp"
+                android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:ems="10"
-                android:hint="DOB"
-                android:inputType="date"
+                android:layout_marginStart="16dp"
+                android:backgroundTint="#000000"
+                android:focusableInTouchMode="true"
+                android:text="DOB"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="15dp"
                 app:layout_constraintBottom_toBottomOf="@+id/spnGender"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.05"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/spnGender"
                 app:layout_constraintTop_toTopOf="@+id/spnGender"
                 app:layout_constraintVertical_bias="1.0" />
@@ -64,10 +68,11 @@
                 android:id="@+id/spnSuburb"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
+                android:layout_marginStart="16dp"
                 android:entries="@array/Suburbs"
                 app:layout_constraintBottom_toBottomOf="@+id/edtDOB"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.04"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/edtDOB"
                 app:layout_constraintTop_toTopOf="@+id/edtDOB"
                 app:layout_constraintVertical_bias="0.0" />
@@ -89,10 +94,10 @@
                 android:id="@+id/spnClinitian"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:entries="@array/spinGender"
+                android:layout_marginStart="8dp"
                 app:layout_constraintBottom_toBottomOf="@+id/spnSuburb"
-                app:layout_constraintEnd_toEndOf="@+id/edtPatientSurnameSU"
-                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/spnSuburb"
                 app:layout_constraintTop_toTopOf="@+id/spnSuburb"
                 app:layout_constraintVertical_bias="0.0" />
@@ -155,6 +160,7 @@
                 android:layout_marginTop="16dp"
                 android:backgroundTint="@color/colorPrimary"
                 android:text="Sign-Up"
+                app:cornerRadius="25dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/edtPasswordReSU"
                 app:layout_constraintStart_toStartOf="@+id/edtPasswordReSU"
