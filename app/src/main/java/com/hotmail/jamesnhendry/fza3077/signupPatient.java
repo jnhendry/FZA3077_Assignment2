@@ -187,22 +187,15 @@ public class signupPatient extends Fragment {
                 theClinicians.add("Clinitian");
                 if (task.isSuccessful()){
                     for(QueryDocumentSnapshot document : task.getResult()){
-
                         HashMap <String, Object> map = (HashMap) document.getData();
-
-
-
                         theClinicians.add(map.get("firstName") + " " + map.get("lastName"));
                     }
-
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                         getContext(), android.R.layout.simple_spinner_item, theClinicians);
-
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spnClinitian.setAdapter(adapter);
             }
-
         });
 
 
