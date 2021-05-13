@@ -136,7 +136,7 @@ public class ClinitianHome extends AppCompatActivity {
                     }
                 recyclPatients = findViewById(R.id.recyclMedicalRecord);
                 recyclPatients.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                patientAdapter = new patientAdapter(getApplicationContext(), patients);
+                patientAdapter = new patientAdapter(ClinitianHome.this, patients);
                 recyclPatients.setAdapter(patientAdapter);
 
             }
