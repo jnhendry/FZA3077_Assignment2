@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
        db = FirebaseFirestore.getInstance();
 
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void signin(){
-        edtUsername = findViewById(R.id.edtUsername);
+        edtUsername = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         String email,password;
         email = edtUsername.getText().toString();
