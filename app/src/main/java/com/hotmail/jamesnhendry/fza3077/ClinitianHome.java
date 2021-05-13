@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -42,6 +43,8 @@ public class ClinitianHome extends AppCompatActivity {
     FirebaseUser user;
     private long difference_In_Years;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +52,9 @@ public class ClinitianHome extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
+
+
+
 
 
         edtClinitianName = findViewById(R.id.txtclinitianname);
@@ -125,7 +131,7 @@ public class ClinitianHome extends AppCompatActivity {
 
 
 
-                        Patient pat = new Patient(documentSnapshot.get("name").toString(),difference_In_Years+"",documentSnapshot.get("gender").toString());
+                        Patient pat = new Patient(documentSnapshot.get("name").toString(),difference_In_Years+"",documentSnapshot.get("gender").toString(),documentSnapshot.getId());
                         patients.add(pat);
                     }
                 recyclPatients = findViewById(R.id.recyclMedicalRecord);

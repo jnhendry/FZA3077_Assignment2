@@ -1,13 +1,18 @@
 package com.hotmail.jamesnhendry.fza3077;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
@@ -37,10 +42,24 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
     }
 
     @Override
-    public void onBindViewHolder(@NonNull patientAdapter.subholder holder, int position) {
+    public void onBindViewHolder(@NonNull patientAdapter.subholder holder, final int position) {
         holder.txtName.setText(list.get(position).getName());
         holder.txtPhone.setText(list.get(position).getPhoneNumber());
         holder.txtSex.setText(list.get(position).getSex());
+
+        holder.btnSchedule.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                 Dialog dialog = new Dialog(cr);
+                dialog.setContentView(R.layout.popupvisit);
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                FirebaseUser user = auth.getCurrentUser();
+                String clinitianID = user.getUid();
+                String patientID = list.get(position).getPatientID();
+
+
+            }
+        });
     }
 
     @Override
@@ -51,12 +70,14 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
 
     public static class subholder extends RecyclerView.ViewHolder {
         TextView txtName,txtPhone,txtSex;
+        Button btnSchedule;
 
         public subholder(@NonNull View itemView,final onItemClickListener listener) {
             super(itemView);
             txtName = itemView.findViewById(R.id.txtNameSurname);
             txtPhone = itemView.findViewById(R.id.txtAgeClPatients);
             txtSex = itemView.findViewById(R.id.txtSex);
+            btnSchedule = itemView.findViewById(R.id.btnScheduleVisit);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
