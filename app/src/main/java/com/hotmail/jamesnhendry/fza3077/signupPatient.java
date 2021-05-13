@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.SimpleTimeZone;
 import java.util.concurrent.Executor;
 
@@ -64,7 +66,7 @@ public class signupPatient extends Fragment {
     private TextView txtLogin;
     private Spinner spnGender,spnSuburb,spnClinitian;
     private Button btnSignUp;
-
+    private final ArrayList<String> clintianID = new ArrayList<>();
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private long dateselected;
@@ -136,7 +138,7 @@ public class signupPatient extends Fragment {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(edtPassword.getText().toString().equals(edtPass2.getText().toString())){
+                if((edtPassword.getText().toString().equals(edtPass2.getText().toString()))&& !edtPassword.getText().toString().equals("")){
                     String email,password;
                     email = edtEmail.getText().toString();
                     password = edtPassword.getText().toString();
@@ -178,16 +180,17 @@ public class signupPatient extends Fragment {
     }
 
     public void getClinicians(){
-        final ArrayList <String> clinicians = new ArrayList<String>();
 
         db.collection("Clinitian").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 ArrayList<String> theClinicians =  new ArrayList<String>();
                 theClinicians.add("Clinitian");
+                clintianID.add("Clinitian");
                 if (task.isSuccessful()){
                     for(QueryDocumentSnapshot document : task.getResult()){
                         HashMap <String, Object> map = (HashMap) document.getData();
+                        clintianID.add(document.getId());
                         theClinicians.add(map.get("firstName") + " " + map.get("lastName"));
                     }
                 }
@@ -216,11 +219,39 @@ public class signupPatient extends Fragment {
                             String name = edtName.getText().toString() + " " + edtSurname.getText().toString();
                             String gender = spnGender.getSelectedItem().toString();
                             String suburb = spnSuburb.getSelectedItem().toString();
-                            String clinitian = spnClinitian.getSelectedItem().toString();
+                            String clinitian = clintianID.get(spnClinitian.getSelectedItemPosition());
+                            long dOB = dateselected;
+                            String email = user.getEmail();
+
+                            Map<String,Object> document = new HashMap<>();
+                            document.put("name",name);
+                            document.put("gender",gender);
+                            document.put("email",email);
+                            document.put("suburb",suburb);
+                            document.put("clinitianID",clinitian);
+                            document.put("dateofbirth",dOB);
+
+                            db.collection("Patients").document(docname)
+                                    .set(document)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                           System.out.println("Success");
+                                            Toast.makeText(getActivity().getApplicationContext(), "YAY", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w(TAG, "Error writing document", e);
+                                        }
+                                    });
+
+
 
 
                             Intent intent = new Intent(getContext(),PatientHome.class);
-                            startActivity(intent);
+                           // startActivity(intent);
                         } else{
                             Log.w(TAG, "signinwithemail:failure",task.getException() );
                             Toast.makeText(getActivity().getApplicationContext(),"authentication failed, check email and/or password or create a new Account",Toast.LENGTH_SHORT).show();
