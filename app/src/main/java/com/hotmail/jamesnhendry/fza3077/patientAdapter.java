@@ -55,7 +55,7 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
         public subholder(@NonNull View itemView,final onItemClickListener listener) {
             super(itemView);
             txtName = itemView.findViewById(R.id.txtNameSurname);
-            txtPhone = itemView.findViewById(R.id.txtPhoneNumber);
+            txtPhone = itemView.findViewById(R.id.txtAgeClPatients);
             txtSex = itemView.findViewById(R.id.txtSex);
 
             itemView.setOnClickListener(new View.OnClickListener() {

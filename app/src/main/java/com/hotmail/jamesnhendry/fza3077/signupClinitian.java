@@ -105,13 +105,20 @@ public class signupClinitian extends Fragment {
         edtretypePassword = view.findViewById(R.id.edtPasswordresu);
         btnsignUpButton = view.findViewById(R.id.btnSignUpClinitian);
         txtswitchToLogIn = view.findViewById((R.id.txtSignInClinitianSU));
+        mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        String email,password;
-        email = edtemail.getText().toString();
-        password = edtpassword.getText().toString();
-        signUp(email,password);
 
+        btnsignUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String email,password;
+                email = edtemail.getText().toString();
+                password = edtpassword.getText().toString();
+                if(!email.equals("") && !password.equals(""))
+                signUp(email,password);
+            }
+        });
     }
 
     private void signUp(String email, String password) {

@@ -1,5 +1,6 @@
 package com.hotmail.jamesnhendry.fza3077;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -8,7 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -49,9 +53,24 @@ public class PatientHome extends AppCompatActivity {
         recyclMedRec.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
         txtPatientName = findViewById(R.id.txtPatientName);
+
+
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
+
+        db.document("Patients/"+mAuth.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists())
+                txtPatientName.setText(documentSnapshot.get("name").toString());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(PatientHome.this, "Boo", Toast.LENGTH_SHORT).show();
+            }
+        });
         populateArray();
 
 
@@ -126,7 +145,7 @@ public class PatientHome extends AppCompatActivity {
                 MedicalRecordAdapter medicalRecordAdapter = new MedicalRecordAdapter(getApplicationContext(), medtemp);
                 recyclMedRec.setAdapter(medicalRecordAdapter);
 
-                System.out.println(medtemp.get(0).getBloodpressure());
+               // System.out.println(medtemp.get(0).getBloodpressure());
 
             }
         });

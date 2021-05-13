@@ -191,7 +191,7 @@ public class signupPatient extends Fragment {
                     for(QueryDocumentSnapshot document : task.getResult()){
                         HashMap <String, Object> map = (HashMap) document.getData();
                         clintianID.add(document.getId());
-                        theClinicians.add(map.get("firstName") + " " + map.get("lastName"));
+                        theClinicians.add(map.get("name").toString());
                     }
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(

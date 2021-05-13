@@ -20,8 +20,11 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ClinitianHome extends AppCompatActivity {
 
@@ -82,15 +85,16 @@ public class ClinitianHome extends AppCompatActivity {
     private void populateArray() {
 
 
-        db.collection("Patients").whereEqualTo("ClinitianID",user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("Patients").whereEqualTo("clinitianID",user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if(error!=null){
                     return;
                 }
-
                     for(DocumentSnapshot documentSnapshot:value) {
-                        Patient pat = new Patient(documentSnapshot.get("name").toString(),documentSnapshot.get("phone").toString(),documentSnapshot.get("sex").toString());
+                        long yearsold = (long) documentSnapshot.get("dateofbirth");
+
+                        Patient pat = new Patient(documentSnapshot.get("name").toString(),documentSnapshot.get("suburb").toString(),documentSnapshot.get("gender").toString());
                         patients.add(pat);
                     }
                 recyclPatients = findViewById(R.id.recyclMedicalRecord);
