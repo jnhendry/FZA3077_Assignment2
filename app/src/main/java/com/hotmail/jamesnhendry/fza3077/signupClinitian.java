@@ -9,6 +9,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +20,16 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class signupClinitian extends Fragment {
+
+
+    private EditText firstName;
+    private EditText surname;
+    private Spinner cSpecialisation;
+    private EditText email;
+    private EditText password;
+    private EditText retypePassword;
+    private Button signUpButton;
+    private TextView switchToLogIn;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -67,5 +81,14 @@ public class signupClinitian extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        firstName = view.findViewById(R.id.edtClinitianNameSU);
+        surname = view.findViewById(R.id.edtClinitianSurnamesu);
+        cSpecialisation = view.findViewById(R.id.spnClinitianSpeciality);
+        email = view.findViewById(R.id.edtEmailClinitianSU);
+        password = view.findViewById(R.id.edtClinitianPasswordSU);
+        retypePassword = view.findViewById(R.id.edtPasswordresu);
+        signUpButton = view.findViewById(R.id.btnSignUpClinitian);
+        switchToLogIn = view.findViewById((R.id.txtSignInClinitianSU));
     }
 }
