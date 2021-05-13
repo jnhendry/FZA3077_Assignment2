@@ -115,8 +115,7 @@ public class signupPatient extends Fragment {
 
         db = FirebaseFirestore.getInstance();
 
-        getClinicians();
-
+        populateCliniciansSpinner();
 
 
         edtName = view.findViewById(R.id.edtPatientNameSU);
@@ -132,9 +131,6 @@ public class signupPatient extends Fragment {
         spnClinitian = view.findViewById(R.id.spnClinitian);
         mAuth = FirebaseAuth.getInstance();
 
-
-
-
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,8 +142,6 @@ public class signupPatient extends Fragment {
                 }
             }
         });
-
-
 
         edtDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,23 +157,14 @@ public class signupPatient extends Fragment {
                         String dateString = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH).format(selection);
                         edtDate.setText(dateString);
 
-
-
                     }
                 });
             }
         });
 
-
-
-
-
-
-
-
     }
 
-    public void getClinicians(){
+    public void populateCliniciansSpinner(){
 
         db.collection("Clinitian").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -200,10 +185,6 @@ public class signupPatient extends Fragment {
                 spnClinitian.setAdapter(adapter);
             }
         });
-
-
-
-
     }
 
     public void SignUpemail(String email,String password){

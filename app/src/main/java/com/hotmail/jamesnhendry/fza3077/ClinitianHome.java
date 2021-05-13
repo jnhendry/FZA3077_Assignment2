@@ -21,6 +21,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -92,7 +94,35 @@ public class ClinitianHome extends AppCompatActivity {
                     return;
                 }
                     for(DocumentSnapshot documentSnapshot:value) {
-                        long yearsold = (long) documentSnapshot.get("dateofbirth");
+                        long yearsOld = (long) documentSnapshot.get("dateofbirth");
+                        String yearsOldString = new SimpleDateFormat("dd-mm-yyyy", Locale.ENGLISH).format(yearsOld);
+                        SimpleDateFormat sdf
+                                = new SimpleDateFormat(
+                                "dd-MM-yyyy");
+
+                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-mm-yyyy");
+                        LocalDateTime now = LocalDateTime.now();
+
+                        String currentDate = dtf.format((now));
+
+                        try{
+                            Date d1 = sdf.parse(yearsOldString);
+                            Date d2 = sdf.parse(currentDate);
+
+                            long difference = d2.getTime() - d1.getTime();
+
+                            long difference_In_Years
+                                    = (difference
+                                    / (1000l * 60 * 60 * 24 * 365));
+
+                            System.out.println("Difference: " +difference_In_Years);
+
+                        }catch (Exception e){
+                            System.out.println("Something went wrong with converting dates. ");
+                        }
+
+
+
 
                         Patient pat = new Patient(documentSnapshot.get("name").toString(),documentSnapshot.get("suburb").toString(),documentSnapshot.get("gender").toString());
                         patients.add(pat);
