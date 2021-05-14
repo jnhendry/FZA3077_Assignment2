@@ -151,27 +151,8 @@ public class ClinitianHome extends AppCompatActivity {
                     return;
                 }
                 for(DocumentSnapshot documentSnapshot : value) {
-                    final String[] clinitian = new String[1];
-                    final String[] patient = new String[1];
-                   db.collection("Clinitian").document(documentSnapshot.get("clinitianID").toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                             clinitian[0] = documentSnapshot.get("name").toString();
-                        }
-                    });
-
-                    db.collection("Patients").document(documentSnapshot.get("patientID").toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                          patient[0] = documentSnapshot.get("name").toString();
-                        }
-                    });
-
-
                     String date = documentSnapshot.get("date").toString();
                     String time = documentSnapshot.get("schedulestart").toString();
-
-
 
                     Visit visit = new Visit(clinitian[0], patient[0], date, time);
                     visitArrayList.add(visit);
