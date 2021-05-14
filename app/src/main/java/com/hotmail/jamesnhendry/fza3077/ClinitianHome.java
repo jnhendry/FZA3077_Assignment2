@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,7 @@ public class ClinitianHome extends AppCompatActivity {
     private visitAdapter visitAdapter;
     private TextView edtClinitianName;
     private Clinitian cl;
+    private String name;
     private FirebaseAuth mAuth;
     private ArrayList<Patient> patients = new ArrayList<>();
     FirebaseFirestore db;
@@ -69,6 +71,7 @@ public class ClinitianHome extends AppCompatActivity {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.exists()) {
                     edtClinitianName.setText(documentSnapshot.get("name").toString());
+                    name = documentSnapshot.get("name").toString();
                 }
             }
         });
@@ -77,10 +80,7 @@ public class ClinitianHome extends AppCompatActivity {
         populateArray();
         setRecycle();
 
-        recycvisit = findViewById(R.id.recycVisitclinitian);
-        recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        visitAdapter = new visitAdapter(visitArrayList, ClinitianHome.this);
-        recycvisit.setAdapter(visitAdapter);
+
 
 
     }
@@ -100,7 +100,6 @@ public class ClinitianHome extends AppCompatActivity {
     }
 
     private void populateArray() {
-
 
         db.collection("Patients").whereEqualTo("clinitianID", user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -137,7 +136,7 @@ public class ClinitianHome extends AppCompatActivity {
                     }
 
 
-                    Patient pat = new Patient(documentSnapshot.get("name").toString(), difference_In_Years + "", documentSnapshot.get("gender").toString(), documentSnapshot.getId());
+                    Patient pat = new Patient(documentSnapshot.get("name").toString(), difference_In_Years + "", documentSnapshot.get("gender").toString(), documentSnapshot.getId(),name);
                     patients.add(pat);
                 }
                 recyclPatients = findViewById(R.id.recyclMedicalRecord);
@@ -156,58 +155,35 @@ public class ClinitianHome extends AppCompatActivity {
 
 
 
-
         db.collection("Visits").whereEqualTo("clinitianID", user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if(error != null) {
                     return;
                 }
+                visitArrayList.clear();
                 for( final DocumentSnapshot documentSnapshot : value) {
-                    final String[] clinitian = new String[1];
-                    final String[] patient = new String[1];
 
-                   db.collection("Clinitian").document(documentSnapshot.get("clinitianID").toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                       @Override
-                       public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                           if (task.isSuccessful()){
-                               DocumentSnapshot document = task.getResult();
-                               Map<String, Object> aMap = new HashMap<>();
-                               aMap = document.getData();
-
-                               clinitian[0] = aMap.get("name").toString();
-                               System.out.println((clinitian[0]));
+                    String date = documentSnapshot.get("date").toString();
+                    String time = documentSnapshot.get("schedulestart").toString();
+                    String clinitianID = documentSnapshot.get("clinitianname").toString();
+                    String patientID = documentSnapshot.get("patientname").toString();
 
 
-                               String date = documentSnapshot.get("date").toString();
-                               String time = documentSnapshot.get("schedulestart").toString();
-
-
-                               Visit visit = new Visit(clinitian[0], patient[0], date, time);
-                               visitArrayList.add(visit);
-
-
-
-                           }
-                       }
-                   });
-
-
-
-//                    String date = documentSnapshot.get("date").toString();
-//                    String time = documentSnapshot.get("schedulestart").toString();
-//
-//
-//                    Visit visit = new Visit(clinitian[0], patient[0], date, time);
-//                    visitArrayList.add(visit);
+                    Visit visit = new Visit(clinitianID,patientID , date, time);
+                    visitArrayList.add(visit);
                 }
 
+                recycvisit = findViewById(R.id.recycVisitclinitian);
+                recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                visitAdapter = new visitAdapter(visitArrayList, ClinitianHome.this);
+                recycvisit.setAdapter(visitAdapter);
 
-//                recycvisit = findViewById(R.id.recycVisitclinitian);
-//                recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-//                visitAdapter = new visitAdapter(visitArrayList, ClinitianHome.this);
-//                recycvisit.setAdapter(visitAdapter);
             }
         });
     }
+
+
+
+
 }

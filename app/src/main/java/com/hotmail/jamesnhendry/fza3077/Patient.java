@@ -11,11 +11,12 @@ public class Patient {
     public Patient() {
     }
 
-    public Patient(String name, String phoneNumber, String sex,String patientid) {
+    public Patient(String name, String phoneNumber, String sex,String patientid,String clinitianUsername) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.sex = sex;
         this.patientID = patientid;
+        this.clinitianUsername = clinitianUsername;
     }
 
     public String getPatientID() {

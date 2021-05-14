@@ -50,8 +50,10 @@ public class MainActivity extends AppCompatActivity {
         //TODO
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        }
         //updateUI(currentUser);
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

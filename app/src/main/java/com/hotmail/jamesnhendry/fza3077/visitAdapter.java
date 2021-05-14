@@ -7,7 +7,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.ArrayList;
 
@@ -15,6 +21,7 @@ public class visitAdapter extends RecyclerView.Adapter<visitAdapter.subholder>{
 
     private ArrayList<Visit> list;
     private onItemClickListener mListener;
+    private String testcl,testpat;
     Context cr;
 
     public visitAdapter(ArrayList<Visit> list, Context cr) {
@@ -41,14 +48,21 @@ public class visitAdapter extends RecyclerView.Adapter<visitAdapter.subholder>{
     @Override
     public void onBindViewHolder(@NonNull subholder holder, int position) {
                 holder.txtVisitDate.setText(list.get(position).getDate().toString());
-                holder.txtVisitClinitian.setText(list.get(position).getClinitianID());
-                holder.txtVisitPatient.setText(list.get(position).getPatientID());
+                String clinitian , patient;
+                clinitian = list.get(position).getClinitianID();
+                patient = list.get(position).getPatientID();
+                holder.txtVisitClinitian.setText(clinitian);
+                holder.txtVisitPatient.setText(patient);
                 holder.txtVisitTime.setText(list.get(position).getTime());
 
 
 
 
     }
+
+
+
+
 
     @Override
     public int getItemCount() {

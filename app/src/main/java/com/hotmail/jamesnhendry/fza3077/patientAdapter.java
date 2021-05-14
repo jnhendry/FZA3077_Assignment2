@@ -38,10 +38,13 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
     private ArrayList<Patient> list;
     private onItemClickListener mListener;
     Context cr;
+    private String clinitianname;
 
     public patientAdapter(Context cr, ArrayList<Patient> pat){
         this.cr = cr;
         list = pat;
+
+
     }
     public void setonItemClicklistener(onItemClickListener listener) {
         mListener = listener;
@@ -106,11 +109,14 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
 
                         Map<String,Object> visit = new HashMap<>();
                         visit.put("patientID",patientID);
+                        visit.put("patientname",list.get(position).getName());
                         visit.put("clinitianID",clinitianID);
+                        visit.put("clinitianname",list.get(position).getClinitianUsername());
                         visit.put("schedulestart",time);
                         visit.put("date",dateString[0]);
                         visit.put("visitCancelled",false);
                         visit.put("visitCompleted",false);
+
 
                         db.collection("Visits").document().set(visit).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
