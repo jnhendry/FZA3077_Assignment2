@@ -52,13 +52,6 @@
                 android:text="Patient"
                 android:textSize="10sp" />
 
-            <TextView
-                android:id="@+id/textView8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="Medical Record"
-                android:textSize="10sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -98,12 +91,6 @@
                 android:layout_margin="10dp"
                 android:textSize="10sp" />
 
-            <TextView
-                android:id="@+id/txtVisitMedicalRecord"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:textSize="10sp" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

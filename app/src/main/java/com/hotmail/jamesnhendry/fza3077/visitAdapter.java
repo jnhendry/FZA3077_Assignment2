@@ -43,16 +43,11 @@ public class visitAdapter extends RecyclerView.Adapter<visitAdapter.subholder>{
                 holder.txtVisitDate.setText(list.get(position).getDate().toString());
                 holder.txtVisitClinitian.setText(list.get(position).getClinitianID());
                 holder.txtVisitPatient.setText(list.get(position).getPatientID());
+                holder.txtVisitTime.setText(list.get(position).getTime());
 
-        String medicalrecord;
 
-        if(list.get(position).getMedicalRecord()!=null){
-            medicalrecord = "Completed";
-        }else{
-            medicalrecord = "Not Completed";
-        }
 
-        holder.txtVisitMedicalRecord.setText(medicalrecord);
+
     }
 
     @Override
@@ -71,7 +66,6 @@ public class visitAdapter extends RecyclerView.Adapter<visitAdapter.subholder>{
             txtVisitTime = itemView.findViewById(R.id.txtVisitTime);
             txtVisitClinitian = itemView.findViewById(R.id.txtVisitClinitian);
             txtVisitPatient = itemView.findViewById(R.id.txtVisitPatient);
-            txtVisitMedicalRecord = itemView.findViewById(R.id.txtVisitMedicalRecord);
 
 
 

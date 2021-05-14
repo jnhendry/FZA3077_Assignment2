@@ -1,5 +1,6 @@
 package com.hotmail.jamesnhendry.fza3077;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,7 +11,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -32,17 +35,16 @@ import java.util.Locale;
 public class ClinitianHome extends AppCompatActivity {
 
     private Gson gson = new Gson();
-    private RecyclerView recyclPatients,recycvisit;
+    private RecyclerView recyclPatients, recycvisit;
     private patientAdapter patientAdapter;
     private visitAdapter visitAdapter;
     private TextView edtClinitianName;
-    private  Clinitian cl;
+    private Clinitian cl;
     private FirebaseAuth mAuth;
     private ArrayList<Patient> patients = new ArrayList<>();
     FirebaseFirestore db;
     FirebaseUser user;
     private long difference_In_Years;
-
 
 
     @Override
@@ -54,39 +56,35 @@ public class ClinitianHome extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
 
-
-
-
         edtClinitianName = findViewById(R.id.txtclinitianname);
         DocumentReference snap = db.collection("Clinitian").document(user.getUid());
 
         snap.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.exists()){
+                if(documentSnapshot.exists()) {
                     edtClinitianName.setText(documentSnapshot.get("name").toString());
                 }
             }
         });
 
+
         populateArray();
-//        System.out.println(patients.get(0).getName());
+        setRecycle();
 
 
+    }
 
-      /*  patientAdapter.setonItemClicklistener(new patientAdapter.onItemClickListener() {
-            @Override
-            public void onItemClicked(int position) {
-                Intent intent1 = new Intent(getApplicationContext(),PatientHome.class);
-                String patientDetails = gson.toJson(cl);//put something here
-                int pos = position;
-                intent1.putExtra("patientdetails",patientDetails);
-                intent1.putExtra("position",pos);
-                startActivity(intent1);
-            }
-        });
-*/
+    @Override
+    protected void onStart() {
+        super.onStart();
 
+
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
 
 
     }
@@ -94,46 +92,44 @@ public class ClinitianHome extends AppCompatActivity {
     private void populateArray() {
 
 
-        db.collection("Patients").whereEqualTo("clinitianID",user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("Patients").whereEqualTo("clinitianID", user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if(error!=null){
+                if(error != null) {
                     return;
                 }
-                    for(DocumentSnapshot documentSnapshot:value) {
-                        long yearsOld = (long) documentSnapshot.get("dateofbirth");
-                        String yearsOldString = new SimpleDateFormat("dd-mm-yyyy", Locale.ENGLISH).format(yearsOld);
-                        SimpleDateFormat sdf
-                                = new SimpleDateFormat(
-                                "dd-MM-yyyy");
+                for(DocumentSnapshot documentSnapshot : value) {
+                    long yearsOld = (long) documentSnapshot.get("dateofbirth");
+                    String yearsOldString = new SimpleDateFormat("dd-mm-yyyy", Locale.ENGLISH).format(yearsOld);
+                    SimpleDateFormat sdf
+                            = new SimpleDateFormat(
+                            "dd-MM-yyyy");
 
-                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-mm-yyyy");
-                        LocalDateTime now = LocalDateTime.now();
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-mm-yyyy");
+                    LocalDateTime now = LocalDateTime.now();
 
-                        String currentDate = dtf.format((now));
+                    String currentDate = dtf.format((now));
 
-                        try{
-                            Date d1 = sdf.parse(yearsOldString);
-                            Date d2 = sdf.parse(currentDate);
+                    try {
+                        Date d1 = sdf.parse(yearsOldString);
+                        Date d2 = sdf.parse(currentDate);
 
-                            long difference = d2.getTime() - d1.getTime();
-
-
-                                  difference_In_Years  = (difference
-                                    / (1000l * 60 * 60 * 24 * 365));
-
-                            System.out.println("Difference: " +difference_In_Years);
-
-                        }catch (Exception e){
-                            System.out.println("Something went wrong with converting dates. ");
-                        }
+                        long difference = d2.getTime() - d1.getTime();
 
 
+                        difference_In_Years = (difference
+                                / (1000l * 60 * 60 * 24 * 365));
 
+                        System.out.println("Difference: " + difference_In_Years);
 
-                        Patient pat = new Patient(documentSnapshot.get("name").toString(),difference_In_Years+"",documentSnapshot.get("gender").toString(),documentSnapshot.getId());
-                        patients.add(pat);
+                    } catch(Exception e) {
+                        System.out.println("Something went wrong with converting dates. ");
                     }
+
+
+                    Patient pat = new Patient(documentSnapshot.get("name").toString(), difference_In_Years + "", documentSnapshot.get("gender").toString(), documentSnapshot.getId());
+                    patients.add(pat);
+                }
                 recyclPatients = findViewById(R.id.recyclMedicalRecord);
                 recyclPatients.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 patientAdapter = new patientAdapter(ClinitianHome.this, patients);
@@ -143,19 +139,50 @@ public class ClinitianHome extends AppCompatActivity {
         });
 
 
-
-
-
-
     }
 
-    public void setRecycle(){
+    public void setRecycle() {
+        final ArrayList<Visit> visitArrayList = new ArrayList<>();
+
+        db.collection("Visits").whereEqualTo("clinitianID", user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if(error != null) {
+                    return;
+                }
+                for(DocumentSnapshot documentSnapshot : value) {
+                    final String[] clinitian = new String[1];
+                    final String[] patient = new String[1];
+                   db.collection("Clinitian").document(documentSnapshot.get("clinitianID").toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                             clinitian[0] = documentSnapshot.get("name").toString();
+                        }
+                    });
+
+                    db.collection("Patients").document(documentSnapshot.get("patientID").toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                          patient[0] = documentSnapshot.get("name").toString();
+                        }
+                    });
+
+
+                    String date = documentSnapshot.get("date").toString();
+                    String time = documentSnapshot.get("schedulestart").toString();
 
 
 
-       // recycvisit = findViewById(R.id.recycVisitclinitian);
-        //recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-       // visitAdapter = new visitAdapter(cl.getFutureVisits(),getApplicationContext());
-        //recycvisit.setAdapter(visitAdapter);
+                    Visit visit = new Visit(clinitian[0], patient[0], date, time);
+                    visitArrayList.add(visit);
+                }
+
+
+                recycvisit = findViewById(R.id.recycVisitclinitian);
+                recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                visitAdapter = new visitAdapter(visitArrayList, ClinitianHome.this);
+                recycvisit.setAdapter(visitAdapter);
+            }
+        });
     }
 }

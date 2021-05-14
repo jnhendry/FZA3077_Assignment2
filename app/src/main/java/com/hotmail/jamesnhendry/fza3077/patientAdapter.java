@@ -8,22 +8,30 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholder> {
 
@@ -62,11 +70,10 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
                  final Dialog dialog = new Dialog(cr);
                 dialog.setContentView(R.layout.popupvisit);
                 FirebaseAuth auth = FirebaseAuth.getInstance();
-                FirebaseUser user = auth.getCurrentUser();
-                String clinitianID = user.getUid();
-                String patientID = list.get(position).getPatientID();
+                final FirebaseUser user = auth.getCurrentUser();
+
                 final CalendarView calendarView = dialog.findViewById(R.id.clvDate);
-                final EditText edtTime = dialog.findViewById(R.id.edtTime);
+                final Spinner edtTime = dialog.findViewById(R.id.spnTimes);
                 Button btnConfirm = dialog.findViewById(R.id.btnConfirm);
                 TextView txtAppointment = dialog.findViewById(R.id.txtAppointment);
 
@@ -84,18 +91,41 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
                                                     int dayOfMonth) {
                         String  curDate = String.valueOf(dayOfMonth);
                         String  Year = String.valueOf(year);
-                        String  Month = String.valueOf(month);
-                        dateString[0] = dayOfMonth+"-"+month+"-"+year;
+                        String  Month = String.valueOf(month+1);
+                        dateString[0] = curDate + "-" +Month + "-" + Year;
                     }
                 });
 
                 btnConfirm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        String time = edtTime.getSelectedItem().toString();
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        String clinitianID = user.getUid();
+                        String patientID = list.get(position).getPatientID();
+
+                        Map<String,Object> visit = new HashMap<>();
+                        visit.put("patientID",patientID);
+                        visit.put("clinitianID",clinitianID);
+                        visit.put("schedulestart",time);
+                        visit.put("date",dateString[0]);
+                        visit.put("visitCancelled",false);
+                        visit.put("visitCompleted",false);
+
+                        db.collection("Visits").document().set(visit).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(cr, "boom", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                            }
+                        });
 
 
-                        String time = edtTime.getText().toString();
-                        System.out.println(dateString[0] +" " + time);
+
                     }
                 });
 

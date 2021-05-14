@@ -5,7 +5,7 @@ import java.util.Date;
 public class Visit {
     private String clinitianID, patientID;
     private MedicalRecord medicalRecord;
-    private String date;
+    private String date,time;
 
     /*
     Every visit will have basic requirements. date, time doc username and patient username.
@@ -14,11 +14,23 @@ public class Visit {
     the home page of a patient and patient page for doctors will display the latest medical record as well as all old visits with their respective medical record.
      */
 
-    public Visit(String clinitianID,String date,String patientID,MedicalRecord medicalRecord) {
+    public String getTime() {
+        return time;
+    }
+
+    public Visit(String clinitianID, String date, String patientID, MedicalRecord medicalRecord) {
         this.clinitianID = clinitianID;
         this.patientID = patientID;
         this.medicalRecord = medicalRecord;
         this.date = date;
+
+    }
+
+    public Visit(String clinitianID, String patientID, String date,String time) {
+        this.clinitianID = clinitianID;
+        this.patientID = patientID;
+        this.date = date;
+        this.time = time;
     }
 
     public String getClinitianID() {
