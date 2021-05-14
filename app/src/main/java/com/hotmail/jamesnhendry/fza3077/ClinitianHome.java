@@ -24,13 +24,17 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
+import org.w3c.dom.Document;
+
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class ClinitianHome extends AppCompatActivity {
 
@@ -45,6 +49,7 @@ public class ClinitianHome extends AppCompatActivity {
     FirebaseFirestore db;
     FirebaseUser user;
     private long difference_In_Years;
+    final ArrayList<Visit> visitArrayList = new ArrayList<>();
 
 
     @Override
@@ -71,6 +76,11 @@ public class ClinitianHome extends AppCompatActivity {
 
         populateArray();
         setRecycle();
+
+        recycvisit = findViewById(R.id.recycVisitclinitian);
+        recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        visitAdapter = new visitAdapter(visitArrayList, ClinitianHome.this);
+        recycvisit.setAdapter(visitAdapter);
 
 
     }
@@ -142,7 +152,10 @@ public class ClinitianHome extends AppCompatActivity {
     }
 
     public void setRecycle() {
-        final ArrayList<Visit> visitArrayList = new ArrayList<>();
+
+
+
+
 
         db.collection("Visits").whereEqualTo("clinitianID", user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -150,19 +163,50 @@ public class ClinitianHome extends AppCompatActivity {
                 if(error != null) {
                     return;
                 }
-                for(DocumentSnapshot documentSnapshot : value) {
-                    String date = documentSnapshot.get("date").toString();
-                    String time = documentSnapshot.get("schedulestart").toString();
+                for( final DocumentSnapshot documentSnapshot : value) {
+                    final String[] clinitian = new String[1];
+                    final String[] patient = new String[1];
 
-                    Visit visit = new Visit(clinitian[0], patient[0], date, time);
-                    visitArrayList.add(visit);
+                   db.collection("Clinitian").document(documentSnapshot.get("clinitianID").toString()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                       @Override
+                       public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                           if (task.isSuccessful()){
+                               DocumentSnapshot document = task.getResult();
+                               Map<String, Object> aMap = new HashMap<>();
+                               aMap = document.getData();
+
+                               clinitian[0] = aMap.get("name").toString();
+                               System.out.println((clinitian[0]));
+
+
+                               String date = documentSnapshot.get("date").toString();
+                               String time = documentSnapshot.get("schedulestart").toString();
+
+
+                               Visit visit = new Visit(clinitian[0], patient[0], date, time);
+                               visitArrayList.add(visit);
+
+
+
+                           }
+                       }
+                   });
+
+
+
+//                    String date = documentSnapshot.get("date").toString();
+//                    String time = documentSnapshot.get("schedulestart").toString();
+//
+//
+//                    Visit visit = new Visit(clinitian[0], patient[0], date, time);
+//                    visitArrayList.add(visit);
                 }
 
 
-                recycvisit = findViewById(R.id.recycVisitclinitian);
-                recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                visitAdapter = new visitAdapter(visitArrayList, ClinitianHome.this);
-                recycvisit.setAdapter(visitAdapter);
+//                recycvisit = findViewById(R.id.recycVisitclinitian);
+//                recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+//                visitAdapter = new visitAdapter(visitArrayList, ClinitianHome.this);
+//                recycvisit.setAdapter(visitAdapter);
             }
         });
     }
