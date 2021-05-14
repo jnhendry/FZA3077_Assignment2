@@ -23,6 +23,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class PatientHome extends AppCompatActivity {
 
@@ -127,7 +128,7 @@ public class PatientHome extends AppCompatActivity {
     private void populateArray() {
 
 
-        db.collection("Visits").whereEqualTo("PatientID",user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("Visits").whereEqualTo("patientID",user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if(error!=null){
@@ -135,15 +136,33 @@ public class PatientHome extends AppCompatActivity {
                 }
 
                 for(DocumentSnapshot documentSnapshot:value) {
-                    Visit pat = new Visit(documentSnapshot.get("ClinitianID").toString(),documentSnapshot.get("Date").toString(),documentSnapshot.get("PatientID").toString(),documentSnapshot.get("medicalrecord",MedicalRecord.class));
-                    visits.add(pat);
-                    medtemp.add(pat.getMedicalRecord());
+                    Map<String,Object> map = documentSnapshot.getData();
+                    String clinitianname = map.get("clinitianname").toString();
+                    String patientname = map.get("patientname").toString();
+                    String date = map.get("date").toString();
+                    String time = map.get("schedulestart").toString();
+                    Boolean set = (Boolean) map.get("visitCompleted");
+                    //if(!set) {
+                        ///Visit pat = new Visit(clinitianname,patientname,date,time);//add medical record shit
+                        //visits.add(pat);
+
+                  //  }else{
+                        Visit pat = new Visit(clinitianname,patientname,date,time);
+                        visits.add(pat);
+                  //  }
+
+                   // medtemp.add(pat.getMedicalRecord());
                 }
 
-                recyclMedRec = findViewById(R.id.recyclMedicalRecord);
-                recyclMedRec.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                MedicalRecordAdapter medicalRecordAdapter = new MedicalRecordAdapter(getApplicationContext(), medtemp);
-                recyclMedRec.setAdapter(medicalRecordAdapter);
+                recyclFutureVisit = findViewById(R.id.recycFuturevisit);
+                recyclFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                visitAdapter visitAdapter = new visitAdapter(visits,getApplicationContext());
+                recyclFutureVisit.setAdapter(visitAdapter);
+
+//                recyclMedRec = findViewById(R.id.recyclMedicalRecord);
+//                recyclMedRec.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+//                MedicalRecordAdapter medicalRecordAdapter = new MedicalRecordAdapter(getApplicationContext(), medtemp);
+//                recyclMedRec.setAdapter(medicalRecordAdapter);
 
                // System.out.println(medtemp.get(0).getBloodpressure());
 

@@ -110,9 +110,7 @@ public class ClinitianHome extends AppCompatActivity {
                 for(DocumentSnapshot documentSnapshot : value) {
                     long yearsOld = (long) documentSnapshot.get("dateofbirth");
                     String yearsOldString = new SimpleDateFormat("dd-mm-yyyy", Locale.ENGLISH).format(yearsOld);
-                    SimpleDateFormat sdf
-                            = new SimpleDateFormat(
-                            "dd-MM-yyyy");
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-mm-yyyy");
                     LocalDateTime now = LocalDateTime.now();
@@ -126,8 +124,7 @@ public class ClinitianHome extends AppCompatActivity {
                         long difference = d2.getTime() - d1.getTime();
 
 
-                        difference_In_Years = (difference
-                                / (1000l * 60 * 60 * 24 * 365));
+                        difference_In_Years = (difference / (1000L * 60 * 60 * 24 * 365));
 
                         System.out.println("Difference: " + difference_In_Years);
 
@@ -151,9 +148,6 @@ public class ClinitianHome extends AppCompatActivity {
     }
 
     public void setRecycle() {
-
-
-
 
         db.collection("Visits").whereEqualTo("clinitianID", user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
