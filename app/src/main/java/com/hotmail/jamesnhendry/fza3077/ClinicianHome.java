@@ -140,12 +140,10 @@ public class ClinicianHome extends AppCompatActivity {
                     patients.add(pat);
                 }
 
-
                 recyclPatients = findViewById(R.id.recyclMedicalRecord);
                 recyclPatients.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 patientAdapter = new patientAdapter(ClinicianHome.this, patients);
                 recyclPatients.setAdapter(patientAdapter);
-
             }
         });
 
@@ -181,7 +179,6 @@ public class ClinicianHome extends AppCompatActivity {
                         visitFutureArrayList.add(visit);
                     }
                 }
-
                 recyclerFutureVisit = findViewById(R.id.recycFutureVisitclinitian);
                 recyclerFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 visitFutureAdapter = new visitAdapter(visitFutureArrayList, ClinicianHome.this);
@@ -195,8 +192,5 @@ public class ClinicianHome extends AppCompatActivity {
             }
         });
     }
-
-
-
 
 }
