@@ -1,14 +1,21 @@
 package com.hotmail.jamesnhendry.fza3077;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -41,7 +48,7 @@ public class ClinicianHome extends AppCompatActivity {
     FirebaseUser user;
     private long difference_In_Years;
     final ArrayList<Visit> visitArrayList = new ArrayList<>();
-
+    private MaterialToolbar topAppBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +58,24 @@ public class ClinicianHome extends AppCompatActivity {
         user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
 
-
-        edtClinitianName = findViewById(R.id.txtclinitianname);
+        edtClinitianName = findViewById(R.id.user_name_banner);
         DocumentReference snap = db.collection("clinician").document(user.getUid());
+
+        topAppBar = findViewById(R.id.topAppBar);
+
+        topAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                System.out.println("You Clicked Log Out");
+                mAuth.signOut();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+
+                return true;
+            }
+        });
+
+
 
         snap.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -65,12 +87,8 @@ public class ClinicianHome extends AppCompatActivity {
             }
         });
 
-
         populateArray();
         setRecycle();
-
-
-
 
     }
 
@@ -135,6 +153,8 @@ public class ClinicianHome extends AppCompatActivity {
 
 
     }
+
+
 
     public void setRecycle() {
 

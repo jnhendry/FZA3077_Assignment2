@@ -22,6 +22,7 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -39,6 +40,7 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
     private onItemClickListener mListener;
     Context cr;
     private String clinitianname;
+
 
     public patientAdapter(Context cr, ArrayList<Patient> pat){
         this.cr = cr;
@@ -85,7 +87,7 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
                 dialog.show();
 
 
-                txtAppointment.setText("Create a new visit with :" + list.get(position).getName());
+                txtAppointment.setText("Create a new visit with: " + list.get(position).getName());
                 final String[] dateString = new String[1];
 
                 calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
@@ -102,35 +104,48 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
                 btnConfirm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        String time = edtTime.getSelectedItem().toString();
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-                        String clinicianID = user.getUid();
-                        String patientID = list.get(position).getPatientID();
+                        dialog.dismiss();
+                        final String time = edtTime.getSelectedItem().toString();
+                        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        final String clinicianID = user.getUid();
+                        final String patientID = list.get(position).getPatientID();
 
-                        Map<String,Object> visit = new HashMap<>();
-                        visit.put("patientId",patientID);
-                        visit.put("patientName",list.get(position).getName());
-                        visit.put("clinicianId", clinicianID);
-                        visit.put("clinicianName",list.get(position).getClinitianUsername());
-                        visit.put("scheduleStart",time);
-                        visit.put("date",dateString[0]);
-                        visit.put("visitCancelled",false);
-                        visit.put("visitCompleted",false);
-
-
-                        db.collection("visit").document().set(visit).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        db.collection("clinician").document(clinicianID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Toast.makeText(cr, "boom", Toast.LENGTH_SHORT).show();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
+                                if(task.isSuccessful()){
+                                    DocumentSnapshot document = task.getResult();
+                                    if(document.exists()){
+
+                                        String cName = document.getData().get("name").toString();
+
+                                        Map<String,Object> visit = new HashMap<>();
+                                        visit.put("patientId",patientID);
+                                        visit.put("patientName",list.get(position).getName());
+                                        visit.put("clinicianId", clinicianID);
+                                        visit.put("clinicianName",cName);
+                                        visit.put("scheduleStart",time);
+                                        visit.put("date",dateString[0]);
+                                        visit.put("visitCancelled",false);
+                                        visit.put("visitCompleted",false);
+
+
+                                        db.collection("visit").document().set(visit).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                Toast.makeText(cr, "boom", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+
+                                            }
+                                        });
+                                    }
+                                }
                             }
                         });
-
-
 
                     }
                 });
