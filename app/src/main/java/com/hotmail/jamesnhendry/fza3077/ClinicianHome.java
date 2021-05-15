@@ -1,6 +1,5 @@
 package com.hotmail.jamesnhendry.fza3077;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -9,8 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -36,9 +33,9 @@ import java.util.Locale;
 public class ClinicianHome extends AppCompatActivity {
 
     private Gson gson = new Gson();
-    private RecyclerView recyclPatients, recycvisit;
+    private RecyclerView recyclPatients, recyclerPastVisit, recyclerFutureVisit;
     private patientAdapter patientAdapter;
-    private visitAdapter visitAdapter;
+    private visitAdapter visitPastAdapter, visitFutureAdapter;
     private TextView edtClinitianName;
     private Clinitian cl;
     private String name;
@@ -47,7 +44,8 @@ public class ClinicianHome extends AppCompatActivity {
     FirebaseFirestore db;
     FirebaseUser user;
     private long difference_In_Years;
-    final ArrayList<Visit> visitArrayList = new ArrayList<>();
+    final ArrayList<Visit> visitPastArrayList = new ArrayList<>();
+    final ArrayList<Visit> visitFutureArrayList = new ArrayList<>();
     private MaterialToolbar topAppBar;
 
     @Override
@@ -130,7 +128,6 @@ public class ClinicianHome extends AppCompatActivity {
 
                         long difference = d2.getTime() - d1.getTime();
 
-
                         difference_In_Years = (difference / (1000L * 60 * 60 * 24 * 365));
 
                         System.out.println("Difference: " + difference_In_Years);
@@ -139,10 +136,11 @@ public class ClinicianHome extends AppCompatActivity {
                         System.out.println("Something went wrong with converting dates. ");
                     }
 
-
                     Patient pat = new Patient(documentSnapshot.get("name").toString(), difference_In_Years + "", documentSnapshot.get("gender").toString(), documentSnapshot.getId(),name);
                     patients.add(pat);
                 }
+
+
                 recyclPatients = findViewById(R.id.recyclMedicalRecord);
                 recyclPatients.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 patientAdapter = new patientAdapter(ClinicianHome.this, patients);
@@ -164,23 +162,35 @@ public class ClinicianHome extends AppCompatActivity {
                 if(error != null) {
                     return;
                 }
-                visitArrayList.clear();
+                visitPastArrayList.clear();
+                visitFutureArrayList.clear();
                 for( final DocumentSnapshot documentSnapshot : value) {
 
                     String date = documentSnapshot.get("date").toString();
                     String time = documentSnapshot.get("scheduleStart").toString();
                     String clinicianId = documentSnapshot.get("clinicianName").toString();
                     String patientID = documentSnapshot.get("patientName").toString();
-
+                    boolean visitCompleted = (boolean) documentSnapshot.get("visitCompleted");
 
                     Visit visit = new Visit(clinicianId,patientID , date, time);
-                    visitArrayList.add(visit);
+
+                    if (visitCompleted){
+                        visitPastArrayList.add(visit);
+                    }
+                    else{
+                        visitFutureArrayList.add(visit);
+                    }
                 }
 
-                recycvisit = findViewById(R.id.recycVisitclinitian);
-                recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                visitAdapter = new visitAdapter(visitArrayList, ClinicianHome.this);
-                recycvisit.setAdapter(visitAdapter);
+                recyclerFutureVisit = findViewById(R.id.recycFutureVisitclinitian);
+                recyclerFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                visitFutureAdapter = new visitAdapter(visitFutureArrayList, ClinicianHome.this);
+                recyclerFutureVisit.setAdapter(visitFutureAdapter);
+
+                recyclerPastVisit = findViewById(R.id.recycPastVisitclinitian);
+                recyclerPastVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                visitPastAdapter = new visitAdapter(visitPastArrayList, ClinicianHome.this);
+                recyclerPastVisit.setAdapter(visitPastAdapter);
 
             }
         });
