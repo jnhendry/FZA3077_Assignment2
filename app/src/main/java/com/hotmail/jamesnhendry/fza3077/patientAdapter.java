@@ -104,14 +104,14 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
                     public void onClick(View view) {
                         String time = edtTime.getSelectedItem().toString();
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
-                        String clinitianID = user.getUid();
+                        String clinicianID = user.getUid();
                         String patientID = list.get(position).getPatientID();
 
                         Map<String,Object> visit = new HashMap<>();
                         visit.put("patientId",patientID);
                         visit.put("patientName",list.get(position).getName());
-                        visit.put("clinicianId",clinitianID);
-                        visit.put("clinicianId",list.get(position).getClinitianUsername());
+                        visit.put("clinicianId", clinicianID);
+                        visit.put("clinicianName",list.get(position).getClinitianUsername());
                         visit.put("scheduleStart",time);
                         visit.put("date",dateString[0]);
                         visit.put("visitCancelled",false);
