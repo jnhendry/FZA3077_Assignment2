@@ -21,28 +21,21 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.gson.Gson;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "";
 
+    //Ui Components
     private Button btnLogin;
     private EditText edtUsername,edtPassword;
-    private Gson gson = new Gson();
-    private ArrayList<Patient> patients = new ArrayList<>();
-    private ArrayList<Clinitian> clinitians = new ArrayList<>();
-    private ArrayList<Visit> pastVisits = new ArrayList<>();
-    private ArrayList<Visit> futureVisits = new ArrayList<>();
-    private ArrayList<MedicalRecord> medicalRecords = new ArrayList<>();
+    private TextView goToSignUpPageText;
+
+
     private FirebaseAuth mAuth;
     private DocumentReference userpatient;
     private DocumentReference userClinitian;
     FirebaseFirestore db;
     FirebaseUser user;
-    private TextView txtSignup;
-
 
     @Override
     public void onStart() {
@@ -50,92 +43,105 @@ public class MainActivity extends AppCompatActivity {
         //TODO
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        }
-        //updateUI(currentUser);
-
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-       db = FirebaseFirestore.getInstance();
-
-
+        //Connecting View Components
+        edtUsername = findViewById(R.id.edtEmail);
+        edtPassword = findViewById(R.id.edtPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        txtSignup = findViewById(R.id.txtSignUp);
+        goToSignUpPageText = findViewById(R.id.txtSignUp);
 
-        txtSignup.setOnClickListener(new View.OnClickListener() {
+        goToSignUpPageText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(),SignUp.class);
-                startActivity(intent);
+                pushToNewActivity("Sign Up");
             }
         });
-
-
-
-        mAuth = FirebaseAuth.getInstance();
-
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                signin();
+                logIn();
             }
         });
+
+        //Firebase FireStore & Authentication Initialization
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
     }
 
-
-    public void signin(){
-        edtUsername = findViewById(R.id.edtEmail);
-        edtPassword = findViewById(R.id.edtPassword);
+    public void logIn(){
         String email,password;
         email = edtUsername.getText().toString();
         password = edtPassword.getText().toString();
-        mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    Log.d(TAG, "signinwithemail:success");
-                     user = mAuth.getCurrentUser();
-                      userpatient = db.document("Patients/"+user.getUid());
-                      userClinitian = db.document("Clinitian/"+user.getUid());
+        if(!email.isEmpty() && !password.isEmpty()){
+            mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()){
+                        Log.d(TAG, "signinwithemail:success");
+                        user = mAuth.getCurrentUser();
+                        userpatient = db.document("patient/"+user.getUid());
+                        userClinitian = db.document("clinician/"+user.getUid());
 
-
-                    userClinitian.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            if(documentSnapshot.exists()) {
-                                Toast.makeText(MainActivity.this, "DOC!", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(MainActivity.this, ClinitianHome.class);
-                                startActivity(intent);
+                        userClinitian.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if(documentSnapshot.exists()) {
+                                    Toast.makeText(MainActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                                    pushToNewActivity("Clinician Home");
+                                }
                             }
-                        }
-                    });
-                    userpatient.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            if(documentSnapshot.exists()) {
-                                Toast.makeText(MainActivity.this, "MARTY!", Toast.LENGTH_SHORT).show();
+                        });
 
-                                Intent intent = new Intent(MainActivity.this, PatientHome.class);
-                                startActivity(intent);
+                        userpatient.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if(documentSnapshot.exists()) {
+                                    Toast.makeText(MainActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                                    pushToNewActivity("Patient Home");
+                                }
                             }
-                        }
-                    });
+                        });
 
-                }else{
-                    Log.w(TAG, "signinwithemail:failure",task.getException() );
-                    Toast.makeText(getApplicationContext(),"authentication failed, check email and/or password or create a new Account",Toast.LENGTH_SHORT).show();
+                    }else{
+                        Log.w(TAG, "signinwithemail:failure",task.getException() );
+                        Toast.makeText(getApplicationContext(),"Invalid email and/or password ",Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
-        });
+            });
+
+        }
+        else{
+            Toast.makeText(getApplicationContext(),"Username and/or Password Empty",Toast.LENGTH_SHORT).show();
+        }
+
     }
 
+    public void pushToNewActivity(String activityName){
 
+        Intent intent;
+        switch (activityName){
+            case "Clinician Home":
+                intent = new Intent(MainActivity.this, ClinicianHome.class);
+                break;
 
+            case "Patient Home":
+                intent = new Intent(MainActivity.this, PatientHome.class);
 
+                break;
+            case "Sign Up":
+                intent = new Intent(getApplicationContext(),SignUp.class);
 
-
+                break;
+            default:
+                intent = new Intent(getApplicationContext(),MainActivity.class);
+        }
+        startActivity(intent);
+    }
 }

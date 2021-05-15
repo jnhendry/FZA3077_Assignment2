@@ -1,12 +1,10 @@
 package com.hotmail.jamesnhendry.fza3077;
 
-import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -15,10 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CalendarView;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,15 +32,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.SimpleTimeZone;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -71,20 +61,13 @@ public class signupPatient extends Fragment {
     private final ArrayList<String> clintianID = new ArrayList<>();
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
-    private long dateselected;
+    private long dateSelected = 0;
 
     public signupPatient() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment signupPatient.
-     */
+
     // TODO: Rename and change types and number of parameters
     public static signupPatient newInstance(String param1, String param2) {
         signupPatient fragment = new signupPatient();
@@ -116,9 +99,7 @@ public class signupPatient extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         db = FirebaseFirestore.getInstance();
-
-        populateCliniciansSpinner();
-
+        mAuth = FirebaseAuth.getInstance();
 
         edtName = view.findViewById(R.id.edtPatientNameSU);
         edtSurname = view.findViewById(R.id.edtPatientSurnameSU);
@@ -131,38 +112,54 @@ public class signupPatient extends Fragment {
         spnGender = view.findViewById(R.id.spnGender);
         spnSuburb = view.findViewById(R.id.spnSuburb);
         spnClinitian = view.findViewById(R.id.spnClinitian);
-        mAuth = FirebaseAuth.getInstance();
-
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if((edtPassword.getText().toString().equals(edtPass2.getText().toString()))&& !edtPassword.getText().toString().equals("")){
-                    String email,password;
-                    email = edtEmail.getText().toString();
-                    password = edtPassword.getText().toString();
-                    SignUpemail(email,password);
-                }
-            }
-        });
+        populateCliniciansSpinner();
 
         edtDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                 MaterialDatePicker datePicker = MaterialDatePicker.Builder.datePicker().setTitleText("Select date of Birth").setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR).build();
+                MaterialDatePicker datePicker = MaterialDatePicker.Builder.datePicker().setTitleText("Select date of Birth").setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR).build();
                 datePicker.show(getFragmentManager(),"Date");
 
                 datePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener() {
                     @Override
                     public void onPositiveButtonClick(Object selection) {
-                        dateselected = (long) selection;
+                        dateSelected = (long) selection;
                         String dateString = new SimpleDateFormat("dd-mm-yyyy", Locale.ENGLISH).format(selection);
                         edtDate.setText(dateString);
-
-
-
                     }
                 });
+            }
+        });
+
+        btnSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //State Variables
+                String firstName, surname, gender, suburb, clinician, email, password, retypePassword;
+                long dateOfBirth;
+
+                firstName = edtName.getText().toString();
+                surname = edtSurname.getText().toString();
+                gender = spnGender.getSelectedItem().toString();
+                suburb = spnSuburb.getSelectedItem().toString();
+                clinician = spnClinitian.getSelectedItem().toString();
+                email = edtEmail.getText().toString();
+                password = edtPassword.getText().toString();
+                retypePassword = edtPass2.getText().toString();
+                dateOfBirth = dateSelected;
+
+                if(firstName.isEmpty() || surname.isEmpty() || gender.equals("Gender") || suburb.equals("Suburb") || clinician.equals("Clinician") || email.isEmpty() || password.isEmpty() || retypePassword.isEmpty() || dateOfBirth == 0 ){
+                    Toast.makeText(getActivity().getApplicationContext(),"Please fill in all fields",Toast.LENGTH_SHORT).show();
+
+                } else{
+                    if(!password.equals(retypePassword)){
+                        Toast.makeText(getActivity().getApplicationContext(),"Password & Re-type Password do not match",Toast.LENGTH_SHORT).show();
+                    }else {
+                        //getClinicianID
+                        String clinicianId =clintianID.get(spnClinitian.getSelectedItemPosition());
+                        signUpNewUser(firstName, surname, gender, suburb, clinicianId, email, password, dateOfBirth);
+                    }
+                }
             }
         });
 
@@ -170,12 +167,12 @@ public class signupPatient extends Fragment {
 
     public void populateCliniciansSpinner(){
 
-        db.collection("Clinitian").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("clinician").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 ArrayList<String> theClinicians =  new ArrayList<String>();
-                theClinicians.add("Clinitian");
-                clintianID.add("Clinitian");
+                theClinicians.add("Clinician");
+                clintianID.add("Clinician");
                 if (task.isSuccessful()){
                     for(QueryDocumentSnapshot document : task.getResult()){
                         HashMap <String, Object> map = (HashMap) document.getData();
@@ -191,57 +188,50 @@ public class signupPatient extends Fragment {
         });
     }
 
-    public void SignUpemail(String email,String password){
+
+    public void signUpNewUser(final String firstName, final String surname,final String gender,final String suburb, final String clinician, final String email,final String password,final long dateOfBirth){
+
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            String docname = user.getUid();
-                            String name = edtName.getText().toString() + " " + edtSurname.getText().toString();
-                            String gender = spnGender.getSelectedItem().toString();
-                            String suburb = spnSuburb.getSelectedItem().toString();
-                            String clinitian = clintianID.get(spnClinitian.getSelectedItemPosition());
-                            long dOB = dateselected;
-                            String email = user.getEmail();
+            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "createUserWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        String documentId = user.getUid();
+                        Map<String,Object> document = new HashMap<>();
+                        document.put("name",firstName + " " + surname);
+                        document.put("gender",gender);
+                        document.put("email",email);
+                        document.put("suburb",suburb);
+                        document.put("clinicianId",clinician);
+                        document.put("dateOfBirth",dateOfBirth);
 
-                            Map<String,Object> document = new HashMap<>();
-                            document.put("name",name);
-                            document.put("gender",gender);
-                            document.put("email",email);
-                            document.put("suburb",suburb);
-                            document.put("clinitianID",clinitian);
-                            document.put("dateofbirth",dOB);
+                        db.collection("patient").document(documentId)
+                                .set(document)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                       System.out.println("Success");
+                                        Toast.makeText(getActivity().getApplicationContext(), "Sign Up Successful", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(getContext(),PatientHome.class);
+                                        startActivity(intent);
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error Storing New User Info", e);
+                                        Toast.makeText(getActivity().getApplicationContext(),"Error Storing New User Info",Toast.LENGTH_SHORT).show();
+                                    }
+                                });
 
-                            db.collection("Patients").document(docname)
-                                    .set(document)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                           System.out.println("Success");
-                                            Toast.makeText(getActivity().getApplicationContext(), "YAY", Toast.LENGTH_SHORT).show();
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "Error writing document", e);
-                                        }
-                                    });
-
-
-
-
-                            Intent intent = new Intent(getContext(),PatientHome.class);
-                            startActivity(intent);
-                        } else{
-                            Log.w(TAG, "signinwithemail:failure",task.getException() );
-                            Toast.makeText(getActivity().getApplicationContext(),"authentication failed, check email and/or password or create a new Account",Toast.LENGTH_SHORT).show();
-                        }
+                    } else{
+                        Log.w(TAG, "signinwithemail:failure",task.getException() );
+                        Toast.makeText(getActivity().getApplicationContext(),"Sign Up Error: Please Try Again",Toast.LENGTH_SHORT).show();
                     }
-                });
+                }
+            });
     }
 }

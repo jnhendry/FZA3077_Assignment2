@@ -55,9 +55,6 @@ public class visitAdapter extends RecyclerView.Adapter<visitAdapter.subholder>{
                 holder.txtVisitPatient.setText(patient);
                 holder.txtVisitTime.setText(list.get(position).getTime());
 
-
-
-
     }
 
 

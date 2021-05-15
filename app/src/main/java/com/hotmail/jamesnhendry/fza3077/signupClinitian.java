@@ -1,5 +1,6 @@
 package com.hotmail.jamesnhendry.fza3077;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,7 +34,6 @@ import java.util.Map;
  * create an instance of this fragment.
  */
 public class signupClinitian extends Fragment {
-
 
     private EditText edtfirstName;
     private EditText edtsurname;
@@ -108,54 +108,65 @@ public class signupClinitian extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-
         btnsignUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email,password;
+
+                //State Variables
+                String firstName, surname, specialisation, email, password, retypePassword;
+
+                firstName = edtfirstName.getText().toString();
+                surname = edtsurname.getText().toString();
+                specialisation = spncSpecialisation.getSelectedItem().toString();
                 email = edtemail.getText().toString();
                 password = edtpassword.getText().toString();
-                if(!email.equals("") && !password.equals(""))
-                signUp(email,password);
+                retypePassword = edtretypePassword.getText().toString();
+
+                if(firstName.isEmpty() || surname.isEmpty() || specialisation.equals("Specialisation") || email.isEmpty() || password.isEmpty() || retypePassword.isEmpty()){
+                    Toast.makeText(getActivity().getApplicationContext(),"Please fill in all fields",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    if(!password.equals(retypePassword)){
+                        Toast.makeText(getActivity().getApplicationContext(),"Password & Re-type Password do not match",Toast.LENGTH_SHORT).show();
+                    }else{
+                        signUpNewClinician(firstName, surname, specialisation, email,password);
+                    }
+                }
             }
         });
     }
 
-    private void signUp(String email, String password) {
+    private void signUpNewClinician(final String firstName, final String surname, final String specialisation, final String email, final String password) {
         mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     FirebaseUser user = mAuth.getCurrentUser();
-                    String name,specialisation,email,userID;
-
-                    name = edtfirstName.getText().toString()+ " " + edtsurname.getText().toString();
-                    specialisation = spncSpecialisation.getSelectedItem().toString();
-                    email = user.getEmail();
-                    userID = user.getUid();
+                    String documentId = user.getUid();
 
                     Map<String,Object> doc = new HashMap<>();
-                    doc.put("name",name);
+                    doc.put("name", firstName + " " + surname);
                     doc.put("specialisation",specialisation);
                     doc.put("email",email);
 
-                    db.collection("Clinitian").document(userID).set(doc).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    db.collection("clinician").document(documentId).set(doc).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Toast.makeText(getContext(), "Yay doc", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity().getApplicationContext(), "Sign Up Successful", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getContext(), ClinicianHome.class);
+                            startActivity(intent);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getContext(), "Boo", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity().getApplicationContext(),"Error Storing New User Info",Toast.LENGTH_SHORT).show();
                         }
                     });
 
                 }else{
-                    Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(),"Sign Up Error: Please Try Again",Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
     }
 }

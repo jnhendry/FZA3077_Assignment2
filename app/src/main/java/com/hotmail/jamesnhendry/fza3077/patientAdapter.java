@@ -108,17 +108,17 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
                         String patientID = list.get(position).getPatientID();
 
                         Map<String,Object> visit = new HashMap<>();
-                        visit.put("patientID",patientID);
-                        visit.put("patientname",list.get(position).getName());
-                        visit.put("clinitianID",clinitianID);
-                        visit.put("clinitianname",list.get(position).getClinitianUsername());
-                        visit.put("schedulestart",time);
+                        visit.put("patientId",patientID);
+                        visit.put("patientName",list.get(position).getName());
+                        visit.put("clinicianId",clinitianID);
+                        visit.put("clinicianId",list.get(position).getClinitianUsername());
+                        visit.put("scheduleStart",time);
                         visit.put("date",dateString[0]);
                         visit.put("visitCancelled",false);
                         visit.put("visitCompleted",false);
 
 
-                        db.collection("Visits").document().set(visit).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        db.collection("visit").document().set(visit).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 Toast.makeText(cr, "boom", Toast.LENGTH_SHORT).show();

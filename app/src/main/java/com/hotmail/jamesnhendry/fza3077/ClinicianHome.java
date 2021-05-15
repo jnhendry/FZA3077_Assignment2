@@ -1,19 +1,14 @@
 package com.hotmail.jamesnhendry.fza3077;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -24,20 +19,14 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
-import org.w3c.dom.Document;
-
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-public class ClinitianHome extends AppCompatActivity {
+public class ClinicianHome extends AppCompatActivity {
 
     private Gson gson = new Gson();
     private RecyclerView recyclPatients, recycvisit;
@@ -64,7 +53,7 @@ public class ClinitianHome extends AppCompatActivity {
 
 
         edtClinitianName = findViewById(R.id.txtclinitianname);
-        DocumentReference snap = db.collection("Clinitian").document(user.getUid());
+        DocumentReference snap = db.collection("clinician").document(user.getUid());
 
         snap.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -101,14 +90,14 @@ public class ClinitianHome extends AppCompatActivity {
 
     private void populateArray() {
 
-        db.collection("Patients").whereEqualTo("clinitianID", user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("patient").whereEqualTo("clinicianId", user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if(error != null) {
                     return;
                 }
                 for(DocumentSnapshot documentSnapshot : value) {
-                    long yearsOld = (long) documentSnapshot.get("dateofbirth");
+                    long yearsOld = (long) documentSnapshot.get("dateOfBirth");
                     String yearsOldString = new SimpleDateFormat("dd-mm-yyyy", Locale.ENGLISH).format(yearsOld);
                     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -138,7 +127,7 @@ public class ClinitianHome extends AppCompatActivity {
                 }
                 recyclPatients = findViewById(R.id.recyclMedicalRecord);
                 recyclPatients.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                patientAdapter = new patientAdapter(ClinitianHome.this, patients);
+                patientAdapter = new patientAdapter(ClinicianHome.this, patients);
                 recyclPatients.setAdapter(patientAdapter);
 
             }
@@ -149,7 +138,7 @@ public class ClinitianHome extends AppCompatActivity {
 
     public void setRecycle() {
 
-        db.collection("Visits").whereEqualTo("clinitianID", user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("visit").whereEqualTo("clinicianId", user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if(error != null) {
@@ -159,18 +148,18 @@ public class ClinitianHome extends AppCompatActivity {
                 for( final DocumentSnapshot documentSnapshot : value) {
 
                     String date = documentSnapshot.get("date").toString();
-                    String time = documentSnapshot.get("schedulestart").toString();
-                    String clinitianID = documentSnapshot.get("clinitianname").toString();
-                    String patientID = documentSnapshot.get("patientname").toString();
+                    String time = documentSnapshot.get("scheduleStart").toString();
+                    String clinicianId = documentSnapshot.get("clinicianName").toString();
+                    String patientID = documentSnapshot.get("patientName").toString();
 
 
-                    Visit visit = new Visit(clinitianID,patientID , date, time);
+                    Visit visit = new Visit(clinicianId,patientID , date, time);
                     visitArrayList.add(visit);
                 }
 
                 recycvisit = findViewById(R.id.recycVisitclinitian);
                 recycvisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                visitAdapter = new visitAdapter(visitArrayList, ClinitianHome.this);
+                visitAdapter = new visitAdapter(visitArrayList, ClinicianHome.this);
                 recycvisit.setAdapter(visitAdapter);
 
             }
