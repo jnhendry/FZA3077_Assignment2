@@ -6,6 +6,7 @@ public class Visit {
     private String clinitianID, patientID;
     private MedicalRecord medicalRecord;
     private String date,time;
+    private Patient patty;
 
     /*
     Every visit will have basic requirements. date, time doc username and patient username.
