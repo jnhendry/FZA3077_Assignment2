@@ -124,7 +124,7 @@ public class signupPatient extends Fragment {
                     @Override
                     public void onPositiveButtonClick(Object selection) {
                         dateSelected = (long) selection;
-                        String dateString = new SimpleDateFormat("dd-mm-yyyy", Locale.ENGLISH).format(selection);
+                        String dateString = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).format(selection);
                         edtDate.setText(dateString);
                     }
                 });

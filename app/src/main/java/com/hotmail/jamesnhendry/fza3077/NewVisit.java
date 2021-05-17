@@ -140,6 +140,9 @@ public class NewVisit extends AppCompatActivity {
                     Note note = new Note(nbody,nsubject);
                     noteArrayList.add(note);
                 }
+
+                popup.hide();
+                adapter.notifyDataSetChanged();
             }
         });
     }
@@ -167,9 +170,11 @@ public class NewVisit extends AppCompatActivity {
                 }else{
                 Recommendation recommendation = new Recommendation(notebody,notesubject);
                 recommendationArrayList.add(recommendation);
+                    dialog.hide();
             }}
         });
 
+        adapter.notifyDataSetChanged();
     }
 
     public void setuprecyclers(){
