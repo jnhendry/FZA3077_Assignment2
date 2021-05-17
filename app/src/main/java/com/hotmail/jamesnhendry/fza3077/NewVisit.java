@@ -53,6 +53,12 @@ public class NewVisit extends AppCompatActivity {
             }
         });
 
+        btnaddNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createNewNote();
+            }
+        });
 
 
 
@@ -111,7 +117,31 @@ public class NewVisit extends AppCompatActivity {
 
 
     public void createNewNote(){
-            //add a new note to the arraylist and update the recycler view. notifydatsetchanged
+        //add a new note to the arraylist and update the recycler view. notifydatsetchanged
+        final EditText nBody, nDescription;
+        Button saveNote;
+        final Dialog popup = new Dialog(this);
+        popup.setContentView(R.layout.notes_popup);
+
+        nBody = popup.findViewById(R.id.noteBody);
+        nDescription = popup.findViewById(R.id.noteSubject);
+        saveNote = popup.findViewById(R.id.newNote);
+        popup.show();
+
+        saveNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nbody, nsubject;
+                nbody = nBody.getText().toString();
+                nsubject = nDescription.getText().toString();
+                if (nbody.equals("")||nsubject.equals("")){
+                    Toast.makeText(NewVisit.this, "Do not leave fields empty", Toast.LENGTH_SHORT).show();
+                }else {
+                    Note note = new Note(nbody,nsubject);
+                    noteArrayList.add(note);
+                }
+            }
+        });
     }
 
     public void createnewRecommendation(){
