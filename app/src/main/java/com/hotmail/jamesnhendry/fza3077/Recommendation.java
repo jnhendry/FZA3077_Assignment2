@@ -4,6 +4,10 @@ public class Recommendation {
 
     private String body,description;
 
+    public Recommendation() {
+
+    }
+
     public String getBody() {
         return body;
     }

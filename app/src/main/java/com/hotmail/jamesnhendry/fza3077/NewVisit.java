@@ -4,12 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -21,8 +24,8 @@ public class NewVisit extends AppCompatActivity {
     private RecyclerView recyclnotes,recyclRecommendation;
     private Button btnaddNote,btnaddRecommendation,btnSaveVisit;
     private notes_recommendationadapter adapter;
-    private ArrayList<Note> noteArrayList;
-    private ArrayList<Recommendation> recommendationArrayList;
+    private ArrayList<Note> noteArrayList = new ArrayList<>();
+    private ArrayList<Recommendation> recommendationArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,19 +36,31 @@ public class NewVisit extends AppCompatActivity {
         declareelements();
         Intent intent = getIntent();
         String visitID;
-        visitID = intent.getStringExtra("visitid");
+        visitID = intent.getStringExtra("visitid");//use this to gather from the DB
         value = intent.getBooleanExtra("value",false);
         completed = intent.getBooleanExtra("isvisitcompleted",false);
         usertype = intent.getStringExtra("usertype");
+        populateemptyfields(visitID);
         isEditable(value);
         whatUser(usertype);
 
         iscompleted(completed);
 
+        btnaddRecommendation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createnewRecommendation();
+            }
+        });
+
 
 
 
         setuprecyclers();
+    }
+
+    private void populateemptyfields(String visitID) {
+
     }
 
     private void iscompleted(boolean completed) {
@@ -80,15 +95,17 @@ public class NewVisit extends AppCompatActivity {
     }
 
     private void whatUser(String usertype) {
-        switch(usertype){
-            case "patient":
+        if(usertype!=null) {
+            switch(usertype) {
+                case "patient":
                     //make the buttons dissapear to add notes and recommendations
-                return;
-            case  "clinician":
-                //make buttons appear
-                return;
-            default:
-                //throw out an error
+                    return;
+                case "clinician":
+                    //make buttons appear
+                    return;
+                default:
+                    //throw out an error
+            }
         }
     }
 
@@ -99,6 +116,29 @@ public class NewVisit extends AppCompatActivity {
 
     public void createnewRecommendation(){
         //add a new recommendation to the arraylist and update the recycler view. notifydatsetchanged
+        final Dialog dialog = new Dialog( NewVisit.this);
+        dialog.setContentView(R.layout.notes_popup);
+        final EditText body,description;
+        Button save;
+        body = dialog.findViewById(R.id.noteBody);
+        description = dialog.findViewById(R.id.noteSubject);
+        save = dialog.findViewById(R.id.newNote);
+
+        dialog.show();
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String notebody,notesubject;
+                notebody = body.getText().toString();
+                notesubject = description.getText().toString();
+                if(notebody.equals("")||notesubject.equals("")){
+                    Toast.makeText(NewVisit.this, "Do not leave fields empty", Toast.LENGTH_SHORT).show();
+                }else{
+                Recommendation recommendation = new Recommendation(notebody,notesubject);
+                recommendationArrayList.add(recommendation);
+            }}
+        });
 
     }
 
