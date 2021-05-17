@@ -10,6 +10,11 @@
         <item>Female</item>
         <item>Other</item>
     </string-array>
+    <string-array name="truefalse">
+        <item>--Select one--</item>
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
     <string-array name="Clinitianspin">
         <item>Specialisation</item>
         <item>General Practitioner</item>
