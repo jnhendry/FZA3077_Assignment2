@@ -1,7 +1,7 @@
 package com.hotmail.jamesnhendry.fza3077;
 
 public class MedicalRecord {
-    private String dateUpdated,time,clinitianName,patientName,clinitiannotes;
+    private String dateUpdated,time,clinitianName,patientName,clinitiannotes;//remove clinitian notes and make a seperate database declaration
     private int age;
     private double bloodpressure,reynoldsRiskScore,cReactive,apolprotB,apolprotA,lipProteinA;
     private boolean smoker;

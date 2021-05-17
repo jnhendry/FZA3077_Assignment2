@@ -91,7 +91,6 @@ public class PatientHome extends AppCompatActivity {
             med.setReynoldsRiskScore(med.calculateReynoldsRiskScore());
             medtemp.add(med);
 
-            MedicalRecordAdapter medicalRecordAdapter = new MedicalRecordAdapter(this,medtemp);
             recyclFutureVisit.setAdapter(futureVisitAdapter);
             recyclVisit.setAdapter(pastVisitAdapter);
             recyclMedRec.setAdapter(medicalRecordAdapter);
@@ -109,7 +108,6 @@ public class PatientHome extends AppCompatActivity {
                 medtemp.clear();
                 med.setReynoldsRiskScore(med.calculateReynoldsRiskScore());
                 medtemp.add(med);
-                MedicalRecordAdapter medicalRecordAdapter = new MedicalRecordAdapter(this,medtemp);
                 recyclFutureVisit.setAdapter(futureVisitAdapter);
                 recyclVisit.setAdapter(pastVisitAdapter);
                 recyclMedRec.setAdapter(medicalRecordAdapter);
@@ -161,7 +159,6 @@ public class PatientHome extends AppCompatActivity {
 
 //                recyclMedRec = findViewById(R.id.recyclMedicalRecord);
 //                recyclMedRec.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-//                MedicalRecordAdapter medicalRecordAdapter = new MedicalRecordAdapter(getApplicationContext(), medtemp);
 //                recyclMedRec.setAdapter(medicalRecordAdapter);
 
                // System.out.println(medtemp.get(0).getBloodpressure());
