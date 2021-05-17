@@ -1,6 +1,7 @@
 package com.hotmail.jamesnhendry.fza3077;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -10,6 +11,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class NewVisit extends AppCompatActivity {
 
     private EditText bloodpressure,creactive,apolprotA,apolprotB,lipoprotA,hemoA;
@@ -17,20 +20,40 @@ public class NewVisit extends AppCompatActivity {
     private TextView txtclinititanname,txtpatientname,txtpatientGender,txtpatientage,txtpatientlocation,txtreynoldsriskscore;
     private RecyclerView recyclnotes,recyclRecommendation;
     private Button btnaddNote,btnaddRecommendation,btnSaveVisit;
+    private notes_recommendationadapter adapter;
+    private ArrayList<Note> noteArrayList;
+    private ArrayList<Recommendation> recommendationArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_visit);
-        boolean value;
+        boolean value,completed;
         String usertype;
+        declareelements();
         Intent intent = getIntent();
+        String visitID;
+        visitID = intent.getStringExtra("visitid");
         value = intent.getBooleanExtra("value",false);
+        completed = intent.getBooleanExtra("isvisitcompleted",false);
         usertype = intent.getStringExtra("usertype");
         isEditable(value);
         whatUser(usertype);
 
-        declareelements();
+        iscompleted(completed);
+
+
+
+
+        setuprecyclers();
+    }
+
+    private void iscompleted(boolean completed) {
+        if(completed){
+            //get the data from the database and populate notes and medical record as well as write out recommendations.
+        }else{
+            //everything is empty its a visit in progress
+        }
     }
 
     private void declareelements() {
@@ -71,15 +94,26 @@ public class NewVisit extends AppCompatActivity {
 
 
     public void createNewNote(){
-
+            //add a new note to the arraylist and update the recycler view. notifydatsetchanged
     }
 
     public void createnewRecommendation(){
+        //add a new recommendation to the arraylist and update the recycler view. notifydatsetchanged
 
     }
 
-    public void saveVisit(){
+    public void setuprecyclers(){
+        recyclnotes.setLayoutManager(new LinearLayoutManager(NewVisit.this));
+        adapter = new notes_recommendationadapter(NewVisit.this,noteArrayList);
+        recyclnotes.setAdapter(adapter);
 
+        recyclRecommendation.setLayoutManager(new LinearLayoutManager(NewVisit.this));
+        adapter = new notes_recommendationadapter(recommendationArrayList,NewVisit.this);
+        recyclRecommendation.setAdapter(adapter);
+    }
+
+    public void saveVisit(){
+            //add all items to the database and update visit statuses.
     }
 
     public void isEditable(boolean val){//set intent to grab a boolean of true if first element of recycler view is selected in PatientHome.class else, set nothing.
