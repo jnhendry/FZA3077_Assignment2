@@ -35,6 +35,25 @@ public class NewVisit extends AppCompatActivity {
 
     private void declareelements() {
         //please do this
+        bloodpressure = findViewById(R.id.bloodpressureMedRec);
+        creactive = findViewById(R.id.creactiveMedRec);
+        apolprotA = findViewById(R.id.apolipoproteinAMedRec);
+        apolprotB = findViewById(R.id.apolipoproteinBMedRec);
+        lipoprotA = findViewById(R.id.lipoproteinAMedRec);
+        hemoA = findViewById(R.id.HemoglobinA1MedRec);
+        smoker = findViewById(R.id.spnSmokerMedRec);
+        famhist = findViewById(R.id.spnFamilyHistory);
+        txtclinititanname = findViewById(R.id.txtClintiannameMedRec);
+        txtpatientname = findViewById(R.id.txtPatientName);
+        txtpatientGender = findViewById(R.id.patientGenderMedRec);
+        txtpatientage = findViewById(R.id.txtAgeClPatients);
+        txtpatientlocation = findViewById(R.id.patientLocationMedRec);
+        txtreynoldsriskscore = findViewById(R.id.reynoldsriskscoreMedRec);
+        recyclnotes = findViewById(R.id.recyclNotes);
+        recyclRecommendation = findViewById(R.id.recyclRecommendations);
+        btnaddNote = findViewById(R.id.addNote);
+        btnaddRecommendation = findViewById(R.id.addRecom);
+        btnSaveVisit = findViewById(R.id.btnSaveVisit);
     }
 
     private void whatUser(String usertype) {
