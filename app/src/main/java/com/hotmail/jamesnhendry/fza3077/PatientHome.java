@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,12 +24,24 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 public class PatientHome extends AppCompatActivity {
 
+    //View Components
+    TextView patientId;
+    TextView patientFullName;
+    TextView patientGender;
+    TextView patientAge;
+    TextView patientDateOfBirth;
+    TextView patientLocation;
+    TextView patientClinician;
+
+
+
     private Gson gson = new Gson();
-    private TextView txtPatientName;
+
     Visit temp ;
     ArrayList<MedicalRecord> medtemp = new ArrayList<>();
     MedicalRecord med;
@@ -41,37 +54,33 @@ public class PatientHome extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_home);
-        recyclFutureVisit = findViewById(R.id.recycFuturevisit);
-        recyclFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-        recyclVisit = findViewById(R.id.recycVisitclinitian);
-        recyclVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        // View Components Binding
+        patientId = findViewById(R.id.patientIdTxt);
+        patientFullName  = findViewById(R.id.fullNameTxt);
+        patientGender = findViewById(R.id.genderTxt);
+        patientAge = findViewById(R.id.ageTxt);
+        patientDateOfBirth = findViewById(R.id.dateOfBirthTxt);
+        patientLocation = findViewById(R.id.locationTxt);
+        patientClinician = findViewById(R.id.clinicianNameTxt);
 
-        recyclMedRec = findViewById(R.id.recyclMedicalRecord);
-        recyclMedRec.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        //Get and Display Patient Details
+        populatePatientDetails();
 
-        txtPatientName = findViewById(R.id.txtPatientName);
+//        recyclFutureVisit = findViewById(R.id.patientFuturerecyclerView);
+//        recyclFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+//
+//        recyclVisit = findViewById(R.id.patientRecyclePast);
+//        recyclVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+//
+//        recyclMedRec = findViewById(R.id.recyclMedicalRecord);
+//        recyclMedRec.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
 
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-        db = FirebaseFirestore.getInstance();
 
-        db.document("Patients/"+mAuth.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.exists())
-                txtPatientName.setText(documentSnapshot.get("name").toString());
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(PatientHome.this, "Boo", Toast.LENGTH_SHORT).show();
-            }
-        });
+
         populateArray();
 
 
@@ -114,12 +123,61 @@ public class PatientHome extends AppCompatActivity {
             }
         }
 
-
 */
 
+    }
+
+    private void populatePatientDetails(){
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+
+        db.document("patient/"+mAuth.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists()){
 
 
 
+                    final String id = documentSnapshot.getId();
+                    final String fullName = documentSnapshot.get("name").toString();
+                    final String gender = documentSnapshot.get("gender").toString();
+
+                    DateAge dateAge = new DateAge((long) documentSnapshot.get("dateOfBirth"));
+                    final int age = dateAge.getAge();
+                    final String datOfBirth = dateAge.getDateOfBirth();
+                    final String location = documentSnapshot.get("suburb").toString();
+
+                    db.document("clinician/"+documentSnapshot.get("clinicianId")).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if(documentSnapshot.exists()){
+
+                                displayPatientDetails(id, fullName,gender, age + " ", datOfBirth, location,documentSnapshot.get("name").toString());
+                            }
+                        }
+                    });
+
+                }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(PatientHome.this, "Error: Something went Wrong getting data.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void displayPatientDetails(String id, String fullName, String gender, String age, String dateOfBirth, String location, String clinicianName ){
+        patientId.setText(id);
+        patientFullName.setText(fullName);
+        patientGender.setText(gender);
+        patientAge.setText(age);
+        patientDateOfBirth.setText(dateOfBirth);
+        patientLocation.setText(location);
+        patientClinician.setText(clinicianName);
     }
 
 
@@ -152,7 +210,7 @@ public class PatientHome extends AppCompatActivity {
                    // medtemp.add(pat.getMedicalRecord());
                 }
 
-                recyclFutureVisit = findViewById(R.id.recycFuturevisit);
+                recyclFutureVisit = findViewById(R.id.patientFuturerecyclerView);
                 recyclFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 visitAdapter visitAdapter = new visitAdapter(visits,getApplicationContext());
                 recyclFutureVisit.setAdapter(visitAdapter);

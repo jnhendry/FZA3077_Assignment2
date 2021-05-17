@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_margin="dp"
+
                 >
 
                 <LinearLayout
@@ -207,8 +207,8 @@
             android:text="Completed Visits"
             android:textColor="#000000"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/recyclerView"
-            app:layout_constraintStart_toStartOf="@+id/recyclerView"
+            app:layout_constraintBottom_toTopOf="@+id/patientRecyclePast"
+            app:layout_constraintStart_toStartOf="@+id/patientRecyclePast"
             app:layout_constraintTop_toTopOf="@+id/guideline12"
             app:layout_constraintVertical_bias="0.192" />
 
@@ -223,7 +223,7 @@
             app:layout_constraintTop_toTopOf="@+id/guideline8" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/patientRecyclePast"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_margin="20dp"
