@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SignUp extends AppCompatActivity {
 
@@ -17,6 +18,7 @@ public class SignUp extends AppCompatActivity {
     private final Fragment signUpPatients = signupPatient.newInstance("","");
 
     private Button btnPatient,btnCllinitian;
+    int counter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +51,23 @@ public class SignUp extends AppCompatActivity {
 
         btnPatient.callOnClick();
 
+
     }
 
     public void openFragment(Fragment fragment) {
         ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.frmcontain, fragment);
         ft.commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        counter+=1;
+        if(counter>1){
+            super.onBackPressed();
+        }else{
+            Toast.makeText(this, "press back again to exit", Toast.LENGTH_SHORT).show();
+        }
     }
 }

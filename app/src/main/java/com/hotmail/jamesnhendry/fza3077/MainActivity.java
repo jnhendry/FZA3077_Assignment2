@@ -30,13 +30,12 @@ public class MainActivity extends AppCompatActivity {
     private EditText edtUsername,edtPassword;
     private TextView goToSignUpPageText;
 
-
     private FirebaseAuth mAuth;
     private DocumentReference userpatient;
     private DocumentReference userClinitian;
     FirebaseFirestore db;
     FirebaseUser user;
-
+    int counter =0;
     @Override
     public void onStart() {
         super.onStart();
@@ -60,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 pushToNewActivity("Sign Up");
+
             }
         });
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void logIn(){
+        Toast.makeText(this, "Loading...", Toast.LENGTH_LONG).show();
         String email,password;
         email = edtUsername.getText().toString();
         password = edtPassword.getText().toString();
@@ -93,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 if(documentSnapshot.exists()) {
-                                    Toast.makeText(MainActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                                     pushToNewActivity("Clinician Home");
+                                    finish();
                                 }
                             }
                         });
@@ -103,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 if(documentSnapshot.exists()) {
-                                    Toast.makeText(MainActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                                     pushToNewActivity("Patient Home");
+                                    finish();
                                 }
                             }
                         });
@@ -133,15 +134,24 @@ public class MainActivity extends AppCompatActivity {
 
             case "Patient Home":
                 intent = new Intent(MainActivity.this, PatientHome.class);
-
                 break;
             case "Sign Up":
                 intent = new Intent(getApplicationContext(),SignUp.class);
-
                 break;
             default:
                 intent = new Intent(getApplicationContext(),MainActivity.class);
         }
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        counter+=1;
+        if(counter>1){
+            super.onBackPressed();
+        }else{
+            Toast.makeText(this, "press back again to exit", Toast.LENGTH_SHORT).show();
+        }
     }
 }

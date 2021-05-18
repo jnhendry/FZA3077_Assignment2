@@ -108,6 +108,14 @@ public class signupClinitian extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        txtswitchToLogIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(),MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
         btnsignUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

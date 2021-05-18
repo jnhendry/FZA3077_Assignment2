@@ -45,6 +45,8 @@ public class NewVisit extends AppCompatActivity {
         whatUser(usertype);
 
         iscompleted(completed);
+        //TODO make medical record editable for lastest visit for patients
+        //TODO make medical record, notes and recommendations editable of the latest visit for clinitians
 
         btnaddRecommendation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +59,14 @@ public class NewVisit extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 createNewNote();
+            }
+        });
+
+        btnSaveVisit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO:import the pdf viewer and handle the data to the database. PDFs will be local.
+                //TODO: handle notifications for clinitians and patients.
             }
         });
 
@@ -88,9 +98,9 @@ public class NewVisit extends AppCompatActivity {
         smoker = findViewById(R.id.spnSmokerMedRec);
         famhist = findViewById(R.id.spnFamilyHistory);
         txtclinititanname = findViewById(R.id.txtClintiannameMedRec);
-        txtpatientname = findViewById(R.id.txtPatientName);
+        txtpatientname = findViewById(R.id.patientnameMedRec);
         txtpatientGender = findViewById(R.id.patientGenderMedRec);
-        txtpatientage = findViewById(R.id.txtAgeClPatients);
+        txtpatientage = findViewById(R.id.patientAgeMedRec);
         txtpatientlocation = findViewById(R.id.patientLocationMedRec);
         txtreynoldsriskscore = findViewById(R.id.reynoldsriskscoreMedRec);
         recyclnotes = findViewById(R.id.recyclNotes);

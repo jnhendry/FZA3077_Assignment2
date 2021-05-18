@@ -112,6 +112,15 @@ public class signupPatient extends Fragment {
         spnGender = view.findViewById(R.id.spnGender);
         spnSuburb = view.findViewById(R.id.spnSuburb);
         spnClinitian = view.findViewById(R.id.spnClinitian);
+
+        txtLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(),MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
         populateCliniciansSpinner();
 
         edtDate.setOnClickListener(new View.OnClickListener() {
@@ -180,8 +189,7 @@ public class signupPatient extends Fragment {
                         theClinicians.add(map.get("name").toString());
                     }
                 }
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                        getContext(), android.R.layout.simple_spinner_item, theClinicians);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, theClinicians);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spnClinitian.setAdapter(adapter);
             }

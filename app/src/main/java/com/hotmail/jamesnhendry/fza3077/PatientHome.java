@@ -174,9 +174,23 @@ public class PatientHome extends AppCompatActivity {
                 visitFutureAdapter = new visitAdapter(visitFutureArrayList, PatientHome.this);
                 recyclerFutureVisit.setAdapter(visitFutureAdapter);
 
+                visitFutureAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
+                    @Override
+                    public void onItemClicked(int position) {
+                        //TODO handle only clinitian ONCLICKS. ignore patient clicks here.
+                    }
+                });
+
                 recyclerPastVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 visitPastAdapter = new visitAdapter(visitPastArrayList, PatientHome.this);
                 recyclerPastVisit.setAdapter(visitPastAdapter);
+
+                visitPastAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
+                    @Override
+                    public void onItemClicked(int position) {
+                        //TODO:handle patient view of visits for patients. handle the IF STATEMENT that will distinguish clinitian or patient.
+                    }
+                });
             }
         });
     }

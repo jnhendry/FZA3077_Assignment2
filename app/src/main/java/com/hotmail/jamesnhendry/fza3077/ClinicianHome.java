@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -47,6 +48,22 @@ public class ClinicianHome extends AppCompatActivity {
     final ArrayList<Visit> visitPastArrayList = new ArrayList<>();
     final ArrayList<Visit> visitFutureArrayList = new ArrayList<>();
     private MaterialToolbar topAppBar;
+    int counter = 0;
+
+
+    //TODO: allow clintians to search all patients...
+    //TODO clinitians must see statistics and print the info
+
+    @Override
+    public void onBackPressed() {
+
+        counter+=1;
+        if(counter>1){
+            super.onBackPressed();
+        }else{
+            Toast.makeText(this, "press back again to exit", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,10 +184,24 @@ public class ClinicianHome extends AppCompatActivity {
                 visitFutureAdapter = new visitAdapter(visitFutureArrayList, ClinicianHome.this);
                 recyclerFutureVisit.setAdapter(visitFutureAdapter);
 
+                visitFutureAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
+                    @Override
+                    public void onItemClicked(int position) {
+                        //TODO: handle the visit onclick
+                    }
+                });
+
                 recyclerPastVisit = findViewById(R.id.recycPastVisitclinitian);
                 recyclerPastVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 visitPastAdapter = new visitAdapter(visitPastArrayList, ClinicianHome.this);
                 recyclerPastVisit.setAdapter(visitPastAdapter);
+
+                visitPastAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
+                    @Override
+                    public void onItemClicked(int position) {
+                        //TODO: handle the data transfer
+                    }
+                });
 
             }
         });

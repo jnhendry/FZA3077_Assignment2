@@ -81,6 +81,7 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
                 final Spinner edtTime = dialog.findViewById(R.id.spnTimes);
                 Button btnConfirm = dialog.findViewById(R.id.btnConfirm);
                 TextView txtAppointment = dialog.findViewById(R.id.txtAppointment);
+                //TODO: make calendar events for visits.
 
 
 
