@@ -7,14 +7,21 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,6 +32,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PatientHome extends AppCompatActivity {
 
@@ -45,6 +54,10 @@ public class PatientHome extends AppCompatActivity {
     final ArrayList<Visit> visitPastArrayList = new ArrayList<>();
     final ArrayList<Visit> visitFutureArrayList = new ArrayList<>();
     private FirebaseAuth mAuth;
+    private String userID;
+    private boolean isClinitian;
+    private String clinitianintent;
+    private Button btnSchedule;
 
     FirebaseFirestore db;
     FirebaseUser user;
@@ -54,14 +67,20 @@ public class PatientHome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_home);
 
+
+        Intent intent = getIntent();
+        userID = intent.getStringExtra("UserID");
+        isClinitian = intent.getBooleanExtra("isClinitian", false);
+        clinitianintent = intent.getStringExtra("clinitianname");
         // View Components Binding
         patientId = findViewById(R.id.patientIdTxt);
-        patientFullName  = findViewById(R.id.fullNameTxt);
+        patientFullName = findViewById(R.id.fullNameTxt);
         patientGender = findViewById(R.id.genderTxt);
         patientAge = findViewById(R.id.ageTxt);
         patientDateOfBirth = findViewById(R.id.dateOfBirthTxt);
         patientLocation = findViewById(R.id.locationTxt);
         patientClinician = findViewById(R.id.clinicianNameTxt);
+        btnSchedule = findViewById(R.id.btnSchedule);
 
         edtPatientName = findViewById(R.id.user_name_banner);
 
@@ -82,14 +101,93 @@ public class PatientHome extends AppCompatActivity {
                 return true;
             }
         });
+        if(isClinitian) {
+            btnSchedule.setVisibility(View.VISIBLE);
+            btnSchedule.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final Dialog dialog = new Dialog(PatientHome.this);
+                    dialog.setContentView(R.layout.popupvisit);
+                    final CalendarView calendarView = dialog.findViewById(R.id.clvDate);
+                    final Spinner edtTime = dialog.findViewById(R.id.spnTimes);
+                    Button btnConfirm = dialog.findViewById(R.id.btnConfirm);
+                    TextView txtAppointment = dialog.findViewById(R.id.txtAppointment);
+                    //TODO: make calendar events for visits.
+                    dialog.show();
+                    txtAppointment.setText("Create a new visit with: " + patientFullName.getText().toString());
+                    final String[] dateString = new String[1];
+
+                    calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                        @Override
+                        public void onSelectedDayChange(CalendarView view, int year, int month,
+                                                        int dayOfMonth) {
+                            String curDate = String.valueOf(dayOfMonth);
+                            String Year = String.valueOf(year);
+                            String Month = String.valueOf(month + 1);
+                            dateString[0] = curDate + "-" + Month + "-" + Year;
+                        }
+                    });
+
+                    btnConfirm.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                            final String time = edtTime.getSelectedItem().toString();
+                            final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            final String clinicianID = user.getUid();
+                            final String patientID = patientId.getText().toString();
+
+                            db.collection("clinician").document(clinicianID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                    if(task.isSuccessful()) {
+                                        DocumentSnapshot document = task.getResult();
+                                        if(document.exists()) {
+                                            String cName = document.getData().get("name").toString();
+                                            Map<String, Object> visit = new HashMap<>();
+                                            visit.put("patientId", patientID);
+                                            visit.put("patientName", patientFullName.getText().toString());
+                                            visit.put("clinicianId", clinicianID);
+                                            visit.put("clinicianName", cName);
+                                            visit.put("scheduleStart", time);
+                                            visit.put("date", dateString[0]);
+                                            visit.put("visitCancelled", false);
+                                            visit.put("visitCompleted", false);
 
 
+                                            db.collection("visit").document().set(visit).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    Toast.makeText(getApplicationContext(), "boom", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
 
-        //Get and Display Patient Details
-        populatePatientDetails();
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            });
 
-        populatePatientVisits();
+                        }
+                    });
 
+                    String time;
+                    long date;
+
+
+                }
+            });
+
+
+            //Get and Display Patient Details
+            populatePatientDetails();
+            populatePatientVisits();
+
+        }
     }
 
     private void populatePatientDetails(){
@@ -97,7 +195,7 @@ public class PatientHome extends AppCompatActivity {
         user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
 
-        db.document("patient/"+mAuth.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.document("patient/"+userID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.exists()){
@@ -115,6 +213,7 @@ public class PatientHome extends AppCompatActivity {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             if(documentSnapshot.exists()){
+
                                 edtPatientName.setText(fullName);
                                 displayPatientDetails(id, fullName,gender, age + " ", datOfBirth, location,documentSnapshot.get("name").toString());
                             }
@@ -140,12 +239,15 @@ public class PatientHome extends AppCompatActivity {
         patientDateOfBirth.setText(dateOfBirth);
         patientLocation.setText(location);
         patientClinician.setText(clinicianName);
+        if(isClinitian){
+            edtPatientName.setText(clinitianintent);
+        }
     }
 
 
     private void populatePatientVisits() {
 
-        db.collection("visit").whereEqualTo("patientId", user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("visit").whereEqualTo("patientId", userID).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {

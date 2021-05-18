@@ -112,6 +112,7 @@ public class ClinicianHome extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.exists()) {
+
                     edtClinitianName.setText(documentSnapshot.get("name").toString());
                     name = documentSnapshot.get("name").toString();
                 }
@@ -157,6 +158,8 @@ public class ClinicianHome extends AppCompatActivity {
         });
 
         setRecycle();
+
+
 
 
 
@@ -255,13 +258,10 @@ public class ClinicianHome extends AppCompatActivity {
                     return;
                 }
                 for(DocumentSnapshot documentSnapshot : value) {
-
                     DateAge dateAge = new DateAge((long) documentSnapshot.get("dateOfBirth"));
                     int age = dateAge.getAge();
-
-//
-
                     Patient pat = new Patient(documentSnapshot.get("name").toString(), age + "", documentSnapshot.get("gender").toString(), documentSnapshot.getId(),name);
+
                     patients.add(pat);
                 }
 
@@ -269,8 +269,26 @@ public class ClinicianHome extends AppCompatActivity {
                 recyclPatients.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 patientAdapter = new patientAdapter(ClinicianHome.this, patients);
                 recyclPatients.setAdapter(patientAdapter);
+
+                patientAdapter.setonItemClicklistener(new patientAdapter.onItemClickListener() {
+                    @Override
+                    public void onItemClicked(int position) {
+                        Intent intent = new Intent(ClinicianHome.this,PatientHome.class);
+                        intent.putExtra("UserID",patients.get(position).getPatientID());
+                        intent.putExtra("isClinitian",true);
+                        intent.putExtra("clinitianname",edtClinitianName.getText().toString());
+                        startActivity(intent);
+                    }
+                });
+
+
             }
         });
+
+
+
+
+
 
 
     }
