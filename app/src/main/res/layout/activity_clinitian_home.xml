@@ -35,15 +35,13 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="25dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="73dp"
             android:layout_marginEnd="25dp"
-            android:layout_marginBottom="65dp"
+            android:layout_marginBottom="55dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline3"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="@+id/guideline3" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline10"
@@ -51,7 +49,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintGuide_percent="0.5"
+            app:layout_constraintGuide_percent="0.55"
             app:layout_constraintStart_toStartOf="parent" />
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
@@ -66,22 +64,28 @@
             android:id="@+id/recycPastVisitclinitian"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_margin="25dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="25dp"
             android:background="#FFFFFF"
-            app:layout_constraintBottom_toTopOf="@+id/recycFutureVisitclinitian"
+            app:layout_constraintBottom_toTopOf="@+id/guideline10"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toTopOf="@+id/guideline3" />
+            app:layout_constraintTop_toTopOf="@+id/guideline3"
+            app:layout_constraintVertical_bias="0.44" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycFutureVisitclinitian"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_margin="25dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="25dp"
+
+            android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-
             app:layout_constraintTop_toTopOf="@+id/guideline10"
             app:layout_constraintVertical_bias="0.921" />
 
@@ -107,11 +111,13 @@
             android:id="@+id/textView24"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="8dp"
             android:text="Completed Visits"
             android:textColor="#000000"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/recycPastVisitclinitian"
+            app:layout_constraintEnd_toEndOf="@+id/recycPastVisitclinitian"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/recycPastVisitclinitian"
             app:layout_constraintTop_toTopOf="@+id/guideline3"
             app:layout_constraintVertical_bias="0.206" />
@@ -120,62 +126,94 @@
             android:id="@+id/textView25"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="8dp"
             android:text="Upcoming Visits"
             android:textColor="#000000"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/recycFutureVisitclinitian"
+            app:layout_constraintEnd_toEndOf="@+id/recycFutureVisitclinitian"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/recycFutureVisitclinitian"
             app:layout_constraintTop_toTopOf="@+id/guideline10" />
 
-        <SearchView
-            android:id="@+id/svsearchpatient"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recyclMedicalRecord"
-            app:layout_constraintVertical_bias="0.058">
-
-        </SearchView>
-
-        <Spinner
-            android:id="@+id/spnsearchpatient"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1"
-            android:entries="@array/searchpatients"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnsearchpatients"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/recyclMedicalRecord" />
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="30dp"
+            app:cardCornerRadius="5dp"
+            app:layout_constraintBottom_toTopOf="@+id/recyclMedicalRecord"
+            app:layout_constraintEnd_toEndOf="@+id/recyclMedicalRecord"
+            app:layout_constraintStart_toStartOf="@+id/recyclMedicalRecord"
+            app:layout_constraintTop_toTopOf="@+id/guideline3"
+            app:layout_constraintVertical_bias="1.0">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <SearchView
+                    android:id="@+id/svsearchpatient"
+                    android:layout_width="140dp"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="7dp">
+
+                </SearchView>
+
+                <Spinner
+                    android:id="@+id/spnsearchpatient"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:entries="@array/searchpatients" />
+
+                <Button
+                    android:id="@+id/btnsearchpatients"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:text="Search"
+                    android:textSize="12sp"
+                    app:cornerRadius="5dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <Button
-            android:id="@+id/btnsearchpatients"
+            android:id="@+id/btnStatistics"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_marginTop="9dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="12dp"
-            android:text="Search"
-            android:textSize="12sp"
-            app:cornerRadius="25dp"
+            android:layout_marginTop="4dp"
+            android:text="Download statistics"
+            android:visibility="invisible"
+            app:cornerRadius="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/recyclMedicalRecord"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Results"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/recyclMedicalRecord"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/recyclMedicalRecord"
+            app:layout_constraintTop_toBottomOf="@+id/cardView"
             app:layout_constraintVertical_bias="1.0" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

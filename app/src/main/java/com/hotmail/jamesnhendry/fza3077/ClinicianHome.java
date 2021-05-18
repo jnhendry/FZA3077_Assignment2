@@ -50,7 +50,7 @@ public class ClinicianHome extends AppCompatActivity {
     FirebaseFirestore db;
     FirebaseUser user;
 
-    private Button btnSearch;
+    private Button btnSearch,btnStatistics;
     private long difference_In_Years;
     final ArrayList<Visit> visitPastArrayList = new ArrayList<>();
     final ArrayList<Visit> visitFutureArrayList = new ArrayList<>();
@@ -59,10 +59,12 @@ public class ClinicianHome extends AppCompatActivity {
     private SearchView svsview ;
     private Spinner spnsearch;
     private String searchstuff,queryforsearch;
+    private int thisisthebreaker;
 
 
 
-    //TODO: allow clintians to search all patients...
+
+
     //TODO clinitians must see statistics and print the info
 
     @Override
@@ -86,7 +88,7 @@ public class ClinicianHome extends AppCompatActivity {
         btnSearch = findViewById(R.id.btnsearchpatients);
         spnsearch = findViewById(R.id.spnsearchpatient);
         svsview = findViewById(R.id.svsearchpatient);
-
+        btnStatistics = findViewById(R.id.btnStatistics);
         edtClinitianName = findViewById(R.id.user_name_banner);
         DocumentReference snap = db.collection("clinician").document(user.getUid());
 
@@ -116,11 +118,23 @@ public class ClinicianHome extends AppCompatActivity {
             }
         });
 
+
+
         populateArray();
+
+        btnStatistics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO set up printing and showing statistics based on people gathered in search. WITH PDF
+            }
+        });
+
+
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                btnStatistics.setVisibility(View.VISIBLE);
 
                 switch(spnsearch.getSelectedItem().toString()) {
                     case "Name":
@@ -132,12 +146,18 @@ public class ClinicianHome extends AppCompatActivity {
                     case "Location":
                         searchPatients(svsview.getQuery().toString(),"suburb");
                         return;
+                    case "My Patients":
+                        searchPatients(svsview.getQuery().toString(),"patients");
+                        return;
                     default:
+
                 }
 
             }
         });
+
         setRecycle();
+
 
 
 
@@ -148,6 +168,7 @@ public class ClinicianHome extends AppCompatActivity {
         patientAdapter.notifyDataSetChanged();
         searchstuff = patient;
         queryforsearch = search;
+        thisisthebreaker = 0;
 
 
 
@@ -162,22 +183,50 @@ public class ClinicianHome extends AppCompatActivity {
                     for(DocumentSnapshot snap:queryDocumentSnapshots){
 
                         Map<String,Object> map = snap.getData();
+                        DateAge test = new DateAge((long)map.get("dateOfBirth"));
+                        String age = test.getAge() + "";
+                        Patient patient1 = new Patient(map.get("name").toString(),age,map.get("gender").toString(),snap.getId(),user.getUid(),map.get("suburb").toString());
 
-                                DateAge test = new DateAge((long)map.get("dateOfBirth"));
-                                String age = test.getAge() + "";
-                        Patient patient1 = new Patient(map.get("name").toString(),age,map.get("gender").toString(),snap.getId(),user.getUid());
+                        switch(queryforsearch){
+                            case "name":
+                                if(patient1.getName().toLowerCase().startsWith(searchstuff.toLowerCase())) {
+                                    patients.add(patient1);
+                                    System.out.println( patient1.getName() + searchstuff);
+                                    patientAdapter.notifyDataSetChanged();
+                                }
+                                break;
+                            case "age":
+                                if(patient1.getPhoneNumber().equals(searchstuff)) {
+                                    patients.add(patient1);
+                                    System.out.println( patient1.getName() + searchstuff);
+                                    patientAdapter.notifyDataSetChanged();
+                                }
+                                break;
+                            case "suburb":
+                                if(patient1.getLocation().toLowerCase().startsWith(searchstuff.toLowerCase())) {
+                                    patients.add(patient1);
+                                    System.out.println( patient1.getName() + searchstuff);
+                                    patientAdapter.notifyDataSetChanged();
+                                }
+                                break;
+                            case "patients":
+                                while(thisisthebreaker == 0) {
+                                    populateArray();
+                                    patientAdapter.notifyDataSetChanged();
+                                    thisisthebreaker+=1;
+                                }
 
-                        if(patient1.getName().toLowerCase().contains(searchstuff)) {
-                            patients.add(patient1);
-                            System.out.println( patient1.getName() + searchstuff);
-                            patientAdapter.notifyDataSetChanged();
+                                break;
+                            default:
+
+
                         }
                     }
                 }
             }
         });
 
-       patientAdapter.notifyDataSetChanged();
+
 
 
     }

@@ -3,7 +3,7 @@ package com.hotmail.jamesnhendry.fza3077;
 import java.util.ArrayList;
 
 public class Patient {
-    private String clinitianUsername,name,username,password,phoneNumber,sex,patientID;
+    private String clinitianUsername,name,username,password,phoneNumber,sex,patientID,location;
     private ArrayList<Visit> pastVisits;
     private ArrayList<Visit> futureVisits;
 
@@ -19,7 +19,22 @@ public class Patient {
         this.clinitianUsername = clinitianUsername;
     }
 
+    public Patient(String name, String phoneNumber, String sex, String patientID, String clinitianUsername,String location) {
+        this.clinitianUsername = clinitianUsername;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.sex = sex;
+        this.patientID = patientID;
+        this.location = location;
+    }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
     public String getPatientID() {
         return patientID;
