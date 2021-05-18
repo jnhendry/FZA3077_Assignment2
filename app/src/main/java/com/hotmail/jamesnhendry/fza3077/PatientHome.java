@@ -3,17 +3,19 @@ package com.hotmail.jamesnhendry.fza3077;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -21,11 +23,8 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Map;
 
 public class PatientHome extends AppCompatActivity {
 
@@ -37,17 +36,15 @@ public class PatientHome extends AppCompatActivity {
     TextView patientDateOfBirth;
     TextView patientLocation;
     TextView patientClinician;
+    TextView edtPatientName;
+    private MaterialToolbar topAppBar;
 
+    private RecyclerView  recyclerPastVisit, recyclerFutureVisit;
+    private visitAdapter visitPastAdapter, visitFutureAdapter;
 
-
-    private Gson gson = new Gson();
-
-    Visit temp ;
-    ArrayList<MedicalRecord> medtemp = new ArrayList<>();
-    MedicalRecord med;
-    RecyclerView recyclFutureVisit,recyclVisit,recyclMedRec;
+    final ArrayList<Visit> visitPastArrayList = new ArrayList<>();
+    final ArrayList<Visit> visitFutureArrayList = new ArrayList<>();
     private FirebaseAuth mAuth;
-    private ArrayList<Visit> visits = new ArrayList<>();
 
     FirebaseFirestore db;
     FirebaseUser user;
@@ -66,64 +63,32 @@ public class PatientHome extends AppCompatActivity {
         patientLocation = findViewById(R.id.locationTxt);
         patientClinician = findViewById(R.id.clinicianNameTxt);
 
+        edtPatientName = findViewById(R.id.user_name_banner);
+
+        recyclerFutureVisit = findViewById(R.id.patientFuturerecyclerView);
+        recyclerPastVisit = findViewById(R.id.patientRecyclePast);
+
+
+        topAppBar = findViewById(R.id.topAppBarPatientHome);
+
+        topAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                System.out.println("You Clicked Log Out");
+                mAuth.signOut();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+
+                return true;
+            }
+        });
+
+
+
         //Get and Display Patient Details
         populatePatientDetails();
 
-//        recyclFutureVisit = findViewById(R.id.patientFuturerecyclerView);
-//        recyclFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-//
-//        recyclVisit = findViewById(R.id.patientRecyclePast);
-//        recyclVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-//
-//        recyclMedRec = findViewById(R.id.recyclMedicalRecord);
-//        recyclMedRec.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-
-
-
-
-        populateArray();
-
-
-
-/*
-
-        Intent intent = getIntent();
-        String patient = intent.getStringExtra("patient") ;
-        if(patient!=null) {
-            Patient pa = gson.fromJson(patient, Patient.class);
-            txtPatientName.setText(pa.getName());
-            visitAdapter pastVisitAdapter = new visitAdapter(pa.getPastVisits(),this);
-            visitAdapter futureVisitAdapter = new visitAdapter(pa.getFutureVisits(),this);
-            temp = pa.getPastVisits().get(pa.getPastVisits().size()-1);
-            med = temp.getMedicalRecord();
-            medtemp.clear();
-            med.setReynoldsRiskScore(med.calculateReynoldsRiskScore());
-            medtemp.add(med);
-
-            recyclFutureVisit.setAdapter(futureVisitAdapter);
-            recyclVisit.setAdapter(pastVisitAdapter);
-            recyclMedRec.setAdapter(medicalRecordAdapter);
-
-        }else{
-            String clinitian = intent.getStringExtra("patientdetails");
-            int pos = intent.getIntExtra("position",0);
-            Clinitian cl = gson.fromJson(clinitian,Clinitian.class);
-            if(cl!=null) {
-                txtPatientName.setText(cl.getPatients().get(pos).getName());
-                visitAdapter pastVisitAdapter = new visitAdapter(cl.getPatients().get(pos).getPastVisits(),this);
-                visitAdapter futureVisitAdapter = new visitAdapter(cl.getPatients().get(pos).getFutureVisits(),this);
-                temp = cl.getPatients().get(pos).getPastVisits().get(cl.getPatients().get(pos).getPastVisits().size()-1);
-                med = temp.getMedicalRecord();
-                medtemp.clear();
-                med.setReynoldsRiskScore(med.calculateReynoldsRiskScore());
-                medtemp.add(med);
-                recyclFutureVisit.setAdapter(futureVisitAdapter);
-                recyclVisit.setAdapter(pastVisitAdapter);
-                recyclMedRec.setAdapter(medicalRecordAdapter);
-            }
-        }
-
-*/
+        populatePatientVisits();
 
     }
 
@@ -136,8 +101,6 @@ public class PatientHome extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.exists()){
-
-
 
                     final String id = documentSnapshot.getId();
                     final String fullName = documentSnapshot.get("name").toString();
@@ -152,12 +115,11 @@ public class PatientHome extends AppCompatActivity {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             if(documentSnapshot.exists()){
-
+                                edtPatientName.setText(fullName);
                                 displayPatientDetails(id, fullName,gender, age + " ", datOfBirth, location,documentSnapshot.get("name").toString());
                             }
                         }
                     });
-
                 }
 
             }
@@ -181,53 +143,41 @@ public class PatientHome extends AppCompatActivity {
     }
 
 
-    private void populateArray() {
+    private void populatePatientVisits() {
 
-
-        db.collection("Visits").whereEqualTo("patientID",user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("visit").whereEqualTo("patientId", user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if(error!=null){
+                if (error != null) {
                     return;
                 }
+                visitPastArrayList.clear();
+                visitFutureArrayList.clear();
+                for (final DocumentSnapshot documentSnapshot : value) {
 
-                for(DocumentSnapshot documentSnapshot:value) {
-                    Map<String,Object> map = documentSnapshot.getData();
-                    String clinitianname = map.get("clinitianname").toString();
-                    String patientname = map.get("patientname").toString();
-                    String date = map.get("date").toString();
-                    String time = map.get("schedulestart").toString();
-                    Boolean set = (Boolean) map.get("visitCompleted");
-                    //if(!set) {
-                        ///Visit pat = new Visit(clinitianname,patientname,date,time);//add medical record shit
-                        //visits.add(pat);
+                    String date = documentSnapshot.get("date").toString();
+                    String time = documentSnapshot.get("scheduleStart").toString();
+                    String clinicianId = documentSnapshot.get("clinicianName").toString();
+                    String patientID = documentSnapshot.get("patientName").toString();
+                    boolean visitCompleted = (boolean) documentSnapshot.get("visitCompleted");
 
-                  //  }else{
-                        Visit pat = new Visit(clinitianname,patientname,date,time);
-                        visits.add(pat);
-                  //  }
+                    Visit visit = new Visit(clinicianId, patientID, date, time);
 
-                   // medtemp.add(pat.getMedicalRecord());
+                    if (visitCompleted) {
+                        visitPastArrayList.add(visit);
+                    } else {
+                        visitFutureArrayList.add(visit);
+                    }
                 }
 
-                recyclFutureVisit = findViewById(R.id.patientFuturerecyclerView);
-                recyclFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                visitAdapter visitAdapter = new visitAdapter(visits,getApplicationContext());
-                recyclFutureVisit.setAdapter(visitAdapter);
+                recyclerFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                visitFutureAdapter = new visitAdapter(visitFutureArrayList, PatientHome.this);
+                recyclerFutureVisit.setAdapter(visitFutureAdapter);
 
-//                recyclMedRec = findViewById(R.id.recyclMedicalRecord);
-//                recyclMedRec.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-//                recyclMedRec.setAdapter(medicalRecordAdapter);
-
-               // System.out.println(medtemp.get(0).getBloodpressure());
-
+                recyclerPastVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                visitPastAdapter = new visitAdapter(visitPastArrayList, PatientHome.this);
+                recyclerPastVisit.setAdapter(visitPastAdapter);
             }
         });
-
-
-
-
-
-
     }
 }

@@ -12,13 +12,13 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBarPatientHome"
+            style="@style/Widget.MaterialComponents.Toolbar.Primary"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary"
             app:menu="@menu/top_app_bar"
             app:title="Safe Heart"
-            app:titleTextColor="#000000"
-            />
+            app:titleTextColor="#000000" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -50,58 +50,65 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginHorizontal="20dp"
                     android:layout_marginVertical="10dp"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginVertical="15dp"
                         android:text="Patient ID"
                         android:textColor="#000000"
-                        android:layout_marginVertical="12dp"/>
+                        android:textSize="18sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginVertical="15dp"
                         android:text="Full Name"
                         android:textColor="#000000"
-                        android:layout_marginVertical="12dp"/>
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginVertical="15dp"
                         android:text="Gender"
                         android:textColor="#000000"
-                        android:layout_marginVertical="12dp"/>
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginVertical="15dp"
                         android:text="Age"
                         android:textColor="#000000"
-                        android:layout_marginVertical="12dp"/>
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginVertical="15dp"
                         android:text="DOB"
                         android:textColor="#000000"
-                        android:layout_marginVertical="12dp"/>
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginVertical="15dp"
                         android:text="Location"
                         android:textColor="#000000"
-                        android:layout_marginVertical="12dp"/>
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginVertical="15dp"
                         android:text="Clinician"
                         android:textColor="#000000"
-                        android:layout_marginVertical="12dp"/>
+                        android:textSize="16sp" />
 
 
                 </LinearLayout>
@@ -118,55 +125,56 @@
                         android:id="@+id/patientIdTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="12dp"
-                        />
+                        android:layout_marginVertical="15dp"
+                        android:textSize="18sp" />
 
                     <TextView
 
                         android:id="@+id/fullNameTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="12dp"
-                         />
+                        android:layout_marginVertical="15dp"
+                        android:textSize="16sp" />
 
                     <TextView
 
                         android:id="@+id/genderTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="12dp"
-                        />
+                        android:layout_marginVertical="15dp"
+                        android:textSize="16sp" />
 
                     <TextView
 
                         android:id="@+id/ageTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="12dp"
-                        />
+                        android:layout_marginVertical="15dp"
+                        android:textSize="16sp" />
+
                     <TextView
 
                         android:id="@+id/dateOfBirthTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="12dp"
-                        />
+                        android:layout_marginVertical="15dp"
+                        android:textSize="16sp" />
 
                     <TextView
 
                         android:id="@+id/locationTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="12dp"
-                        />
+                        android:layout_marginVertical="15dp"
+                        android:textSize="16sp" />
 
                     <TextView
 
                         android:id="@+id/clinicianNameTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="12dp"
-                        />
+                        android:layout_marginVertical="15dp"
+                        android:textSize="16sp" />
 
 
 
@@ -204,8 +212,10 @@
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:text="Completed Visits"
             android:textColor="#000000"
+            android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/patientRecyclePast"
             app:layout_constraintStart_toStartOf="@+id/patientRecyclePast"
@@ -216,9 +226,11 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textColor="#000000"
+            android:layout_marginStart="4dp"
             android:text="Upcoming Visits"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/patientFuturerecyclerView"
             app:layout_constraintTop_toTopOf="@+id/guideline8" />
 

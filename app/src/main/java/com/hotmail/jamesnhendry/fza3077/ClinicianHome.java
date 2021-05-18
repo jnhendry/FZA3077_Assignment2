@@ -117,28 +117,7 @@ public class ClinicianHome extends AppCompatActivity {
                     DateAge dateAge = new DateAge((long) documentSnapshot.get("dateOfBirth"));
                     int age = dateAge.getAge();
 
-//                    long yearsOld = (long) documentSnapshot.get("dateOfBirth");
-//                    String yearsOldString = new SimpleDateFormat("dd-mm-yyyy", Locale.ENGLISH).format(yearsOld);
-//                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 //
-//                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-mm-yyyy");
-//                    LocalDateTime now = LocalDateTime.now();
-//
-//                    String currentDate = dtf.format((now));
-//
-//                    try {
-//                        Date d1 = sdf.parse(yearsOldString);
-//                        Date d2 = sdf.parse(currentDate);
-//
-//                        long difference = d2.getTime() - d1.getTime();
-//
-//                        difference_In_Years = (difference / (1000L * 60 * 60 * 24 * 365));
-//
-//                        System.out.println("Difference: " + difference_In_Years);
-//
-//                    } catch(Exception e) {
-//                        System.out.println("Something went wrong with converting dates. ");
-//                    }
 
                     Patient pat = new Patient(documentSnapshot.get("name").toString(), age + "", documentSnapshot.get("gender").toString(), documentSnapshot.getId(),name);
                     patients.add(pat);
