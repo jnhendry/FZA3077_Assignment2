@@ -9,6 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,11 +49,17 @@ public class ClinicianHome extends AppCompatActivity {
     private ArrayList<Patient> patients = new ArrayList<>();
     FirebaseFirestore db;
     FirebaseUser user;
+
+    private Button btnSearch;
     private long difference_In_Years;
     final ArrayList<Visit> visitPastArrayList = new ArrayList<>();
     final ArrayList<Visit> visitFutureArrayList = new ArrayList<>();
     private MaterialToolbar topAppBar;
     int counter = 0;
+    private SearchView svsview ;
+    private Spinner spnsearch;
+    private String searchstuff,queryforsearch;
+
 
 
     //TODO: allow clintians to search all patients...
@@ -73,6 +83,9 @@ public class ClinicianHome extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
+        btnSearch = findViewById(R.id.btnsearchpatients);
+        spnsearch = findViewById(R.id.spnsearchpatient);
+        svsview = findViewById(R.id.svsearchpatient);
 
         edtClinitianName = findViewById(R.id.user_name_banner);
         DocumentReference snap = db.collection("clinician").document(user.getUid());
@@ -104,40 +117,67 @@ public class ClinicianHome extends AppCompatActivity {
         });
 
         populateArray();
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                switch(spnsearch.getSelectedItem().toString()) {
+                    case "Name":
+                        searchPatients(svsview.getQuery().toString(),"name");
+                        return;
+                    case "Age":
+                        searchPatients(svsview.getQuery().toString(),"age");
+                        return;
+                    case "Location":
+                        searchPatients(svsview.getQuery().toString(),"suburb");
+                        return;
+                    default:
+                }
+
+            }
+        });
         setRecycle();
+
+
 
     }
 
     public void searchPatients(String patient, String search){
         patients.clear();
-        String query;
-        switch(search){
-            case "Name":
-                query = "name";
-                return;
-            case "Age":
-                query = "age";
-                return;
-            case "Location":
-                query = "suburb";
-                return;
-            default:
-                query = "";
+        patientAdapter.notifyDataSetChanged();
+        searchstuff = patient;
+        queryforsearch = search;
 
-        }
 
-        db.collection("patients").whereEqualTo(query,patient).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+
+
+
+        //Toast.makeText(getApplicationContext(), search + " ======= " + patient, Toast.LENGTH_SHORT).show();
+
+        db.collection("patient").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 if(!queryDocumentSnapshots.isEmpty()){
                     for(DocumentSnapshot snap:queryDocumentSnapshots){
+
                         Map<String,Object> map = snap.getData();
-                        Patient patient1 = new Patient(map.get("name").toString(),map.get("age").toString(),map.get("gender").toString(),snap.getId(),user.getUid());
-                        patients.add(patient1);
+
+                                DateAge test = new DateAge((long)map.get("dateOfBirth"));
+                                String age = test.getAge() + "";
+                        Patient patient1 = new Patient(map.get("name").toString(),age,map.get("gender").toString(),snap.getId(),user.getUid());
+
+                        if(patient1.getName().toLowerCase().contains(searchstuff)) {
+                            patients.add(patient1);
+                            System.out.println( patient1.getName() + searchstuff);
+                            patientAdapter.notifyDataSetChanged();
+                        }
                     }
                 }
             }
         });
+
+       patientAdapter.notifyDataSetChanged();
 
 
     }
