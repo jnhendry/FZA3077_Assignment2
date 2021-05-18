@@ -30,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 public class ClinicianHome extends AppCompatActivity {
 
@@ -106,6 +107,41 @@ public class ClinicianHome extends AppCompatActivity {
         setRecycle();
 
     }
+
+    public void searchPatients(String patient, String search){
+        patients.clear();
+        String query;
+        switch(search){
+            case "Name":
+                query = "name";
+                return;
+            case "Age":
+                query = "age";
+                return;
+            case "Location":
+                query = "suburb";
+                return;
+            default:
+                query = "";
+
+        }
+
+        db.collection("patients").whereEqualTo(query,patient).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if(!queryDocumentSnapshots.isEmpty()){
+                    for(DocumentSnapshot snap:queryDocumentSnapshots){
+                        Map<String,Object> map = snap.getData();
+                        Patient patient1 = new Patient(map.get("name").toString(),map.get("age").toString(),map.get("gender").toString(),snap.getId(),user.getUid());
+                        patients.add(patient1);
+                    }
+                }
+            }
+        });
+
+
+    }
+
 
     @Override
     protected void onStart() {

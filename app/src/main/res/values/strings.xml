@@ -46,4 +46,11 @@
         <item>17:00</item>
     </string-array>
 
+    <string-array name="searchpatients">
+        <item>--Select--</item>
+        <item>Name</item>
+        <item>Age</item>
+        <item>Location</item>
+    </string-array>
+
 </resources>

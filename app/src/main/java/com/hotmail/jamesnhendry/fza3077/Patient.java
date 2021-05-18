@@ -19,6 +19,8 @@ public class Patient {
         this.clinitianUsername = clinitianUsername;
     }
 
+
+
     public String getPatientID() {
         return patientID;
     }
