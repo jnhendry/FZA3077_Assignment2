@@ -313,7 +313,7 @@ public class ClinicianHome extends AppCompatActivity {
                     String patientID = documentSnapshot.get("patientName").toString();
                     boolean visitCompleted = (boolean) documentSnapshot.get("visitCompleted");
 
-                    Visit visit = new Visit(clinicianId,patientID , date, time);
+                    Visit visit = new Visit(clinicianId,patientID , date, time,documentSnapshot.getId(),(boolean)documentSnapshot.get("visitCompleted"));
 
                     if (visitCompleted){
                         visitPastArrayList.add(visit);
@@ -331,6 +331,13 @@ public class ClinicianHome extends AppCompatActivity {
                     @Override
                     public void onItemClicked(int position) {
                         //TODO: handle the visit onclick
+                        Intent futurevis = new Intent(ClinicianHome.this,NewVisit.class);
+                        futurevis.putExtra("visitid",visitFutureArrayList.get(position).getVisitid());
+                        futurevis.putExtra("value",position);//if position>0 then do nothing;
+                        futurevis.putExtra("isvisitcompleted",visitFutureArrayList.get(position).isIscompleted());
+                        futurevis.putExtra("usertype","clinitian");
+                        startActivity(futurevis);
+
                     }
                 });
 

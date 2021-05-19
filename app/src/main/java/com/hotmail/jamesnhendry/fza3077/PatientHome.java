@@ -264,7 +264,7 @@ public class PatientHome extends AppCompatActivity {
                     String patientID = documentSnapshot.get("patientName").toString();
                     boolean visitCompleted = (boolean) documentSnapshot.get("visitCompleted");
 
-                    Visit visit = new Visit(clinicianId, patientID, date, time);
+                    Visit visit = new Visit(clinicianId, patientID, date, time,visitId,ifitscompleted);
 
                     if (visitCompleted) {
                         visitPastArrayList.add(visit);
@@ -292,6 +292,7 @@ public class PatientHome extends AppCompatActivity {
                     @Override
                     public void onItemClicked(int position) {
                         //TODO:handle patient view of visits for patients. handle the IF STATEMENT that will distinguish clinitian or patient.
+                        //Patients can click any but only edit the most recent.
                     }
                 });
             }

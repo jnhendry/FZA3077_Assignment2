@@ -3,10 +3,11 @@ package com.hotmail.jamesnhendry.fza3077;
 import java.util.Date;
 
 public class Visit {
-    private String clinitianID, patientID;
+    private String clinitianID, patientID,visitid;
     private MedicalRecord medicalRecord;
     private String date,time;
     private Patient patty;
+    private boolean iscompleted;
 
     /*
     Every visit will have basic requirements. date, time doc username and patient username.
@@ -27,7 +28,23 @@ public class Visit {
 
     }
 
-    public Visit(String clinitianID, String patientID, String date,String time) {
+    public String getVisitid() {
+        return visitid;
+    }
+
+    public void setVisitid(String visitid) {
+        this.visitid = visitid;
+    }
+
+    public boolean isIscompleted() {
+        return iscompleted;
+    }
+
+    public void setIscompleted(boolean iscompleted) {
+        this.iscompleted = iscompleted;
+    }
+
+    public Visit(String clinitianID, String patientID, String date, String time, String visitid, boolean iscompleted) {
         this.clinitianID = clinitianID;
         this.patientID = patientID;
         this.date = date;

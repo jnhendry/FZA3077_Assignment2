@@ -54,6 +54,14 @@ public class visitAdapter extends RecyclerView.Adapter<visitAdapter.subholder>{
                 holder.txtVisitClinitian.setText(clinitian);
                 holder.txtVisitPatient.setText(patient);
                 holder.txtVisitTime.setText(list.get(position).getTime());
+//                if(iscompleted){
+//                    if(position==0) {
+//                        btnEdit.setvisibility(VISIBILE);
+//                    }
+//                }
+
+
+                //btnedit.setOnCLICKLISTENER....
 
     }
 

@@ -31,17 +31,18 @@ public class NewVisit extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_visit);
-        boolean value,completed;
+        boolean completed;
+        int isMostRecent;
         String usertype;
         declareelements();
         Intent intent = getIntent();
         String visitID;
         visitID = intent.getStringExtra("visitid");//use this to gather from the DB
-        value = intent.getBooleanExtra("value",false);
+        isMostRecent = intent.getIntExtra("value",1);
         completed = intent.getBooleanExtra("isvisitcompleted",false);
         usertype = intent.getStringExtra("usertype");
         populateemptyfields(visitID);
-        isEditable(value);
+        isEditable(isMostRecent);
         whatUser(usertype);
 
         iscompleted(completed);
@@ -201,11 +202,11 @@ public class NewVisit extends AppCompatActivity {
             //add all items to the database and update visit statuses.
     }
 
-    public void isEditable(boolean val){//set intent to grab a boolean of true if first element of recycler view is selected in PatientHome.class else, set nothing.
-        if(val){
-
+    public void isEditable(int val){//set intent to grab a boolean of true if first element of recycler view is selected in PatientHome.class else, set nothing.
+        if(val==0){
+                //ismostrecent do something here
         }else{
-
+                // is not most recent set edit texts to not editable and remove buttons for patients.
         }
     }
 }
