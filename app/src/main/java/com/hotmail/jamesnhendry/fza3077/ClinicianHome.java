@@ -313,7 +313,7 @@ public class ClinicianHome extends AppCompatActivity {
                     String patientID = documentSnapshot.get("patientName").toString();
                     boolean visitCompleted = (boolean) documentSnapshot.get("visitCompleted");
 
-                    Visit visit = new Visit(clinicianId,patientID , date, time,documentSnapshot.getId(),(boolean)documentSnapshot.get("visitCompleted"));
+                    Visit visit = new Visit(clinicianId,patientID , date, time,documentSnapshot.getId(),visitCompleted);
 
                     if (visitCompleted){
                         visitPastArrayList.add(visit);
@@ -349,6 +349,12 @@ public class ClinicianHome extends AppCompatActivity {
                     @Override
                     public void onItemClicked(int position) {
                         //TODO: handle the data transfer
+                        Intent pastvis = new Intent(ClinicianHome.this,NewVisit.class);
+                        pastvis.putExtra("visitid",visitPastArrayList.get(position).getVisitid());
+                        pastvis.putExtra("value",position);//if position>0 then do nothing;
+                        pastvis.putExtra("isvisitcompleted",visitPastArrayList.get(position).isIscompleted());
+                        pastvis.putExtra("usertype","clinician");
+                        startActivity(pastvis);
                     }
                 });
 

@@ -291,7 +291,7 @@ public class PatientHome extends AppCompatActivity {
                             futureVisit.putExtra("visitid",visitFutureArrayList.get(position).getVisitid());
                             futureVisit.putExtra("value",position);//if position>0 then do nothing;
                             futureVisit.putExtra("isvisitcompleted",visitFutureArrayList.get(position).isIscompleted());
-                            futureVisit.putExtra("usertype","clinitian");
+                            futureVisit.putExtra("usertype","clinician");
                             startActivity(futureVisit);
                         }
                     });
@@ -305,7 +305,12 @@ public class PatientHome extends AppCompatActivity {
                     @Override
                     public void onItemClicked(int position) {
                         //TODO:handle patient view of visits for patients. handle the IF STATEMENT that will distinguish clinitian or patient.
-                        //Patients can click any but only edit the most recent.
+                        Intent futureVisit = new Intent(PatientHome.this,NewVisit.class);
+                        futureVisit.putExtra("visitid",visitPastArrayList.get(position).getVisitid());
+                        futureVisit.putExtra("value",position);//if position>0 then do nothing;
+                        futureVisit.putExtra("isvisitcompleted",visitPastArrayList.get(position).isIscompleted());
+                        futureVisit.putExtra("usertype","patient");
+                        startActivity(futureVisit);
                     }
                 });
             }

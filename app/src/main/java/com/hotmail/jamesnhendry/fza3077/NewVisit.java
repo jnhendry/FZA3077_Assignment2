@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -36,8 +37,10 @@ public class NewVisit extends AppCompatActivity {
     private ArrayList<Note> noteArrayList = new ArrayList<>();
     private ArrayList<Recommendation> recommendationArrayList = new ArrayList<>();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
+    private Button btnUpdate,btnSimulate;
+    String usertype,futureorpast;
     String visitID;
+    private MedicalRecord medrec;
 
 
     @Override
@@ -46,7 +49,7 @@ public class NewVisit extends AppCompatActivity {
         setContentView(R.layout.activity_new_visit);
         boolean completed;
         int isMostRecent;
-        String usertype,futureorpast;
+
         declareelements();
         Intent intent = getIntent();
 
@@ -54,43 +57,181 @@ public class NewVisit extends AppCompatActivity {
         isMostRecent = intent.getIntExtra("value",1);
         completed = intent.getBooleanExtra("isvisitcompleted",false);
         usertype = intent.getStringExtra("usertype");
+        Toast.makeText(this, usertype, Toast.LENGTH_SHORT).show();
         populateemptyfields(visitID);
-        isEditable(isMostRecent);
-        whatUser(usertype);
+
+        //isEditable(isMostRecent);
+
         //TODO make medical record editable for lastest visit for patients
         //TODO make medical record, notes and recommendations editable of the latest visit for clinitians
 
-
-        if(completed){
-            //get the data from the database and populate notes and medical record as well as write out recommendations.
-        }else{
-            btnaddRecommendation.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    createnewRecommendation();
-                }
-            });
-
-            btnaddNote.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    createNewNote();
-                }
-            });
+        if(usertype!=null) {
+            switch(usertype) {
+                case "patient":
+                    btnSimulate.setVisibility(View.VISIBLE);
+                    btnUpdate.setVisibility(View.GONE);
+                    btnSaveVisit.setVisibility(View.GONE);
+                    btnaddNote.setVisibility(View.GONE);
+                    btnaddRecommendation.setVisibility(View.GONE);
+                    updateviewforcompleted();
+                    return;
+                case "clinician":
+                    if(completed) {
+                       btnSaveVisit.setVisibility(View.GONE);
+                       btnUpdate.setVisibility(View.VISIBLE);
+                       btnSimulate.setVisibility(View.GONE);
+                       updateviewforcompleted();
+                       makeViewUneditable();
+                    }else {
+                        btnSaveVisit.setVisibility(View.VISIBLE);
+                        btnUpdate.setVisibility(View.GONE);
+                        btnSimulate.setVisibility(View.GONE);
+                    }
+                    return;
+                default:
+                    //throw out an error
+            }
         }
 
+        btnaddRecommendation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createnewRecommendation();
+            }
+        });
 
+        btnaddNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createNewNote();
+            }
+        });
+
+
+            //get the data from the database and populate notes and medical record as well as write out recommendations.
+
+       btnSimulate.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               String sbloodp,screac,sapolproA,sapolproB,shemoglo,slipoProt;
+               double rrs;
+               boolean smokerer,famhitoryry;
+               String smokes,famhistory;
+               sbloodp =bloodpressure.getText().toString();
+               screac = creactive.getText().toString();
+               sapolproA = (apolprotA.getText().toString());
+               sapolproB=(apolprotB.getText().toString());
+               shemoglo = (hemoA.getText().toString());
+               slipoProt = (lipoprotA.getText().toString());
+               smokes = smoker.getSelectedItem().toString();
+               famhistory = famhist.getSelectedItem().toString();
+               if((sbloodp.equals(""))||(screac.equals(""))||(sapolproA.equals(""))||(sapolproB.equals(""))||(shemoglo.equals(""))||(slipoProt.equals(""))||(smokes.equals("--Select one--"))||famhistory.equals("--Select one--")){
+                   Toast.makeText(NewVisit.this, "Fill in all fields", Toast.LENGTH_SHORT).show();
+               }else{
+                   Toast.makeText(NewVisit.this, "works", Toast.LENGTH_SHORT).show();
+
+                   if(smokes.equals("Yes")){
+                       smokerer = true;
+                   }else{
+                       smokerer = false;
+                   }
+                   if(famhistory.equals("Yes")){
+                       famhitoryry = true;
+                   }else {
+                       famhitoryry = false;
+                   }
+                   MedicalRecord medrec = new MedicalRecord(Double.parseDouble(sbloodp),Double.parseDouble(screac),Double.parseDouble(sapolproB),Double.parseDouble(sapolproA),Double.parseDouble(slipoProt),Double.parseDouble(shemoglo),smokerer,famhitoryry);
+                   rrs = medrec.calculateReynoldsRiskScore();
+                   txtreynoldsriskscore.setText(Math.round(rrs)+"%");
+               }
+       }});
         btnSaveVisit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //TODO:import the pdf viewer and handle the data to the database. PDFs will be local.
                 //TODO: handle notifications for clinitians and patients.
                saveVisit();
-
             }
         });
 
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateVisit();
+            }
+        });
         setuprecyclers();
+    }
+
+    private void updateviewforcompleted() {
+        System.out.println(visitID);
+        db.collection("visit").document(visitID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                if(documentSnapshot.exists()) {
+                    double bp, cr, apa, apb, lipa, hem,rrs;
+                    boolean sm, fh;
+                    Map<String,Object> map = documentSnapshot.getData();
+                    Map<String,Object> mr = (Map<String, Object>) map.get("medicalRecord");
+                    ArrayList<Map> notes = (ArrayList<Map>) map.get("notes");
+                    ArrayList<Map> recos =(ArrayList<Map>) map.get("recommendations");
+
+                     bp = (double) mr.get("bloodPressure");
+                    cr = (double) mr.get("creactive");
+                    apa = (double) mr.get("apolprotA");
+                    apb = (double) mr.get("apolprotB");
+                    lipa = (double) mr.get("lipoprotA");
+                    hem = (double) mr.get("hemoglobin");
+                    sm = (boolean) mr.get("smoker");
+                    fh = (boolean) mr.get("familyHistory");
+                    rrs = (double) mr.get("reynoldsRiskScore");
+                    MedicalRecord medicalRecord = new MedicalRecord(bp, cr, apb, apa, lipa, hem, sm, fh);//put shit here
+
+
+                    for(Map maps : notes) {
+                        String body,description;
+                        body = maps.get("body").toString();
+                        description=maps.get("subject").toString();
+                        Note note = new Note(body, description);
+                        noteArrayList.add(note);
+                    }
+                    for(Map maps : recos) {
+                        Recommendation recommendation = new Recommendation(maps.get("body").toString(), maps.get("subject").toString());
+                        recommendationArrayList.add(recommendation);
+                    }
+
+                    setuprecyclers();
+                    bloodpressure.setText(bp+"");
+                    creactive.setText( cr+"");
+                    apolprotA.setText( apa+"");
+                    apolprotB.setText(apb+"");
+                    lipoprotA.setText( lipa+"");
+                    hemoA.setText(hem+"");
+                    txtreynoldsriskscore.setText(Math.round(rrs)+"%");
+
+                    if(medicalRecord.isSmoker()) {
+                        smoker.setSelection(1);
+                    } else {
+                        smoker.setSelection(2);
+                    }
+                    if(medicalRecord.isFamhist()) {
+                        famhist.setSelection(1);
+                    } else {
+                        famhist.setSelection(2);
+
+                    }
+
+
+                }
+                }
+
+        });
+
+    }
+
+    private void updateVisit() {
+        updateVisitData(visitID,medrec,noteArrayList,recommendationArrayList);
     }
 
     private void populateemptyfields(String visitID) {
@@ -138,22 +279,10 @@ public class NewVisit extends AppCompatActivity {
         btnaddNote = findViewById(R.id.addNote);
         btnaddRecommendation = findViewById(R.id.addRecom);
         btnSaveVisit = findViewById(R.id.btnSaveVisit);
+        btnUpdate = findViewById(R.id.btnUpdate);
+        btnSimulate = findViewById(R.id.btnSimulate);
     }
 
-    private void whatUser(String usertype) {
-        if(usertype!=null) {
-            switch(usertype) {
-                case "patient":
-                    //make the buttons dissapear to add notes and recommendations
-                    return;
-                case "clinician":
-                    //make buttons appear
-                    return;
-                default:
-                    //throw out an error
-            }
-        }
-    }
 
 
     public void createNewNote(){
@@ -255,7 +384,7 @@ public class NewVisit extends AppCompatActivity {
             }else {
                 famhitoryry = false;
             }
-            MedicalRecord medrec = new MedicalRecord(Double.parseDouble(sbloodp),Double.parseDouble(screac),Double.parseDouble(sapolproB),Double.parseDouble(sapolproA),Double.parseDouble(slipoProt),Double.parseDouble(shemoglo),smokerer,famhitoryry);
+             medrec = new MedicalRecord(Double.parseDouble(sbloodp),Double.parseDouble(screac),Double.parseDouble(sapolproB),Double.parseDouble(sapolproA),Double.parseDouble(slipoProt),Double.parseDouble(shemoglo),smokerer,famhitoryry);
             rrs = medrec.calculateReynoldsRiskScore();
             txtreynoldsriskscore.setText(Math.round(rrs)+"%");
 
@@ -308,7 +437,9 @@ public class NewVisit extends AppCompatActivity {
         currentVisit.update("medicalRecord",medicalRecordMap, "notes", notesArrayToSave, "recommendations", RecommendationArrayToSave, "visitCompleted", true).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
-
+                btnSaveVisit.setVisibility(View.GONE);
+                btnUpdate.setVisibility(View.VISIBLE);
+                makeViewUneditable();
                 Toast.makeText(NewVisit.this, "Visit Updated", Toast.LENGTH_SHORT).show();
 
 
@@ -321,11 +452,24 @@ public class NewVisit extends AppCompatActivity {
         });
     }
 
+    private void makeViewUneditable() {
+        bloodpressure.setKeyListener(null);
+        creactive.setKeyListener(null);
+        apolprotA.setKeyListener(null);
+        apolprotB.setKeyListener(null);
+        hemoA.setKeyListener(null);
+        lipoprotA.setKeyListener(null);
+        smoker.setEnabled(false);
+        famhist.setEnabled(false);
+    }
+
     public void isEditable(int val){//set intent to grab a boolean of true if first element of recycler view is selected in PatientHome.class else, set nothing.
-        if(val==0){
-                //ismostrecent do something here
+        if(val==0&&usertype.equals("patient")){
+                btnSaveVisit.setVisibility(View.GONE);
+                btnUpdate.setVisibility(View.GONE);
+                btnSimulate.setVisibility(View.VISIBLE);
         }else{
-                // is not most recent set edit texts to not editable and remove buttons for patients.
+               makeViewUneditable();
         }
     }
 }
