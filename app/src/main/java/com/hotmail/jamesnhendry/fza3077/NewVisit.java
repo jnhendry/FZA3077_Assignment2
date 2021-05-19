@@ -70,6 +70,41 @@ public class NewVisit extends AppCompatActivity {
                 createnewRecommendation();
             }
         });
+        btnSimulate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String sbloodp,screac,sapolproA,sapolproB,shemoglo,slipoProt;
+                double rrs;
+                boolean smokerer,famhitoryry;
+                String smokes,famhistory;
+                sbloodp =bloodpressure.getText().toString();
+                screac = creactive.getText().toString();
+                sapolproA = (apolprotA.getText().toString());
+                sapolproB=(apolprotB.getText().toString());
+                shemoglo = (hemoA.getText().toString());
+                slipoProt = (lipoprotA.getText().toString());
+                smokes = smoker.getSelectedItem().toString();
+                famhistory = famhist.getSelectedItem().toString();
+                if((sbloodp.equals(""))||(screac.equals(""))||(sapolproA.equals(""))||(sapolproB.equals(""))||(shemoglo.equals(""))||(slipoProt.equals(""))||(smokes.equals("--Select one--"))||famhistory.equals("--Select one--")){
+                    Toast.makeText(NewVisit.this, "Fill in all fields", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(NewVisit.this, "works", Toast.LENGTH_SHORT).show();
+
+                    if(smokes.equals("Yes")){
+                        smokerer = true;
+                    }else{
+                        smokerer = false;
+                    }
+                    if(famhistory.equals("Yes")){
+                        famhitoryry = true;
+                    }else {
+                        famhitoryry = false;
+                    }
+                    MedicalRecord medrec = new MedicalRecord(Double.parseDouble(sbloodp),Double.parseDouble(screac),Double.parseDouble(sapolproB),Double.parseDouble(sapolproA),Double.parseDouble(slipoProt),Double.parseDouble(shemoglo),smokerer,famhitoryry);
+                    rrs = medrec.calculateReynoldsRiskScore();
+                    txtreynoldsriskscore.setText(Math.round(rrs)+"%");
+                }
+            }});
         Intent intent = getIntent();
 
         visitID = intent.getStringExtra("visitid");//use this to gather from the DB
@@ -118,41 +153,7 @@ public class NewVisit extends AppCompatActivity {
 
             //get the data from the database and populate notes and medical record as well as write out recommendations.
 
-       btnSimulate.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View view) {
-               String sbloodp,screac,sapolproA,sapolproB,shemoglo,slipoProt;
-               double rrs;
-               boolean smokerer,famhitoryry;
-               String smokes,famhistory;
-               sbloodp =bloodpressure.getText().toString();
-               screac = creactive.getText().toString();
-               sapolproA = (apolprotA.getText().toString());
-               sapolproB=(apolprotB.getText().toString());
-               shemoglo = (hemoA.getText().toString());
-               slipoProt = (lipoprotA.getText().toString());
-               smokes = smoker.getSelectedItem().toString();
-               famhistory = famhist.getSelectedItem().toString();
-               if((sbloodp.equals(""))||(screac.equals(""))||(sapolproA.equals(""))||(sapolproB.equals(""))||(shemoglo.equals(""))||(slipoProt.equals(""))||(smokes.equals("--Select one--"))||famhistory.equals("--Select one--")){
-                   Toast.makeText(NewVisit.this, "Fill in all fields", Toast.LENGTH_SHORT).show();
-               }else{
-                   Toast.makeText(NewVisit.this, "works", Toast.LENGTH_SHORT).show();
 
-                   if(smokes.equals("Yes")){
-                       smokerer = true;
-                   }else{
-                       smokerer = false;
-                   }
-                   if(famhistory.equals("Yes")){
-                       famhitoryry = true;
-                   }else {
-                       famhitoryry = false;
-                   }
-                   MedicalRecord medrec = new MedicalRecord(Double.parseDouble(sbloodp),Double.parseDouble(screac),Double.parseDouble(sapolproB),Double.parseDouble(sapolproA),Double.parseDouble(slipoProt),Double.parseDouble(shemoglo),smokerer,famhitoryry);
-                   rrs = medrec.calculateReynoldsRiskScore();
-                   txtreynoldsriskscore.setText(Math.round(rrs)+"%");
-               }
-       }});
 
 
         btnSaveVisit.setOnClickListener(new View.OnClickListener() {
