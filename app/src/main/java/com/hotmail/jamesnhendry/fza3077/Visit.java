@@ -44,13 +44,14 @@ public class Visit {
         this.iscompleted = iscompleted;
     }
 
-    public Visit(String clinitianID, String patientID, String date, String time, String visitid, boolean iscompleted) {
+    public Visit(String clinitianID, String patientID, String date, String time, String visitId, boolean iscompleted) {
         this.clinitianID = clinitianID;
         this.patientID = patientID;
         this.date = date;
         this.time = time;
         this.visitid = visitid;
         this.iscompleted = iscompleted;
+
     }
 
     public String getClinitianID() {
