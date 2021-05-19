@@ -19,6 +19,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NewVisit extends AppCompatActivity {
 
@@ -78,7 +80,7 @@ public class NewVisit extends AppCompatActivity {
             public void onClick(View view) {
                 //TODO:import the pdf viewer and handle the data to the database. PDFs will be local.
                 //TODO: handle notifications for clinitians and patients.
-
+               saveVisit();
 
             }
         });
@@ -221,7 +223,44 @@ public class NewVisit extends AppCompatActivity {
     }
 
     public void saveVisit(){
-            //add all items to the database and update visit statuses.
+        String sbloodp,screac,sapolproA,sapolproB,shemoglo,slipoProt;
+        double rrs;
+        boolean smokerer,famhitoryry;
+        String smokes,famhistory;
+        sbloodp =bloodpressure.getText().toString();
+        screac = creactive.getText().toString();
+        sapolproA = (apolprotA.getText().toString());
+        sapolproB=(apolprotB.getText().toString());
+        shemoglo = (hemoA.getText().toString());
+        slipoProt = (lipoprotA.getText().toString());
+        smokes = smoker.getSelectedItem().toString();
+        famhistory = famhist.getSelectedItem().toString();
+        if((sbloodp.equals(""))||(screac.equals(""))||(sapolproA.equals(""))||(sapolproB.equals(""))||(shemoglo.equals(""))||(slipoProt.equals(""))||(smokes.equals("--Select one--"))||famhistory.equals("--Select one--")){
+            Toast.makeText(NewVisit.this, "Fill in all fields", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(NewVisit.this, "works", Toast.LENGTH_SHORT).show();
+            Map<String,Object> newvisit = new HashMap<>();
+            if(smokes.equals("Yes")){
+                smokerer = true;
+            }else{
+                smokerer = false;
+            }
+            if(famhistory.equals("Yes")){
+                famhitoryry = true;
+            }else {
+                famhitoryry = false;
+            }
+            MedicalRecord medrec = new MedicalRecord(Double.parseDouble(sbloodp),Double.parseDouble(screac),Double.parseDouble(sapolproB),Double.parseDouble(sapolproA),Double.parseDouble(slipoProt),Double.parseDouble(shemoglo),smokerer,famhitoryry);
+            rrs = medrec.calculateReynoldsRiskScore();
+            txtreynoldsriskscore.setText(Math.round(rrs)+"%");
+
+            updateVisitData(medrec,noteArrayList,recommendationArrayList);
+            // newvisit.put("")
+        }
+    }
+
+    private void updateVisitData(MedicalRecord medrec, ArrayList<Note> noteArrayList, ArrayList<Recommendation> recommendationArrayList) {
+
     }
 
     public void isEditable(int val){//set intent to grab a boolean of true if first element of recycler view is selected in PatientHome.class else, set nothing.

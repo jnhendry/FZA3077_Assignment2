@@ -3,7 +3,7 @@ package com.hotmail.jamesnhendry.fza3077;
 public class MedicalRecord {
     private String dateUpdated,time,clinitianName,patientName,clinitiannotes;//remove clinitian notes and make a seperate database declaration
     private int age;
-    private double bloodpressure,reynoldsRiskScore,cReactive,apolprotB,apolprotA,lipProteinA;
+    private double bloodpressure,reynoldsRiskScore,cReactive,apolprotB,apolprotA,lipProteinA,hemoglobin;
     private boolean smoker;
     private boolean famhist;
 
@@ -19,9 +19,8 @@ public class MedicalRecord {
     public MedicalRecord() {
     }
 
-    public MedicalRecord(String clinitiannotes, int age, double bloodpressure, double cReactive, double apolprotB, double apolprotA, double lipProteinA, boolean smoker, boolean famhist) {
-        this.clinitiannotes = clinitiannotes;
-        this.age = age;
+    public MedicalRecord( double bloodpressure, double cReactive, double apolprotB, double apolprotA, double lipProteinA,double hemoglobin, boolean smoker, boolean famhist) {
+
         this.bloodpressure = bloodpressure;
         this.cReactive = cReactive;
         this.apolprotB = apolprotB;
@@ -29,6 +28,15 @@ public class MedicalRecord {
         this.lipProteinA = lipProteinA;
         this.smoker = smoker;
         this.famhist = famhist;
+        this.hemoglobin = hemoglobin;
+    }
+
+    public double getHemoglobin() {
+        return hemoglobin;
+    }
+
+    public void setHemoglobin(double hemoglobin) {
+        this.hemoglobin = hemoglobin;
     }
 
     public String getDateUpdated() {
@@ -138,8 +146,13 @@ public class MedicalRecord {
     }
 
     public double calculateReynoldsRiskScore(){
+
+        if(age<40) {
+            age += (65 - age);
+        }
         double A = (((0.0785)*(age)+(3.271)*Math.log(bloodpressure)+(0.202)*Math.log(cReactive)+(0.00820)*(apolprotB)));
         A=A-(0.00769)*(apolprotA+0.134);
+
         if(smoker){
             A=A+0.825;
         }
@@ -150,6 +163,6 @@ public class MedicalRecord {
             A=A+0.00742*lipProteinA;
         }
         reynoldsRiskScore = (1-Math.pow(0.98756,A-19.848))*100;
-        return reynoldsRiskScore;
+        return reynoldsRiskScore+10;
     }
 }
