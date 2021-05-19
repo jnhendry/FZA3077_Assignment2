@@ -49,7 +49,7 @@ public class Visit {
         this.patientID = patientID;
         this.date = date;
         this.time = time;
-        this.visitid = visitid;
+        this.visitid = visitId;
         this.iscompleted = iscompleted;
 
     }

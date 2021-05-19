@@ -50,7 +50,6 @@ public class NewVisit extends AppCompatActivity {
         populateemptyfields(visitID);
         isEditable(isMostRecent);
         whatUser(usertype);
-        iscompleted(completed);
         //TODO make medical record editable for lastest visit for patients
         //TODO make medical record, notes and recommendations editable of the latest visit for clinitians
 
@@ -79,6 +78,8 @@ public class NewVisit extends AppCompatActivity {
             public void onClick(View view) {
                 //TODO:import the pdf viewer and handle the data to the database. PDFs will be local.
                 //TODO: handle notifications for clinitians and patients.
+
+
             }
         });
 
@@ -107,9 +108,7 @@ public class NewVisit extends AppCompatActivity {
         });
     }
 
-    private void iscompleted(boolean completed) {
 
-    }
 
     private void declareelements() {
         //please do this

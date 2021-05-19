@@ -337,7 +337,6 @@ public class ClinicianHome extends AppCompatActivity {
                         futurevis.putExtra("isvisitcompleted",visitFutureArrayList.get(position).isIscompleted());
                         futurevis.putExtra("usertype","clinitian");
                         startActivity(futurevis);
-
                     }
                 });
 
