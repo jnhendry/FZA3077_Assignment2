@@ -242,9 +242,6 @@ public class PatientHome extends AppCompatActivity {
         patientClinician.setText(clinicianName);
         if(isClinitian){
             edtPatientName.setText(clinitianintent);
-        }
-
-        if(isClinitian){
             if(!patientClinician.getText().equals(clinitianintent)){
                 ArrayList<Visit> afuture = new ArrayList<>();
                 ArrayList<Visit> apast = new ArrayList<>();
@@ -270,6 +267,8 @@ public class PatientHome extends AppCompatActivity {
 
             }
         }
+
+
     }
 
 
