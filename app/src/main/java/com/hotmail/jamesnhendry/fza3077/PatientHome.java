@@ -266,7 +266,9 @@ public class PatientHome extends AppCompatActivity {
                     String patientID = documentSnapshot.get("patientName").toString();
                     boolean visitCompleted = (boolean) documentSnapshot.get("visitCompleted");
 
-                    Visit visit = new Visit(clinicianId, patientID, date, time,visitId,visitCompleted);
+
+                    Visit visit = new Visit(clinicianId, patientID, date, time,documentSnapshot.getId(),visitCompleted);
+
 
                     if (visitCompleted) {
                         visitPastArrayList.add(visit);
@@ -278,6 +280,7 @@ public class PatientHome extends AppCompatActivity {
                 recyclerFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 visitFutureAdapter = new visitAdapter(visitFutureArrayList, PatientHome.this);
                 recyclerFutureVisit.setAdapter(visitFutureAdapter);
+
 
                 if(isClinitian){
                     visitFutureAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {

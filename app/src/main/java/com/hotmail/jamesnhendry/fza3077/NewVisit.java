@@ -14,6 +14,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 
 public class NewVisit extends AppCompatActivity {
@@ -26,6 +30,8 @@ public class NewVisit extends AppCompatActivity {
     private notes_recommendationadapter adapter;
     private ArrayList<Note> noteArrayList = new ArrayList<>();
     private ArrayList<Recommendation> recommendationArrayList = new ArrayList<>();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +39,7 @@ public class NewVisit extends AppCompatActivity {
         setContentView(R.layout.activity_new_visit);
         boolean completed;
         int isMostRecent;
-        String usertype;
+        String usertype,futureorpast;
         declareelements();
         Intent intent = getIntent();
         String visitID;
@@ -44,24 +50,29 @@ public class NewVisit extends AppCompatActivity {
         populateemptyfields(visitID);
         isEditable(isMostRecent);
         whatUser(usertype);
-
         iscompleted(completed);
         //TODO make medical record editable for lastest visit for patients
         //TODO make medical record, notes and recommendations editable of the latest visit for clinitians
 
-        btnaddRecommendation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createnewRecommendation();
-            }
-        });
 
-        btnaddNote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createNewNote();
-            }
-        });
+        if(completed){
+            //get the data from the database and populate notes and medical record as well as write out recommendations.
+        }else{
+            btnaddRecommendation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    createnewRecommendation();
+                }
+            });
+
+            btnaddNote.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    createNewNote();
+                }
+            });
+        }
+
 
         btnSaveVisit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,21 +82,33 @@ public class NewVisit extends AppCompatActivity {
             }
         });
 
-
-
         setuprecyclers();
     }
 
     private void populateemptyfields(String visitID) {
+        db.collection("visit").document(visitID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                txtclinititanname.setText(documentSnapshot.get("clinicianName").toString());
+                txtpatientname.setText(documentSnapshot.get("patientName").toString());
 
+                db.collection("patient").document(documentSnapshot.get("patientId").toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        txtpatientGender.setText(documentSnapshot.get("gender").toString());
+                        txtpatientlocation.setText(documentSnapshot.get("suburb").toString());
+                        DateAge age = new DateAge((long)documentSnapshot.get("dateOfBirth"));
+
+                        txtpatientage.setText(age.getAge()+"");
+
+                    }
+                });
+            }
+        });
     }
 
     private void iscompleted(boolean completed) {
-        if(completed){
-            //get the data from the database and populate notes and medical record as well as write out recommendations.
-        }else{
-            //everything is empty its a visit in progress
-        }
+
     }
 
     private void declareelements() {
@@ -101,7 +124,7 @@ public class NewVisit extends AppCompatActivity {
         txtclinititanname = findViewById(R.id.txtClintiannameMedRec);
         txtpatientname = findViewById(R.id.patientnameMedRec);
         txtpatientGender = findViewById(R.id.patientGenderMedRec);
-        txtpatientage = findViewById(R.id.patientAgeMedRec);
+        txtpatientage = findViewById(R.id.txtPatientAgeMedical);
         txtpatientlocation = findViewById(R.id.patientLocationMedRec);
         txtreynoldsriskscore = findViewById(R.id.reynoldsriskscoreMedRec);
         recyclnotes = findViewById(R.id.recyclNotes);

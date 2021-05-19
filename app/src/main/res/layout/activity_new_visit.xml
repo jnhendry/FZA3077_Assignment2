@@ -278,8 +278,8 @@
 
                         <TextView
                             android:id="@+id/txtClintiannameMedRec"
-                            android:layout_width="63dp"
-                            android:layout_height="16dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:text="TextView"
                             app:layout_constraintBottom_toBottomOf="@+id/textView45"
@@ -313,7 +313,7 @@
                             app:layout_constraintTop_toTopOf="@+id/textView30" />
 
                         <TextView
-                            android:id="@+id/patientAgeMedRec"
+                            android:id="@+id/txtPatientAgeMedical"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
