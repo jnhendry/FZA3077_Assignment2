@@ -1,4 +1,4 @@
-package com.hotmail.jamesnhendry.fza3077;
+  package com.hotmail.jamesnhendry.fza3077;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -83,8 +83,7 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
                 TextView txtAppointment = dialog.findViewById(R.id.txtAppointment);
                 //TODO: make calendar events for visits.
 
-
-
+                
                 dialog.show();
 
 

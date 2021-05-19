@@ -258,13 +258,15 @@ public class PatientHome extends AppCompatActivity {
                 visitFutureArrayList.clear();
                 for (final DocumentSnapshot documentSnapshot : value) {
 
+                    String visitId = documentSnapshot.getId();
+
                     String date = documentSnapshot.get("date").toString();
                     String time = documentSnapshot.get("scheduleStart").toString();
                     String clinicianId = documentSnapshot.get("clinicianName").toString();
                     String patientID = documentSnapshot.get("patientName").toString();
                     boolean visitCompleted = (boolean) documentSnapshot.get("visitCompleted");
 
-                    Visit visit = new Visit(clinicianId, patientID, date, time,visitId,ifitscompleted);
+                    Visit visit = new Visit(clinicianId, patientID, date, time,visitId,visitCompleted);
 
                     if (visitCompleted) {
                         visitPastArrayList.add(visit);
@@ -277,12 +279,20 @@ public class PatientHome extends AppCompatActivity {
                 visitFutureAdapter = new visitAdapter(visitFutureArrayList, PatientHome.this);
                 recyclerFutureVisit.setAdapter(visitFutureAdapter);
 
-                visitFutureAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
-                    @Override
-                    public void onItemClicked(int position) {
-                        //TODO handle only clinitian ONCLICKS. ignore patient clicks here.
-                    }
-                });
+                if(isClinitian){
+                    visitFutureAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
+                        @Override
+                        public void onItemClicked(int position) {
+                            //TODO handle only clinitian ONCLICKS. ignore patient clicks here.
+                            Intent futureVisit = new Intent(PatientHome.this,NewVisit.class);
+                            futureVisit.putExtra("visitid",visitFutureArrayList.get(position).getVisitid());
+                            futureVisit.putExtra("value",position);//if position>0 then do nothing;
+                            futureVisit.putExtra("isvisitcompleted",visitFutureArrayList.get(position).isIscompleted());
+                            futureVisit.putExtra("usertype","clinitian");
+                            startActivity(futureVisit);
+                        }
+                    });
+                }
 
                 recyclerPastVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 visitPastAdapter = new visitAdapter(visitPastArrayList, PatientHome.this);
