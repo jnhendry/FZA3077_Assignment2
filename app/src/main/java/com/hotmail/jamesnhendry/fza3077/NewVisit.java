@@ -1,5 +1,6 @@
 package com.hotmail.jamesnhendry.fza3077;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,7 +15,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -34,6 +37,8 @@ public class NewVisit extends AppCompatActivity {
     private ArrayList<Recommendation> recommendationArrayList = new ArrayList<>();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    String visitID;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +49,7 @@ public class NewVisit extends AppCompatActivity {
         String usertype,futureorpast;
         declareelements();
         Intent intent = getIntent();
-        String visitID;
+
         visitID = intent.getStringExtra("visitid");//use this to gather from the DB
         isMostRecent = intent.getIntExtra("value",1);
         completed = intent.getBooleanExtra("isvisitcompleted",false);
@@ -239,7 +244,7 @@ public class NewVisit extends AppCompatActivity {
             Toast.makeText(NewVisit.this, "Fill in all fields", Toast.LENGTH_SHORT).show();
         }else{
             Toast.makeText(NewVisit.this, "works", Toast.LENGTH_SHORT).show();
-            Map<String,Object> newvisit = new HashMap<>();
+
             if(smokes.equals("Yes")){
                 smokerer = true;
             }else{
@@ -254,13 +259,66 @@ public class NewVisit extends AppCompatActivity {
             rrs = medrec.calculateReynoldsRiskScore();
             txtreynoldsriskscore.setText(Math.round(rrs)+"%");
 
-            updateVisitData(medrec,noteArrayList,recommendationArrayList);
+            updateVisitData(visitID, medrec,noteArrayList,recommendationArrayList);
             // newvisit.put("")
         }
     }
 
-    private void updateVisitData(MedicalRecord medrec, ArrayList<Note> noteArrayList, ArrayList<Recommendation> recommendationArrayList) {
+    private void updateVisitData(String visitId, MedicalRecord medrec, ArrayList<Note> noteArrayList, ArrayList<Recommendation> recommendationArrayList) {
 
+
+        Map<String,Object> medicalRecordMap = new HashMap<>();
+        medicalRecordMap.put("bloodPressure", medrec.getBloodpressure());
+        medicalRecordMap.put("creactive", medrec.getcReactive());
+        medicalRecordMap.put("apolprotA", medrec.getApolprotA());
+        medicalRecordMap.put("apolprotB", medrec.getApolprotB());
+        medicalRecordMap.put("hemoglobin", medrec.getHemoglobin());
+        medicalRecordMap.put("lipoprotA", medrec.getLipProteinA());
+        medicalRecordMap.put("smoker", medrec.isSmoker());
+        medicalRecordMap.put("familyHistory", medrec.isFamhist());
+        medicalRecordMap.put("reynoldsRiskScore", medrec.getReynoldsRiskScore());
+
+
+        //Prepare Notes
+        ArrayList<Map> notesArrayToSave = new ArrayList<>();
+
+
+        for (int i = 0; i < noteArrayList.size(); i++){
+            Map<String,Object> singleNote= new HashMap<>();
+            singleNote.put("subject", noteArrayList.get(i).getDescription());
+            singleNote.put("body",  noteArrayList.get(i).getBody());
+            notesArrayToSave.add(singleNote);
+        }
+
+        // Prepare Recommendations
+
+        ArrayList<Map> RecommendationArrayToSave = new ArrayList<>();
+
+        for (int i = 0; i < recommendationArrayList.size(); i++){
+            Map<String,Object> singleRecommendation= new HashMap<>();
+            singleRecommendation.put("subject", recommendationArrayList.get(i).getDescription());
+            singleRecommendation.put("body",  recommendationArrayList.get(i).getBody());
+            RecommendationArrayToSave.add(singleRecommendation);
+        }
+
+        //Updating The Visit
+
+        DocumentReference currentVisit = db.collection("visit").document(visitId);
+
+        currentVisit.update("medicalRecord",medicalRecordMap, "notes", notesArrayToSave, "recommendations", RecommendationArrayToSave, "visitCompleted", true).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+
+                Toast.makeText(NewVisit.this, "Visit Updated", Toast.LENGTH_SHORT).show();
+
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(NewVisit.this, "Failed To Update Visit", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void isEditable(int val){//set intent to grab a boolean of true if first element of recycler view is selected in PatientHome.class else, set nothing.
