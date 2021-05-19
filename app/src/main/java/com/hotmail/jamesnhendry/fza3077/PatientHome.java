@@ -97,6 +97,7 @@ public class PatientHome extends AppCompatActivity {
                 mAuth.signOut();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
+                finish();
 
                 return true;
             }
