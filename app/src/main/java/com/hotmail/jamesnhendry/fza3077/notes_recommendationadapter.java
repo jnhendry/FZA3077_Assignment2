@@ -50,11 +50,15 @@ public class notes_recommendationadapter extends RecyclerView.Adapter<notes_reco
                 holder.btnAdd.setVisibility(View.GONE);
                 holder.description.setText(notes.get(position).getDescription());
                 holder.body.setText(notes.get(position).getBody());
+                holder.body.setKeyListener(null);
+                holder.description.setKeyListener(null);
 
             }else if(recommended!=null){
                 holder.btnAdd.setVisibility(View.GONE);
                 holder.description.setText(recommended.get(position).getDescription());
                 holder.body.setText(recommended.get(position).getBody());
+                holder.body.setKeyListener(null);
+                holder.description.setKeyListener(null);
 
             }
     }

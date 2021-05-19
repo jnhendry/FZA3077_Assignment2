@@ -523,7 +523,6 @@
                 android:id="@+id/recyclNotes"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_margin="10dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
@@ -539,13 +538,14 @@
                 android:id="@+id/recyclRecommendations"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_margin="10dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 app:layout_constraintBottom_toTopOf="@+id/addRecom"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.333"
                 app:layout_constraintStart_toStartOf="@id/guideline6"
-                app:layout_constraintTop_toTopOf="@+id/guideline7" />
+                app:layout_constraintTop_toBottomOf="@+id/textView4"
+                app:layout_constraintVertical_bias="0.526" />
 
             <TextView
                 android:id="@+id/textView"
@@ -564,17 +564,14 @@
                 android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_marginTop="66dp"
                 android:text="Recommendations"
                 android:textColor="#000000"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/guideline7"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/guideline6"
-                app:layout_constraintTop_toBottomOf="@+id/recyclNotes"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/recyclRecommendations"
+                app:layout_constraintStart_toStartOf="@+id/recyclRecommendations"
+                app:layout_constraintTop_toTopOf="@+id/guideline7"
+                app:layout_constraintVertical_bias="0.0" />
 
             <Button
                 android:id="@+id/addRecom"
@@ -583,13 +580,14 @@
                 android:layout_marginBottom="8dp"
                 android:text="Add Recommendation"
                 android:textSize="12sp"
+                android:visibility="visible"
                 app:cornerRadius="25dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/recyclRecommendations"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toTopOf="@+id/guideline7"
-                app:layout_constraintVertical_bias="1" />
+                app:layout_constraintVertical_bias="1.0" />
 
             <Button
                 android:id="@+id/addNote"
@@ -598,6 +596,7 @@
                 android:layout_marginBottom="8dp"
                 android:text="Add Note"
                 android:textSize="10sp"
+                android:visibility="visible"
                 app:cornerRadius="25dp"
                 app:layout_constraintBottom_toTopOf="@+id/guideline7"
                 app:layout_constraintEnd_toEndOf="@+id/recyclNotes"

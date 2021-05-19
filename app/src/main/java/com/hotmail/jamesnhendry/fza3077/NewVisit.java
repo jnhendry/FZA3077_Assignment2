@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -51,6 +50,26 @@ public class NewVisit extends AppCompatActivity {
         int isMostRecent;
 
         declareelements();
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updatenotesandrecommendations(noteArrayList,recommendationArrayList);
+            }
+        });
+
+        btnaddNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createNewNote();
+            }
+        });
+
+        btnaddRecommendation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createnewRecommendation();
+            }
+        });
         Intent intent = getIntent();
 
         visitID = intent.getStringExtra("visitid");//use this to gather from the DB
@@ -82,6 +101,7 @@ public class NewVisit extends AppCompatActivity {
                        btnSimulate.setVisibility(View.GONE);
                        updateviewforcompleted();
                        makeViewUneditable();
+                       return;
                     }else {
                         btnSaveVisit.setVisibility(View.VISIBLE);
                         btnUpdate.setVisibility(View.GONE);
@@ -93,19 +113,7 @@ public class NewVisit extends AppCompatActivity {
             }
         }
 
-        btnaddRecommendation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createnewRecommendation();
-            }
-        });
 
-        btnaddNote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createNewNote();
-            }
-        });
 
 
             //get the data from the database and populate notes and medical record as well as write out recommendations.
@@ -145,6 +153,8 @@ public class NewVisit extends AppCompatActivity {
                    txtreynoldsriskscore.setText(Math.round(rrs)+"%");
                }
        }});
+
+
         btnSaveVisit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -154,14 +164,13 @@ public class NewVisit extends AppCompatActivity {
             }
         });
 
-        btnUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateVisit();
-            }
-        });
+
+
+
         setuprecyclers();
     }
+
+
 
     private void updateviewforcompleted() {
         System.out.println(visitID);
@@ -230,9 +239,7 @@ public class NewVisit extends AppCompatActivity {
 
     }
 
-    private void updateVisit() {
-        updateVisitData(visitID,medrec,noteArrayList,recommendationArrayList);
-    }
+
 
     private void populateemptyfields(String visitID) {
         db.collection("visit").document(visitID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -388,27 +395,12 @@ public class NewVisit extends AppCompatActivity {
             rrs = medrec.calculateReynoldsRiskScore();
             txtreynoldsriskscore.setText(Math.round(rrs)+"%");
 
-            updateVisitData(visitID, medrec,noteArrayList,recommendationArrayList);
+            updateVisitMedicalRecord(visitID, medrec);
+            updatenotesandrecommendations(noteArrayList,recommendationArrayList);
             // newvisit.put("")
         }
     }
-
-    private void updateVisitData(String visitId, MedicalRecord medrec, ArrayList<Note> noteArrayList, ArrayList<Recommendation> recommendationArrayList) {
-
-
-        Map<String,Object> medicalRecordMap = new HashMap<>();
-        medicalRecordMap.put("bloodPressure", medrec.getBloodpressure());
-        medicalRecordMap.put("creactive", medrec.getcReactive());
-        medicalRecordMap.put("apolprotA", medrec.getApolprotA());
-        medicalRecordMap.put("apolprotB", medrec.getApolprotB());
-        medicalRecordMap.put("hemoglobin", medrec.getHemoglobin());
-        medicalRecordMap.put("lipoprotA", medrec.getLipProteinA());
-        medicalRecordMap.put("smoker", medrec.isSmoker());
-        medicalRecordMap.put("familyHistory", medrec.isFamhist());
-        medicalRecordMap.put("reynoldsRiskScore", medrec.getReynoldsRiskScore());
-
-
-        //Prepare Notes
+    private void updatenotesandrecommendations(ArrayList<Note> noteArrayList, ArrayList<Recommendation> recommendationArrayList) {
         ArrayList<Map> notesArrayToSave = new ArrayList<>();
 
 
@@ -432,9 +424,46 @@ public class NewVisit extends AppCompatActivity {
 
         //Updating The Visit
 
+        DocumentReference currentVisit = db.collection("visit").document(visitID);
+
+        currentVisit.update( "notes", notesArrayToSave, "recommendations", RecommendationArrayToSave).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                btnSaveVisit.setVisibility(View.GONE);
+                btnUpdate.setVisibility(View.VISIBLE);
+                makeViewUneditable();
+                Toast.makeText(NewVisit.this, "Visit Updated", Toast.LENGTH_SHORT).show();
+
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(NewVisit.this, "Failed To Update Visit", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateVisitMedicalRecord(String visitId, MedicalRecord medrec) {
+
+
+        Map<String,Object> medicalRecordMap = new HashMap<>();
+        medicalRecordMap.put("bloodPressure",medrec.getBloodpressure());
+        medicalRecordMap.put("creactive", medrec.getcReactive());
+        medicalRecordMap.put("apolprotA", medrec.getApolprotA());
+        medicalRecordMap.put("apolprotB", medrec.getApolprotB());
+        medicalRecordMap.put("hemoglobin", medrec.getHemoglobin());
+        medicalRecordMap.put("lipoprotA", medrec.getLipProteinA());
+        medicalRecordMap.put("smoker", medrec.isSmoker());
+        medicalRecordMap.put("familyHistory", medrec.isFamhist());
+        medicalRecordMap.put("reynoldsRiskScore", medrec.getReynoldsRiskScore());
+
+
+
+
         DocumentReference currentVisit = db.collection("visit").document(visitId);
 
-        currentVisit.update("medicalRecord",medicalRecordMap, "notes", notesArrayToSave, "recommendations", RecommendationArrayToSave, "visitCompleted", true).addOnSuccessListener(new OnSuccessListener<Void>() {
+        currentVisit.update("medicalRecord",medicalRecordMap, "visitCompleted", true).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 btnSaveVisit.setVisibility(View.GONE);
