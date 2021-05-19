@@ -101,6 +101,7 @@ public class ClinicianHome extends AppCompatActivity {
                 mAuth.signOut();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
+                finish();
 
                 return true;
             }
@@ -278,6 +279,7 @@ public class ClinicianHome extends AppCompatActivity {
                         intent.putExtra("isClinitian",true);
                         intent.putExtra("clinitianname",edtClinitianName.getText().toString());
                         startActivity(intent);
+
                     }
                 });
 
