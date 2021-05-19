@@ -264,7 +264,7 @@ public class PatientHome extends AppCompatActivity {
                     String patientID = documentSnapshot.get("patientName").toString();
                     boolean visitCompleted = (boolean) documentSnapshot.get("visitCompleted");
 
-                    Visit visit = new Visit(clinicianId, patientID, date, time,visitId,ifitscompleted);
+                    Visit visit = new Visit(clinicianId, patientID, date, time,documentSnapshot.getId(),visitCompleted);
 
                     if (visitCompleted) {
                         visitPastArrayList.add(visit);
@@ -281,6 +281,7 @@ public class PatientHome extends AppCompatActivity {
                     @Override
                     public void onItemClicked(int position) {
                         //TODO handle only clinitian ONCLICKS. ignore patient clicks here.
+
                     }
                 });
 

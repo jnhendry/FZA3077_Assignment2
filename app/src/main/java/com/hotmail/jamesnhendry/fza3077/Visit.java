@@ -49,6 +49,8 @@ public class Visit {
         this.patientID = patientID;
         this.date = date;
         this.time = time;
+        this.visitid = visitid;
+        this.iscompleted = iscompleted;
     }
 
     public String getClinitianID() {
