@@ -243,6 +243,33 @@ public class PatientHome extends AppCompatActivity {
         if(isClinitian){
             edtPatientName.setText(clinitianintent);
         }
+
+        if(isClinitian){
+            if(!patientClinician.getText().equals(clinitianintent)){
+                ArrayList<Visit> afuture = new ArrayList<>();
+                ArrayList<Visit> apast = new ArrayList<>();
+
+
+                for(int i = 0;i<visitFutureArrayList.size();i++){
+                    if(visitFutureArrayList.get(i).getClinitianID().equals(clinitianintent)){
+                        afuture.add(visitFutureArrayList.get(i));
+                    }
+                }
+                visitFutureAdapter = new visitAdapter(afuture,PatientHome.this);
+                recyclerFutureVisit.setAdapter(visitFutureAdapter);
+
+
+                for(int i = 0;i<visitPastArrayList.size();i++){
+                    if(visitPastArrayList.get(i).getClinitianID().equals(clinitianintent)){
+                        apast.add(visitPastArrayList.get(i));
+                    }
+                }
+                visitPastAdapter = new visitAdapter(apast,PatientHome.this);
+                recyclerPastVisit.setAdapter(visitPastAdapter);
+
+
+            }
+        }
     }
 
 
@@ -313,6 +340,8 @@ public class PatientHome extends AppCompatActivity {
                         startActivity(futureVisit);
                     }
                 });
+
+
             }
         });
     }
