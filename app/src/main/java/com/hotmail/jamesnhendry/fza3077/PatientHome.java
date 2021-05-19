@@ -93,6 +93,7 @@ public class PatientHome extends AppCompatActivity {
         topAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+
                 System.out.println("You Clicked Log Out");
                 mAuth.signOut();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
