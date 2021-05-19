@@ -131,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
             case "Clinician Home":
                 intent = new Intent(MainActivity.this, ClinicianHome.class);
                 break;
-
             case "Patient Home":
                 intent = new Intent(MainActivity.this, PatientHome.class);
                 intent.putExtra("UserID",user.getUid());

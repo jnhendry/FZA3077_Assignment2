@@ -101,6 +101,7 @@ public class PatientHome extends AppCompatActivity {
                 return true;
             }
         });
+
         if(isClinitian) {
             btnSchedule.setVisibility(View.VISIBLE);
             btnSchedule.setOnClickListener(new View.OnClickListener() {
@@ -182,12 +183,12 @@ public class PatientHome extends AppCompatActivity {
                 }
             });
 
-
+        }
             //Get and Display Patient Details
             populatePatientDetails();
             populatePatientVisits();
 
-        }
+
     }
 
     private void populatePatientDetails(){
