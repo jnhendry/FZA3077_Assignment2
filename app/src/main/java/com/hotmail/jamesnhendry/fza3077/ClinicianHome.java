@@ -54,34 +54,25 @@ public class ClinicianHome extends AppCompatActivity {
     private RecyclerView recyclPatients, recyclerPastVisit, recyclerFutureVisit;
     private patientAdapter patientAdapter;
     private visitAdapter visitPastAdapter, visitFutureAdapter;
-    private TextView edtClinitianName;
-    private Clinitian cl;
+    private TextView edtClinicianName;
     private String name;
     private FirebaseAuth mAuth;
     private ArrayList<Patient> patients = new ArrayList<>();
     FirebaseFirestore db;
     FirebaseUser user;
-    private Stats stat;
-    ArrayList<Stats> stats = new ArrayList<>();;
+
     private static final int PERMISSION_REQUEST_CODE = 200;
 
     private Button btnSearch,btnStatistics;
-    private long difference_In_Years;
     final ArrayList<Visit> visitPastArrayList = new ArrayList<>();
     final ArrayList<Visit> visitFutureArrayList = new ArrayList<>();
     private MaterialToolbar topAppBar;
     int counter = 0;
-    private SearchView svsview ;
-    private Spinner spnsearch;
-    private String searchstuff,queryforsearch;
-    private int thisisthebreaker;
-    int counts,plswork;
-    ArrayList<Stats> temp = new ArrayList<>();
+    private SearchView svsView;
+    private Spinner spnSearch;
+    private String searchStuff, queryForSearch;
+    private int thisIsTheBreaker;
 
-
-
-
-    //TODO clinitians must see statistics and print the info
 
     @Override
     public void onBackPressed() {
@@ -102,10 +93,10 @@ public class ClinicianHome extends AppCompatActivity {
         user = mAuth.getCurrentUser();
         db = FirebaseFirestore.getInstance();
         btnSearch = findViewById(R.id.btnsearchpatients);
-        spnsearch = findViewById(R.id.spnsearchpatient);
-        svsview = findViewById(R.id.svsearchpatient);
+        spnSearch = findViewById(R.id.spnsearchpatient);
+        svsView = findViewById(R.id.svsearchpatient);
         btnStatistics = findViewById(R.id.btnStatistics);
-        edtClinitianName = findViewById(R.id.user_name_banner);
+        edtClinicianName = findViewById(R.id.user_name_banner);
         DocumentReference snap = db.collection("clinician").document(user.getUid());
 
         topAppBar = findViewById(R.id.topAppBar);
@@ -123,71 +114,54 @@ public class ClinicianHome extends AppCompatActivity {
             }
         });
 
-
-
         snap.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.exists()) {
-
-                    edtClinitianName.setText(documentSnapshot.get("name").toString());
+                    edtClinicianName.setText(documentSnapshot.get("name").toString());
                     name = documentSnapshot.get("name").toString();
                 }
             }
         });
-
-
 
         populateArray();
 
         btnStatistics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                generatedate();
-                //generatePDF();
+                generateDate();
             }
         });
-
-
-
+        
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 btnStatistics.setVisibility(View.VISIBLE);
 
-                switch(spnsearch.getSelectedItem().toString()) {
+                switch(spnSearch.getSelectedItem().toString()) {
                     case "Name":
-                        searchPatients(svsview.getQuery().toString(),"name");
+                        searchPatients(svsView.getQuery().toString(),"name");
                         return;
                     case "Age":
-                        searchPatients(svsview.getQuery().toString(),"age");
+                        searchPatients(svsView.getQuery().toString(),"age");
                         return;
                     case "Location":
-                        searchPatients(svsview.getQuery().toString(),"suburb");
+                        searchPatients(svsView.getQuery().toString(),"suburb");
                         return;
                     case "My Patients":
-                        searchPatients(svsview.getQuery().toString(),"patients");
+                        searchPatients(svsView.getQuery().toString(),"patients");
                         return;
                     default:
 
-
-
                 }
-
-
             }
         });
-
         setRecycle();
-
-
-
-
-
-
     }
 
-    private void generatedate() {
+
+    //Generate statistical data for the search criteria that has been used.
+    private void generateDate() {
        db.collection("visit").whereEqualTo("visitCompleted",true).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
            @Override
            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -203,7 +177,6 @@ public class ClinicianHome extends AppCompatActivity {
                    temp.add(stat);
                }
 
-
                for(int j = 0; j < temp.size(); j++) {
                    for(int i = 0; i < patients.size(); i++) {
                        if(patients.get(i).getName().equals(temp.get(j).getName())){
@@ -218,9 +191,7 @@ public class ClinicianHome extends AppCompatActivity {
                            tempstat.setGender(patients.get(i).getSex());
                            stats.add(tempstat);
                        }
-
                    }
-
                }
 
                double rrs = 0,smokes = 0,famhist = 0,bloodpressure = 0,age = 0;
@@ -243,35 +214,17 @@ public class ClinicianHome extends AppCompatActivity {
                famhist /= stats.size();
                bloodpressure /= stats.size();
               generatePDF(rrs,smokes,famhist,bloodpressure,age);
-
-
            }
-
        });
-
     }
 
-
-
-    private void getAverages(ArrayList<Stats> stats) {
-
-
-    }
-
-
-
+    //This method handles functionality concerning searching through the collection patients.
     public void searchPatients(String patient, String search){
         patients.clear();
         patientAdapter.notifyDataSetChanged();
-        searchstuff = patient;
-        queryforsearch = search;
-        thisisthebreaker = 0;
-
-
-
-
-
-        //Toast.makeText(getApplicationContext(), search + " ======= " + patient, Toast.LENGTH_SHORT).show();
+        searchStuff = patient;
+        queryForSearch = search;
+        thisIsTheBreaker = 0;
 
         db.collection("patient").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -284,55 +237,52 @@ public class ClinicianHome extends AppCompatActivity {
                         int age = test.getAge() ;
                         Patient patient1 = new Patient(map.get("name").toString(),age,map.get("gender").toString(),snap.getId(),user.getUid(),map.get("suburb").toString());
 
-                        switch(queryforsearch){
+                        switch(queryForSearch){
                             case "name":
-                                if(patient1.getName().toLowerCase().startsWith(searchstuff.toLowerCase())) {
+                                if(patient1.getName().toLowerCase().startsWith(searchStuff.toLowerCase())) {
                                     patients.add(patient1);
-                                    System.out.println( patient1.getName() + searchstuff);
+                                    System.out.println( patient1.getName() + searchStuff);
                                     patientAdapter.notifyDataSetChanged();
                                 }
                                 break;
                             case "age":
-                                if(patient1.getPhoneNumber()==(Integer.parseInt(searchstuff))) {
+                                if(patient1.getPhoneNumber()==(Integer.parseInt(searchStuff))) {
                                     patients.add(patient1);
-                                    System.out.println( patient1.getName() + searchstuff);
+                                    System.out.println( patient1.getName() + searchStuff);
                                     patientAdapter.notifyDataSetChanged();
                                 }
                                 break;
                             case "suburb":
-                                if(patient1.getLocation().toLowerCase().startsWith(searchstuff.toLowerCase())) {
+                                if(patient1.getLocation().toLowerCase().startsWith(searchStuff.toLowerCase())) {
                                     patients.add(patient1);
-                                    System.out.println( patient1.getName() + searchstuff);
+                                    System.out.println( patient1.getName() + searchStuff);
                                     patientAdapter.notifyDataSetChanged();
                                 }
                                 break;
                             case "patients":
-                                while(thisisthebreaker == 0) {
+                                while(thisIsTheBreaker == 0) {
                                     populateArray();
                                     patientAdapter.notifyDataSetChanged();
-                                    thisisthebreaker+=1;
+                                    thisIsTheBreaker +=1;
                                 }
                                 break;
                             default:
-
 
                         }
                     }
                 }
             }
         });
-
     }
 
+    //Generate PDF document to display statistical data
      private void generatePDF(double rrsa, double smokes, double famhist, double bloodpressure,double age) {
 
-
-         String id = "search for clinician:"+edtClinitianName.getText().toString()+" on: " + LocalTime.now();
+         String id = "search for clinician:"+ edtClinicianName.getText().toString()+" on: " + LocalTime.now();
          String time = LocalTime.now()+"";
          time = time.replace(":","");
          time = time.replace(".","");
-         String filenamed = edtClinitianName.getText().toString().trim()+time+".pdf";
-
+         String filenamed = edtClinicianName.getText().toString().trim()+time+".pdf";
 
         int pageHeight = 1120;
         int pagewidth = 792;
@@ -353,7 +303,6 @@ public class ClinicianHome extends AppCompatActivity {
         canvas.drawBitmap(scaledbmp, 56, 40, paint);
 
 
-
         title.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
 
         title.setTextSize(15);
@@ -367,7 +316,7 @@ public class ClinicianHome extends AppCompatActivity {
 
         title.setTextAlign(Paint.Align.LEFT);
 
-        canvas.drawText("Statitics Generated from Query: "+queryforsearch + " using search : "+searchstuff,100,350,title);
+        canvas.drawText("Statitics Generated from Query: "+ queryForSearch + " using search : "+ searchStuff,100,350,title);
 
         title.setTextSize(15);
 
@@ -400,7 +349,6 @@ public class ClinicianHome extends AppCompatActivity {
         }
 
 
-
         File file = new File(parentDir , filenamed);
 
         try {
@@ -419,7 +367,6 @@ public class ClinicianHome extends AppCompatActivity {
         // after storing our pdf to that
         // location we are closing our PDF file.
         pdfDocument.close();
-
 
     }
 
@@ -452,19 +399,6 @@ public class ClinicianHome extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-
-    }
-
-    @Override
-    public void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-
-
-    }
 
     private void populateArray() {
 
@@ -493,7 +427,7 @@ public class ClinicianHome extends AppCompatActivity {
                         Intent intent = new Intent(ClinicianHome.this,PatientHome.class);
                         intent.putExtra("UserID",patients.get(position).getPatientID());
                         intent.putExtra("isClinitian",true);
-                        intent.putExtra("clinitianname",edtClinitianName.getText().toString());
+                        intent.putExtra("clinitianname", edtClinicianName.getText().toString());
                         startActivity(intent);
 
                     }
@@ -502,12 +436,6 @@ public class ClinicianHome extends AppCompatActivity {
 
             }
         });
-
-
-
-
-
-
 
     }
 
@@ -575,9 +503,7 @@ public class ClinicianHome extends AppCompatActivity {
                         startActivity(pastvis);
                     }
                 });
-
             }
         });
     }
-
 }

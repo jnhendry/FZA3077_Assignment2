@@ -35,6 +35,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -285,21 +286,6 @@ public class NewVisit extends AppCompatActivity {
         }
 
 
-
-    //blood pressure
-        //c reactive Protein
-        //apolipo protein A
-        //apolipo Protein B
-        //lipoprotein A
-        //Hemoglobin A1
-        //smoker
-        //family history
-
-
-
-
-
-
         pdfDocument.finishPage(myPage);
         File[] files = getExternalFilesDirs(null);
         String dir= "";
@@ -316,8 +302,7 @@ public class NewVisit extends AppCompatActivity {
             if(!parentDir.exists()) {
                 parentDir.mkdirs();
             }
-            String filename =  visitID + ".pdf";
-
+            String filename =  txtpatientname.getText().toString().trim().replace(" ", "") + LocalDate.now().toString().replace(":", "").replace("-", "").replace(".", "").replace("/", "") + ".pdf";
 
             File file = new File(parentDir , filename);
 
