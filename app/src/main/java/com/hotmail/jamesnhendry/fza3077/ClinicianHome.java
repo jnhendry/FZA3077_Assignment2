@@ -224,8 +224,8 @@ public class ClinicianHome extends AppCompatActivity {
                }
 
                double rrs = 0,smokes = 0,famhist = 0,bloodpressure = 0,age = 0;
-System.out.println(stats.size()+"");
-for(Stats st:stats){
+                System.out.println(stats.size()+"");
+                for(Stats st:stats){
                    age+=st.getAge();
                    rrs+=st.getRrs();
                    if(st.isSmokes()){
@@ -324,7 +324,7 @@ for(Stats st:stats){
 
     }
 
-     private void generatePDF(double rrs, double smokes, double famhist, double bloodpressure,double age) {
+     private void generatePDF(double rrsa, double smokes, double famhist, double bloodpressure,double age) {
 
 
          String id = "search for clinician:"+edtClinitianName.getText().toString()+" on: " + LocalTime.now();
@@ -373,13 +373,13 @@ for(Stats st:stats){
 
         canvas.drawText("Statistics Details : ",100,380,title);
         title.setTextSize(15);
-        canvas.drawText("Average Age of patients :        "+age,120,420,title);
-        canvas.drawText("Average percentage of smokers  :            "+smokes*100+"%",120,440,title);
-        canvas.drawText("Average of family History in patients :    "+famhist*100+"%",120,480,title);
+        canvas.drawText("Average Age of patients :        "+Math.round(age),120,420,title);
+        canvas.drawText("Average percentage of smokers  :            "+Math.round(smokes*100)+"%",120,440,title);
+        canvas.drawText("Average of family History in patients :    "+Math.round(famhist*100)+"%",120,480,title);
 
-        canvas.drawText("Average blood pressure : " + bloodpressure,100,520,title);
+        canvas.drawText("Average blood pressure : " + Math.round(bloodpressure),100,520,title);
 
-        canvas.drawText("Average Reynolds risk score :                                        "+Math.round(rrs)+"%",120,550,title);
+        canvas.drawText("Average Reynolds risk score :                                        "+Math.round(rrsa)+"%",120,550,title);
 
         pdfDocument.finishPage(myPage);
         File[] files = getExternalFilesDirs(null);

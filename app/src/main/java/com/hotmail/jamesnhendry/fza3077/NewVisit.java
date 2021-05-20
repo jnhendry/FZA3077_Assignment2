@@ -595,7 +595,7 @@ public class NewVisit extends AppCompatActivity {
                 famhitoryry = false;
             }
              medrec = new MedicalRecord(Double.parseDouble(sbloodp),Double.parseDouble(screac),Double.parseDouble(sapolproB),Double.parseDouble(sapolproA),Double.parseDouble(slipoProt),Double.parseDouble(shemoglo),smokerer,famhitoryry);
-            rrs = medrec.calculateReynoldsRiskScore();
+            rrs = medrec.calculateReynoldsRiskScore()+10;
             txtreynoldsriskscore.setText(Math.round(rrs)+"%");
 
             updateVisitMedicalRecord(visitID, medrec);
