@@ -68,6 +68,7 @@ public class PatientHome extends AppCompatActivity {
         setContentView(R.layout.activity_patient_home);
 
 
+
         Intent intent = getIntent();
         userID = intent.getStringExtra("UserID");
         isClinitian = intent.getBooleanExtra("isClinitian", false);

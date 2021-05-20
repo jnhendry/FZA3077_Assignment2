@@ -66,7 +66,7 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
     @Override
     public void onBindViewHolder(@NonNull patientAdapter.subholder holder, final int position) {
         holder.txtName.setText(list.get(position).getName());
-        holder.txtPhone.setText(list.get(position).getPhoneNumber());
+        holder.txtPhone.setText(list.get(position).getPhoneNumber()+"");
         holder.txtSex.setText(list.get(position).getSex());
 
         holder.btnSchedule.setOnClickListener(new View.OnClickListener() {

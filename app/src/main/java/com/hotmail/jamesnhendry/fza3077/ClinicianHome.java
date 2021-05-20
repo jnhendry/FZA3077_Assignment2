@@ -41,12 +41,8 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
@@ -65,6 +61,9 @@ public class ClinicianHome extends AppCompatActivity {
     private ArrayList<Patient> patients = new ArrayList<>();
     FirebaseFirestore db;
     FirebaseUser user;
+    private Stats stat;
+    ArrayList<Stats> stats;
+    private static final int PERMISSION_REQUEST_CODE = 200;
 
     private Button btnSearch,btnStatistics;
     private long difference_In_Years;
@@ -76,6 +75,7 @@ public class ClinicianHome extends AppCompatActivity {
     private Spinner spnsearch;
     private String searchstuff,queryforsearch;
     private int thisisthebreaker;
+    int counts;
 
 
 
@@ -143,6 +143,7 @@ public class ClinicianHome extends AppCompatActivity {
         btnStatistics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                generatedate();
                 //generatePDF();
             }
         });
@@ -183,6 +184,78 @@ public class ClinicianHome extends AppCompatActivity {
 
     }
 
+    private void generatedate() {
+
+        stats = new ArrayList<>();
+        for( counts = 0;counts<patients.size();counts++){
+            stat = new Stats();
+            stat.setName(patients.get(counts).getName());
+            stat.setAge(patients.get(counts).getPhoneNumber());
+            stat.setGender(patients.get(counts).getSex());
+            stat.setLocation(patients.get(counts).getLocation());
+        db.collection("visit").whereEqualTo("patientId",patients.get(counts).getPatientID()).whereEqualTo("visitCompleted",true).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                    if(queryDocumentSnapshots.size() > 0) {
+                        Toast.makeText(ClinicianHome.this, "WORKS", Toast.LENGTH_SHORT).show();
+                        DocumentSnapshot snap = queryDocumentSnapshots.getDocuments().get(0);
+                        if(snap.exists()) {
+                            // name , age, gender, rrs, blood pressure, smokes, family history;
+                            stat.setRrs((Double) snap.get("medicalRecord.reynoldsRiskScore"));
+                            stat.setBloodpressure((Double) snap.get("medicalRecord.bloodPressure"));
+                            stat.setSmokes((Boolean) snap.get("medicalRecord.smoker"));
+                            stat.setFamhist((Boolean) snap.get("medicalRecord.familyHistory"));
+                            stats.add(stat);
+                            if(counts==patients.size()){
+                                getAverages(stats);
+                            }
+
+                        } else {
+                            Toast.makeText(ClinicianHome.this, "OOOOOOOOOOF", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                }
+
+            });
+
+        }
+        Toast.makeText(this, counts + "     "+ patients.size()+"", Toast.LENGTH_SHORT).show();
+
+
+
+
+
+
+    }
+
+    private void getAverages(ArrayList<Stats> stats) {
+        double rrs = 0,smokes = 0,famhist = 0,bloodpressure = 0,age = 0;
+
+        for(Stats st:stats){
+            age+=st.getAge();
+            rrs+=st.getRrs();
+            if(st.isSmokes()){
+                smokes+=1;
+            }
+            if(st.isFamhist()){
+                famhist+=1;
+            }
+            bloodpressure+=st.getBloodpressure();
+        }
+
+        Toast.makeText(this, stats.size()+"", Toast.LENGTH_SHORT).show();
+        rrs=rrs/stats.size();
+        age = age/stats.size();
+        smokes = smokes/stats.size();
+        famhist = famhist/stats.size();
+        bloodpressure = bloodpressure/stats.size();
+
+        generatePDF(rrs,smokes,famhist,bloodpressure,age);
+    }
+
+
+
     public void searchPatients(String patient, String search){
         patients.clear();
         patientAdapter.notifyDataSetChanged();
@@ -204,7 +277,7 @@ public class ClinicianHome extends AppCompatActivity {
 
                         Map<String,Object> map = snap.getData();
                         DateAge test = new DateAge((long)map.get("dateOfBirth"));
-                        String age = test.getAge() + "";
+                        int age = test.getAge() ;
                         Patient patient1 = new Patient(map.get("name").toString(),age,map.get("gender").toString(),snap.getId(),user.getUid(),map.get("suburb").toString());
 
                         switch(queryforsearch){
@@ -216,7 +289,7 @@ public class ClinicianHome extends AppCompatActivity {
                                 }
                                 break;
                             case "age":
-                                if(patient1.getPhoneNumber().equals(searchstuff)) {
+                                if(patient1.getPhoneNumber()==(Integer.parseInt(searchstuff))) {
                                     patients.add(patient1);
                                     System.out.println( patient1.getName() + searchstuff);
                                     patientAdapter.notifyDataSetChanged();
@@ -248,164 +321,132 @@ public class ClinicianHome extends AppCompatActivity {
 
     }
 
-//    private void generatePDF() {
-//        int pageHeight = 1120;
-//        int pagewidth = 792;
-//        Bitmap bmp, scaledbmp;
-//        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.gfgimage);
-//        scaledbmp = Bitmap.createScaledBitmap(bmp, 280, 280, false);
-//        if (checkPermission()) {
-//            Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
-//        } else {
-//            requestPermission();
-//        }
-//
-//        PdfDocument pdfDocument = new PdfDocument();
-//        Paint paint = new Paint();
-//        Paint title = new Paint();
-//
-//        PdfDocument.PageInfo mypageInfo = new PdfDocument.PageInfo.Builder(pagewidth, pageHeight, 1).create();
-//        PdfDocument.Page myPage = pdfDocument.startPage(mypageInfo);
-//        Canvas canvas = myPage.getCanvas();
-//        canvas.drawBitmap(scaledbmp, 56, 40, paint);
-//
-//
-//
-//        title.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-//
-//        title.setTextSize(15);
-//        title.setColor(ContextCompat.getColor(this, R.color.black));
-//        canvas.drawText("Document ID :  "+visitID,500,140,title);
-//
-//
-//        title.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
-//        title.setColor(ContextCompat.getColor(this, R.color.black));
-//        title.setTextSize(15);
-//
-//        title.setTextAlign(Paint.Align.LEFT);
-//
-//        canvas.drawText("Clinitian : "+txtclinititanname.getText().toString(),100,350,title);
-//
-//        title.setTextSize(21);
-//
-//        canvas.drawText("Patient Details : ",100,380,title);
-//        title.setTextSize(15);
-//        canvas.drawText("Name :        "+txtpatientname.getText().toString(),120,420,title);
-//        canvas.drawText("Age :            "+txtpatientage.getText().toString(),120,440,title);
-//        canvas.drawText("Gender :      "+txtpatientGender.getText().toString(),120,460,title);
-//        canvas.drawText("Location :    "+txtpatientlocation.getText().toString(),120,480,title);
-//
-//        title.setTextSize(21);
-//
-//
-//        canvas.drawText("Lab Measurements : ",100,520,title);
-//
-//        title.setTextSize(15);
-//
-//        canvas.drawText("Blood pressure :                                        "+bloodpressure.getText().toString(),120,550,title);
-//        canvas.drawText("C Reactive protein :                                   "+creactive.getText().toString(),120,570,title);
-//        canvas.drawText("Apolipo protein A :                                    "+apolprotA.getText().toString(),120,590,title);
-//        canvas.drawText("Apolipo protein B :                                    "+apolprotB.getText().toString(),120,610,title);
-//        canvas.drawText("Lipoprotein A :                                           "+lipoprotA.getText().toString(),120,630,title);
-//        canvas.drawText("Hemoglobin A1 :                                       "+hemoA.getText().toString(),120,650,title);
-//        canvas.drawText("Is a smoker :                                              "+smoker.getSelectedItem().toString(),120,670,title);
-//        canvas.drawText("Family History of heart disease :              "+famhist.getSelectedItem().toString(),120,690,title);
-//        canvas.drawText("Reynolds risk score :                                  "+txtreynoldsriskscore.getText().toString(),120,710,title);
-//
-//        title.setTextSize(21);
-//
-//        canvas.drawText("Notes  :  ",100,760,title);
-//        int counter = 760;
-//        title.setTextSize(10);
-//        for(int i = 0;i<noteArrayList.size();i++){
-//            counter+=15;
-//            canvas.drawText("Description : "+(noteArrayList.get(i).getDescription()),120,counter,title);
-//            counter+=15;
-//            canvas.drawText("Body :            "+(noteArrayList.get(i).getBody()),120,counter,title);
-//            counter+=15;
-//        }
-//        title.setTextSize(21);
-//        canvas.drawText("Recommendations  :  ",450,760,title);
-//        int counter2 = 760;
-//        title.setTextSize(10);
-//        for(int i = 0;i<recommendationArrayList.size();i++){
-//            counter2+=15;
-//            canvas.drawText("Description : "+(recommendationArrayList.get(i).getDescription()),470,counter2,title);
-//            counter2+=15;
-//            canvas.drawText("Body :            "+(recommendationArrayList.get(i).getBody()),470,counter2,title);
-//            counter2+=15;
-//        }
-//
-//        pdfDocument.finishPage(myPage);
-//        File[] files = getExternalFilesDirs(null);
-//        String dir= "";
-//
-//        if(files == null) {
-//        } else {
-//            if(files.length > 0) {
-//                for(File file : files) {
-//                    dir = file.getPath();
-//
-//                }
-//            }
-//        }
-//        File parentDir = new File(dir + File.separator + getString(R.string.app_name) + File.separator + "PDF's");
-//        if(!parentDir.exists()) {
-//            parentDir.mkdirs();
-//        }
-//        String filename =  visitID + ".pdf";
-//
-//
-//        File file = new File(parentDir , filename);
-//
-//        try {
-//            // after creating a file name we will
-//            // write our PDF file to that location.
-//            pdfDocument.writeTo(new FileOutputStream(file));
-//
-//            // below line is to print toast message
-//            // on completion of PDF generation.
-//            Toast.makeText(NewVisit.this, "PDF file generated succesfully.", Toast.LENGTH_SHORT).show();
-//        } catch(IOException e) {
-//            // below line is used
-//            // to handle error
-//            e.printStackTrace();
-//        }
-//        // after storing our pdf to that
-//        // location we are closing our PDF file.
-//        pdfDocument.close();
-//
-//
-//    }
-//
-//    private boolean checkPermission() {
-//        // checking of permissions.
-//        int permission1 = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
-//        int permission2 = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
-//        return permission1 == PackageManager.PERMISSION_GRANTED && permission2 == PackageManager.PERMISSION_GRANTED;
-//    }
-//    private void requestPermission() {
-//        // requesting permissions if not provided.
-//        ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
-//    }
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        if (requestCode == PERMISSION_REQUEST_CODE) {
-//            if (grantResults.length > 0) {
-//
-//                // after requesting permissions we are showing
-//                // users a toast message of permission granted.
-//                boolean writeStorage = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-//                boolean readStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-//
-//                if (writeStorage && readStorage) {
-//                    Toast.makeText(this, "Permission Granted..", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    Toast.makeText(this, "Permission Denined.", Toast.LENGTH_SHORT).show();
-//                    finish();
-//                }
-//            }
-//        }
-//    }
+     private void generatePDF(double rrs, double smokes, double famhist, double bloodpressure,double age) {
+
+
+         String id = "search for clinician:"+edtClinitianName.getText().toString()+" on: " + LocalTime.now();
+         String time = LocalTime.now()+"";
+         time = time.replace(":","");
+         time = time.replace(".","");
+         String filenamed = edtClinitianName.getText().toString().trim()+time+".pdf";
+
+
+        int pageHeight = 1120;
+        int pagewidth = 792;
+        Bitmap bmp, scaledbmp;
+        bmp = BitmapFactory.decodeResource(getResources(), R.drawable.gfgimage);
+        scaledbmp = Bitmap.createScaledBitmap(bmp, 280, 280, false);
+        if (!checkPermission()) {
+            requestPermission();
+        }
+
+        PdfDocument pdfDocument = new PdfDocument();
+        Paint paint = new Paint();
+        Paint title = new Paint();
+
+        PdfDocument.PageInfo mypageInfo = new PdfDocument.PageInfo.Builder(pagewidth, pageHeight, 1).create();
+        PdfDocument.Page myPage = pdfDocument.startPage(mypageInfo);
+        Canvas canvas = myPage.getCanvas();
+        canvas.drawBitmap(scaledbmp, 56, 40, paint);
+
+
+
+        title.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+
+        title.setTextSize(15);
+        title.setColor(ContextCompat.getColor(this, R.color.black));
+        canvas.drawText(id,400,140,title);
+
+
+        title.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
+        title.setColor(ContextCompat.getColor(this, R.color.black));
+        title.setTextSize(21);
+
+        title.setTextAlign(Paint.Align.LEFT);
+
+        canvas.drawText("Statitics Generated from Query: "+queryforsearch + " using search : "+searchstuff,100,350,title);
+
+        title.setTextSize(15);
+
+        canvas.drawText("Statistics Details : ",100,380,title);
+        title.setTextSize(15);
+        canvas.drawText("Average Age of patients :        "+age,120,420,title);
+        canvas.drawText("Average percentage of smokers  :            "+smokes*100+"%",120,440,title);
+        canvas.drawText("Average of family History in patients :    "+famhist*100+"%",120,480,title);
+
+        canvas.drawText("Average blood pressure : " + bloodpressure,100,520,title);
+
+        canvas.drawText("Average Reynolds risk score :                                        "+Math.round(rrs)+"%",120,550,title);
+
+        pdfDocument.finishPage(myPage);
+        File[] files = getExternalFilesDirs(null);
+        String dir= "";
+
+        if(files == null) {
+        } else {
+            if(files.length > 0) {
+                for(File file : files) {
+                    dir = file.getPath();
+
+                }
+            }
+        }
+        File parentDir = new File(dir + File.separator + getString(R.string.app_name) + File.separator + "PDF's");
+        if(!parentDir.exists()) {
+            parentDir.mkdirs();
+        }
+
+
+
+        File file = new File(parentDir , filenamed);
+
+        try {
+            // after creating a file name we will
+            // write our PDF file to that location.
+            pdfDocument.writeTo(new FileOutputStream(file));
+
+            // below line is to print toast message
+            // on completion of PDF generation.
+            Toast.makeText(ClinicianHome.this, "PDF file generated succesfully.", Toast.LENGTH_SHORT).show();
+        } catch(IOException e) {
+            // below line is used
+            // to handle error
+            e.printStackTrace();
+        }
+        // after storing our pdf to that
+        // location we are closing our PDF file.
+        pdfDocument.close();
+
+
+    }
+
+    private boolean checkPermission() {
+        // checking of permissions.
+        int permission1 = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
+        int permission2 = ContextCompat.checkSelfPermission(getApplicationContext(), READ_EXTERNAL_STORAGE);
+        return permission1 == PackageManager.PERMISSION_GRANTED && permission2 == PackageManager.PERMISSION_GRANTED;
+    }
+    private void requestPermission() {
+        // requesting permissions if not provided.
+        ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+    }
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0) {
+
+                // after requesting permissions we are showing
+                // users a toast message of permission granted.
+                boolean writeStorage = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                boolean readStorage = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+
+                if (writeStorage && readStorage) {
+                } else {
+                    Toast.makeText(this, "Permission Denined.", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            }
+        }
+    }
 
 
     @Override
@@ -433,7 +474,7 @@ public class ClinicianHome extends AppCompatActivity {
                 for(DocumentSnapshot documentSnapshot : value) {
                     DateAge dateAge = new DateAge((long) documentSnapshot.get("dateOfBirth"));
                     int age = dateAge.getAge();
-                    Patient pat = new Patient(documentSnapshot.get("name").toString(), age + "", documentSnapshot.get("gender").toString(), documentSnapshot.getId(),name);
+                    Patient pat = new Patient(documentSnapshot.get("name").toString(), age , documentSnapshot.get("gender").toString(), documentSnapshot.getId(),name);
 
                     patients.add(pat);
                 }

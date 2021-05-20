@@ -3,15 +3,17 @@ package com.hotmail.jamesnhendry.fza3077;
 import java.util.ArrayList;
 
 public class Patient {
-    private String clinitianUsername,name,username,password,phoneNumber,sex,patientID,location;
+    private String clinitianUsername,name,username,password,sex,patientID,location;
+    private int phoneNumber;
     private ArrayList<Visit> pastVisits;
     private ArrayList<Visit> futureVisits;
 
 
     public Patient() {
+        
     }
 
-    public Patient(String name, String phoneNumber, String sex,String patientid,String clinitianUsername) {
+    public Patient(String name, int phoneNumber, String sex,String patientid,String clinitianUsername) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.sex = sex;
@@ -19,7 +21,7 @@ public class Patient {
         this.clinitianUsername = clinitianUsername;
     }
 
-    public Patient(String name, String phoneNumber, String sex, String patientID, String clinitianUsername,String location) {
+    public Patient(String name, int phoneNumber, String sex, String patientID, String clinitianUsername,String location) {
         this.clinitianUsername = clinitianUsername;
         this.name = name;
         this.phoneNumber = phoneNumber;
@@ -88,11 +90,11 @@ public class Patient {
         this.password = password;
     }
 
-    public String getPhoneNumber() {
+    public int getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public void setPhoneNumber(int phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
