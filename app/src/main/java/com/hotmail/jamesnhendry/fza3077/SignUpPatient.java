@@ -226,6 +226,7 @@ public class SignUpPatient extends Fragment {
                                        System.out.println("Success");
                                         Toast.makeText(getActivity().getApplicationContext(), "Sign Up Successful", Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(getContext(),PatientHome.class);
+                                        intent.putExtra("UserID",mAuth.getUid());
                                         startActivity(intent);
                                     }
                                 })

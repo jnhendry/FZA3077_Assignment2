@@ -130,6 +130,7 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     Toast.makeText(cr, "Visit Created Successfully", Toast.LENGTH_SHORT).show();
+
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override

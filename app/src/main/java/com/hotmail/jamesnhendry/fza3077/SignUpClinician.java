@@ -147,6 +147,7 @@ public class SignUpClinician extends Fragment {
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(getActivity().getApplicationContext(), "Sign Up Successful", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getContext(), ClinicianHome.class);
+                        intent.putExtra("UserID",mAuth.getUid());
                         startActivity(intent);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
