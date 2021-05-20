@@ -56,9 +56,9 @@ public class signupPatient extends Fragment {
     private EditText edtName,edtSurname,edtEmail,edtPassword,edtPass2;
     private Button edtDate;
     private TextView txtLogin;
-    private Spinner spnGender,spnSuburb,spnClinitian;
+    private Spinner spnGender,spnSuburb, spnClinician;
     private Button btnSignUp;
-    private final ArrayList<String> clintianID = new ArrayList<>();
+    private final ArrayList<String> clinician = new ArrayList<>();
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private long dateSelected = 0;
@@ -66,7 +66,6 @@ public class signupPatient extends Fragment {
     public signupPatient() {
         // Required empty public constructor
     }
-
 
     // TODO: Rename and change types and number of parameters
     public static signupPatient newInstance(String param1, String param2) {
@@ -111,7 +110,7 @@ public class signupPatient extends Fragment {
         txtLogin = view.findViewById(R.id.txtSignIn);
         spnGender = view.findViewById(R.id.spnGender);
         spnSuburb = view.findViewById(R.id.spnSuburb);
-        spnClinitian = view.findViewById(R.id.spnClinitian);
+        spnClinician = view.findViewById(R.id.spnClinitian);
 
         txtLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,7 +150,7 @@ public class signupPatient extends Fragment {
                 surname = edtSurname.getText().toString();
                 gender = spnGender.getSelectedItem().toString();
                 suburb = spnSuburb.getSelectedItem().toString();
-                clinician = spnClinitian.getSelectedItem().toString();
+                clinician = spnClinician.getSelectedItem().toString();
                 email = edtEmail.getText().toString();
                 password = edtPassword.getText().toString();
                 retypePassword = edtPass2.getText().toString();
@@ -165,8 +164,8 @@ public class signupPatient extends Fragment {
                         Toast.makeText(getActivity().getApplicationContext(),"Password & Re-type Password do not match",Toast.LENGTH_SHORT).show();
                     }else {
                         //getClinicianID
-                        String clinicianId =clintianID.get(spnClinitian.getSelectedItemPosition());
-                        signUpNewUser(firstName, surname, gender, suburb, clinicianId, email, password, dateOfBirth);
+                        String clinicianId = signupPatient.this.clinician.get(spnClinician.getSelectedItemPosition());
+                        signUpNewPatient(firstName, surname, gender, suburb, clinicianId, email, password, dateOfBirth);
                     }
                 }
             }
@@ -174,30 +173,32 @@ public class signupPatient extends Fragment {
 
     }
 
+    // A patient must specify the main clinician responsible for them, this method bellow gets the list of clinicians on
+    // the platform and displays them for the patient to choose.
     public void populateCliniciansSpinner(){
-
         db.collection("clinician").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 ArrayList<String> theClinicians =  new ArrayList<String>();
                 theClinicians.add("Clinician");
-                clintianID.add("Clinician");
+                clinician.add("Clinician");
                 if (task.isSuccessful()){
                     for(QueryDocumentSnapshot document : task.getResult()){
                         HashMap <String, Object> map = (HashMap) document.getData();
-                        clintianID.add(document.getId());
+                        clinician.add(document.getId());
                         theClinicians.add(map.get("name").toString());
                     }
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, theClinicians);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spnClinitian.setAdapter(adapter);
+                spnClinician.setAdapter(adapter);
             }
         });
     }
 
-
-    public void signUpNewUser(final String firstName, final String surname,final String gender,final String suburb, final String clinician, final String email,final String password,final long dateOfBirth){
+    // This method performs the actual process of signing up a new patient as users of this platform.
+    // This also includes storing their user data in the firebase firestore database.
+    public void signUpNewPatient(final String firstName, final String surname, final String gender, final String suburb, final String clinician, final String email, final String password, final long dateOfBirth){
 
         mAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {

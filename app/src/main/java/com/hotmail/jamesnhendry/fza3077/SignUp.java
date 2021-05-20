@@ -7,17 +7,16 @@ import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class SignUp extends AppCompatActivity {
 
     private FragmentTransaction ft;
 
-    private final Fragment signUpClinitian = signupClinitian.newInstance("","");
+    private final Fragment signUpClinician = signupClinician.newInstance("","");
     private final Fragment signUpPatients = signupPatient.newInstance("","");
 
-    private Button btnPatient,btnCllinitian;
+    private Button btnPatient, btnClinician;
     int counter = 0;
 
     @Override
@@ -27,8 +26,7 @@ public class SignUp extends AppCompatActivity {
         ft = getSupportFragmentManager().beginTransaction();
 
         btnPatient = findViewById(R.id.btntogglePatientSU);
-        btnCllinitian = findViewById(R.id.btnToggleClinitianSU);
-
+        btnClinician = findViewById(R.id.btnToggleClinitianSU);
 
 
         btnPatient.setOnClickListener(new View.OnClickListener() {
@@ -36,22 +34,20 @@ public class SignUp extends AppCompatActivity {
             public void onClick(View view) {
                 openFragment(signUpPatients);
                 btnPatient.setAlpha(1);
-                btnCllinitian.setAlpha((float) 0.3);
+                btnClinician.setAlpha((float) 0.3);
             }
         });
 
-        btnCllinitian.setOnClickListener(new View.OnClickListener() {
+        btnClinician.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openFragment(signUpClinitian);
+                openFragment(signUpClinician);
                 btnPatient.setAlpha((float) 0.3);
-                btnCllinitian.setAlpha(1);
+                btnClinician.setAlpha(1);
             }
         });
 
         btnPatient.callOnClick();
-
-
     }
 
     public void openFragment(Fragment fragment) {
@@ -67,7 +63,7 @@ public class SignUp extends AppCompatActivity {
         if(counter>1){
             super.onBackPressed();
         }else{
-            Toast.makeText(this, "press back again to exit", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
         }
     }
 }

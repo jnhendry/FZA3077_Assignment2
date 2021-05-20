@@ -7,13 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.ArrayList;
 
@@ -21,7 +15,6 @@ public class visitAdapter extends RecyclerView.Adapter<visitAdapter.subholder>{
 
     private ArrayList<Visit> list;
     private onItemClickListener mListener;
-    private String testcl,testpat;
     Context cr;
 
     public visitAdapter(ArrayList<Visit> list, Context cr) {
@@ -48,20 +41,12 @@ public class visitAdapter extends RecyclerView.Adapter<visitAdapter.subholder>{
     @Override
     public void onBindViewHolder(@NonNull subholder holder, int position) {
                 holder.txtVisitDate.setText(list.get(position).getDate().toString());
-                String clinitian , patient;
-                clinitian = list.get(position).getClinitianID();
+                String clinician , patient;
+                clinician = list.get(position).getClinitianID();
                 patient = list.get(position).getPatientID();
-                holder.txtVisitClinitian.setText(clinitian);
+                holder.txtVisitClinician.setText(clinician);
                 holder.txtVisitPatient.setText(patient);
                 holder.txtVisitTime.setText(list.get(position).getTime());
-//                if(iscompleted){
-//                    if(position==0) {
-//                        btnEdit.setvisibility(VISIBILE);
-//                    }
-//                }
-
-
-                //btnedit.setOnCLICKLISTENER....
 
     }
 
@@ -76,17 +61,15 @@ public class visitAdapter extends RecyclerView.Adapter<visitAdapter.subholder>{
 
     public static class subholder extends RecyclerView.ViewHolder{
 
-        TextView txtVisitDate,txtVisitTime,txtVisitClinitian,txtVisitPatient,txtVisitMedicalRecord;
+        TextView txtVisitDate,txtVisitTime, txtVisitClinician,txtVisitPatient,txtVisitMedicalRecord;
 
         public subholder(@NonNull View itemView,final onItemClickListener listener) {
             super(itemView);
 
             txtVisitDate = itemView.findViewById(R.id.txtVisitDate);
             txtVisitTime = itemView.findViewById(R.id.txtVisitTime);
-            txtVisitClinitian = itemView.findViewById(R.id.txtVisitClinitian);
+            txtVisitClinician = itemView.findViewById(R.id.txtVisitClinitian);
             txtVisitPatient = itemView.findViewById(R.id.txtVisitPatient);
-
-
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -96,7 +79,6 @@ public class visitAdapter extends RecyclerView.Adapter<visitAdapter.subholder>{
                         if(position!= RecyclerView.NO_POSITION){
                             listener.onItemClicked(position);
                         }
-
                     }
                 }
             });

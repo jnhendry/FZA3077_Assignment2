@@ -134,7 +134,7 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
                                         db.collection("visit").document().set(visit).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                Toast.makeText(cr, "boom", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(cr, "Visit Created Successfully", Toast.LENGTH_SHORT).show();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                             @Override
