@@ -49,7 +49,7 @@ public class PatientHome extends AppCompatActivity {
     private MaterialToolbar topAppBar;
 
     private RecyclerView  recyclerPastVisit, recyclerFutureVisit;
-    private visitAdapter visitPastAdapter, visitFutureAdapter;
+    private visitAdapter pastVisitsAdapter, futureVisitsAdapter;
 
     final ArrayList<Visit> visitPastArrayList = new ArrayList<>();
     final ArrayList<Visit> visitFutureArrayList = new ArrayList<>();
@@ -90,7 +90,6 @@ public class PatientHome extends AppCompatActivity {
         topAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                System.out.println("You Clicked Log Out");
                 mAuth.signOut();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
@@ -109,82 +108,79 @@ public class PatientHome extends AppCompatActivity {
             btnSchedule.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    final Dialog dialog = new Dialog(PatientHome.this);
-                    dialog.setContentView(R.layout.popupvisit);
-                    final CalendarView calendarView = dialog.findViewById(R.id.clvDate);
-                    final Spinner edtTime = dialog.findViewById(R.id.spnTimes);
-                    Button btnConfirm = dialog.findViewById(R.id.btnConfirm);
-                    TextView txtAppointment = dialog.findViewById(R.id.txtAppointment);
+                final Dialog dialog = new Dialog(PatientHome.this);
+                dialog.setContentView(R.layout.popupvisit);
+                final CalendarView calendarView = dialog.findViewById(R.id.clvDate);
+                final Spinner edtTime = dialog.findViewById(R.id.spnTimes);
+                Button btnConfirm = dialog.findViewById(R.id.btnConfirm);
+                TextView txtAppointment = dialog.findViewById(R.id.txtAppointment);
 
-                    dialog.show();
-                    txtAppointment.setText("Create a new visit with: " + patientFullName.getText().toString());
-                    final String[] dateString = new String[1];
+                dialog.show();
+                txtAppointment.setText("Create a new visit with: " + patientFullName.getText().toString());
+                final String[] dateString = new String[1];
 
-                    calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                    @Override
+                    public void onSelectedDayChange(CalendarView view, int year, int month,
+                                                    int dayOfMonth) {
+                    String curDate = String.valueOf(dayOfMonth);
+                    String Year = String.valueOf(year);
+                    String Month = String.valueOf(month + 1);
+                    dateString[0] = curDate + "-" + Month + "-" + Year;
+                    }
+                });
+
+                btnConfirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                    dialog.dismiss();
+                    final String time = edtTime.getSelectedItem().toString();
+                    final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    final String clinicianID = user.getUid();
+                    final String patientID = patientId.getText().toString();
+
+                    db.collection("clinician").document(clinicianID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
-                        public void onSelectedDayChange(CalendarView view, int year, int month,
-                                                        int dayOfMonth) {
-                            String curDate = String.valueOf(dayOfMonth);
-                            String Year = String.valueOf(year);
-                            String Month = String.valueOf(month + 1);
-                            dateString[0] = curDate + "-" + Month + "-" + Year;
-                        }
-                    });
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                    btnConfirm.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            dialog.dismiss();
-                            final String time = edtTime.getSelectedItem().toString();
-                            final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                            final String clinicianID = user.getUid();
-                            final String patientID = patientId.getText().toString();
+                        if(task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if(document.exists()) {
+                                String cName = document.getData().get("name").toString();
+                                Map<String, Object> visit = new HashMap<>();
+                                visit.put("patientId", patientID);
+                                visit.put("patientName", patientFullName.getText().toString());
+                                visit.put("clinicianId", clinicianID);
+                                visit.put("clinicianName", cName);
+                                visit.put("scheduleStart", time);
+                                visit.put("date", dateString[0]);
+                                visit.put("visitCancelled", false);
+                                visit.put("visitCompleted", false);
 
-                            db.collection("clinician").document(clinicianID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                                    if(task.isSuccessful()) {
-                                        DocumentSnapshot document = task.getResult();
-                                        if(document.exists()) {
-                                            String cName = document.getData().get("name").toString();
-                                            Map<String, Object> visit = new HashMap<>();
-                                            visit.put("patientId", patientID);
-                                            visit.put("patientName", patientFullName.getText().toString());
-                                            visit.put("clinicianId", clinicianID);
-                                            visit.put("clinicianName", cName);
-                                            visit.put("scheduleStart", time);
-                                            visit.put("date", dateString[0]);
-                                            visit.put("visitCancelled", false);
-                                            visit.put("visitCompleted", false);
-
-                                            db.collection("visit").document().set(visit).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    Toast.makeText(getApplicationContext(), "boom", Toast.LENGTH_SHORT).show();
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                }
-                                            });
-                                        }
+                                db.collection("visit").document().set(visit).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Toast.makeText(getApplicationContext(), "Visit Created Successfully", Toast.LENGTH_SHORT).show();
                                     }
-                                }
-                            });
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(getApplicationContext(), "Visit Creation Unsuccessful", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }
                         }
                     });
-                    String time;
-                    long date;
+                    }
+                });
                 }
             });
         }
-            //The process of getting and display patient details is invoked here.
-            populatePatientDetails();
-            populatePatientVisits();
+        //The process of getting and display patient details is invoked here.
+        populatePatientDetails();
+        populatePatientVisits();
     }
-
-
 
     private void populatePatientDetails(){
         mAuth = FirebaseAuth.getInstance();
@@ -194,33 +190,33 @@ public class PatientHome extends AppCompatActivity {
         db.document("patient/"+userID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.exists()){
+            if(documentSnapshot.exists()){
 
-                    final String id = documentSnapshot.getId();
-                    final String fullName = documentSnapshot.get("name").toString();
-                    final String gender = documentSnapshot.get("gender").toString();
+                final String id = documentSnapshot.getId();
+                final String fullName = documentSnapshot.get("name").toString();
+                final String gender = documentSnapshot.get("gender").toString();
 
-                    DateAge dateAge = new DateAge((long) documentSnapshot.get("dateOfBirth"));
-                    final int age = dateAge.getAge();
-                    final String datOfBirth = dateAge.getDateOfBirth();
-                    final String location = documentSnapshot.get("suburb").toString();
+                DateAge dateAge = new DateAge((long) documentSnapshot.get("dateOfBirth"));
+                final int age = dateAge.getAge();
+                final String datOfBirth = dateAge.getDateOfBirth();
+                final String location = documentSnapshot.get("suburb").toString();
 
-                    db.document("clinician/"+documentSnapshot.get("clinicianId")).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if(documentSnapshot.exists()){
+                db.document("clinician/"+documentSnapshot.get("clinicianId")).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if(documentSnapshot.exists()){
 
-                            edtPatientName.setText(fullName);
-                            displayPatientDetails(id, fullName,gender, age + " ", datOfBirth, location,documentSnapshot.get("name").toString());
-                        }
-                        }
-                    });
-                }
+                        edtPatientName.setText(fullName);
+                        displayPatientDetails(id, fullName,gender, age + " ", datOfBirth, location,documentSnapshot.get("name").toString());
+                    }
+                    }
+                });
+            }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(PatientHome.this, "Error: Something went Wrong getting data.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(PatientHome.this, "Error: Something went wrong getting data.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -237,24 +233,24 @@ public class PatientHome extends AppCompatActivity {
         if(isClinician){
             edtPatientName.setText(clinicianIntent);
             if(!patientClinician.getText().equals(clinicianIntent)){
-                ArrayList<Visit> afuture = new ArrayList<>();
-                ArrayList<Visit> apast = new ArrayList<>();
+                ArrayList<Visit> aFuture = new ArrayList<>();
+                ArrayList<Visit> aPast = new ArrayList<>();
 
                 for(int i = 0;i<visitFutureArrayList.size();i++){
                     if(visitFutureArrayList.get(i).getClinitianID().equals(clinicianIntent)){
-                        afuture.add(visitFutureArrayList.get(i));
+                        aFuture.add(visitFutureArrayList.get(i));
                     }
                 }
-                visitFutureAdapter = new visitAdapter(afuture,PatientHome.this);
-                recyclerFutureVisit.setAdapter(visitFutureAdapter);
+                futureVisitsAdapter = new visitAdapter(aFuture,PatientHome.this);
+                recyclerFutureVisit.setAdapter(futureVisitsAdapter);
 
                 for(int i = 0;i<visitPastArrayList.size();i++){
                     if(visitPastArrayList.get(i).getClinitianID().equals(clinicianIntent)){
-                        apast.add(visitPastArrayList.get(i));
+                        aPast.add(visitPastArrayList.get(i));
                     }
                 }
-                visitPastAdapter = new visitAdapter(apast,PatientHome.this);
-                recyclerPastVisit.setAdapter(visitPastAdapter);
+                pastVisitsAdapter = new visitAdapter(aPast,PatientHome.this);
+                recyclerPastVisit.setAdapter(pastVisitsAdapter);
             }
         }
     }
@@ -265,63 +261,63 @@ public class PatientHome extends AppCompatActivity {
         db.collection("visit").whereEqualTo("patientId", userID).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    return;
+            if (error != null) {
+                return;
+            }
+            visitPastArrayList.clear();
+            visitFutureArrayList.clear();
+            for (final DocumentSnapshot documentSnapshot : value) {
+
+                String visitId = documentSnapshot.getId();
+                String date = documentSnapshot.get("date").toString();
+                String time = documentSnapshot.get("scheduleStart").toString();
+                String clinicianId = documentSnapshot.get("clinicianName").toString();
+                String patientID = documentSnapshot.get("patientName").toString();
+                boolean visitCompleted = (boolean) documentSnapshot.get("visitCompleted");
+
+                Visit visit = new Visit(clinicianId, patientID, date, time,documentSnapshot.getId(),visitCompleted);
+
+                // This if statement separates completed visits from visits that have only be scheduled.
+                if (visitCompleted) {
+                    visitPastArrayList.add(visit);
+                } else {
+                    visitFutureArrayList.add(visit);
                 }
-                visitPastArrayList.clear();
-                visitFutureArrayList.clear();
-                for (final DocumentSnapshot documentSnapshot : value) {
+            }
 
-                    String visitId = documentSnapshot.getId();
-                    String date = documentSnapshot.get("date").toString();
-                    String time = documentSnapshot.get("scheduleStart").toString();
-                    String clinicianId = documentSnapshot.get("clinicianName").toString();
-                    String patientID = documentSnapshot.get("patientName").toString();
-                    boolean visitCompleted = (boolean) documentSnapshot.get("visitCompleted");
+            recyclerFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            futureVisitsAdapter = new visitAdapter(visitFutureArrayList, PatientHome.this);
+            recyclerFutureVisit.setAdapter(futureVisitsAdapter);
 
-                    Visit visit = new Visit(clinicianId, patientID, date, time,documentSnapshot.getId(),visitCompleted);
-
-                    // This if statement separates completed visits from visits that have only be scheduled.
-                    if (visitCompleted) {
-                        visitPastArrayList.add(visit);
-                    } else {
-                        visitFutureArrayList.add(visit);
-                    }
-                }
-
-                recyclerFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                visitFutureAdapter = new visitAdapter(visitFutureArrayList, PatientHome.this);
-                recyclerFutureVisit.setAdapter(visitFutureAdapter);
-
-                if(isClinician){
-                    visitFutureAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
-                        @Override
-                        public void onItemClicked(int position) {
-                            Intent futureVisit = new Intent(PatientHome.this,NewVisit.class);
-                            futureVisit.putExtra("visitid",visitFutureArrayList.get(position).getVisitid());
-                            futureVisit.putExtra("value",position);//if position>0 then do nothing;
-                            futureVisit.putExtra("isvisitcompleted",visitFutureArrayList.get(position).isIscompleted());
-                            futureVisit.putExtra("usertype","clinician");
-                            startActivity(futureVisit);
-                        }
-                    });
-                }
-
-                recyclerPastVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                visitPastAdapter = new visitAdapter(visitPastArrayList, PatientHome.this);
-                recyclerPastVisit.setAdapter(visitPastAdapter);
-
-                visitPastAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
+            if(isClinician){
+                futureVisitsAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
                     @Override
                     public void onItemClicked(int position) {
-                        Intent futureVisit = new Intent(PatientHome.this,NewVisit.class);
-                        futureVisit.putExtra("visitid",visitPastArrayList.get(position).getVisitid());
-                        futureVisit.putExtra("value",position);//if position>0 then do nothing;
-                        futureVisit.putExtra("isvisitcompleted",visitPastArrayList.get(position).isIscompleted());
-                        futureVisit.putExtra("usertype","patient");
-                        startActivity(futureVisit);
+                    Intent futureVisit = new Intent(PatientHome.this,NewVisit.class);
+                    futureVisit.putExtra("visitid",visitFutureArrayList.get(position).getVisitid());
+                    futureVisit.putExtra("value",position);//if position>0 then do nothing;
+                    futureVisit.putExtra("isvisitcompleted",visitFutureArrayList.get(position).isIscompleted());
+                    futureVisit.putExtra("usertype","clinician");
+                    startActivity(futureVisit);
                     }
                 });
+            }
+
+            recyclerPastVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            pastVisitsAdapter = new visitAdapter(visitPastArrayList, PatientHome.this);
+            recyclerPastVisit.setAdapter(pastVisitsAdapter);
+
+            pastVisitsAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
+                @Override
+                public void onItemClicked(int position) {
+                Intent futureVisit = new Intent(PatientHome.this,NewVisit.class);
+                futureVisit.putExtra("visitid",visitPastArrayList.get(position).getVisitid());
+                futureVisit.putExtra("value",position);//if position>0 then do nothing;
+                futureVisit.putExtra("isvisitcompleted",visitPastArrayList.get(position).isIscompleted());
+                futureVisit.putExtra("usertype","patient");
+                startActivity(futureVisit);
+                }
+            });
             }
         });
     }

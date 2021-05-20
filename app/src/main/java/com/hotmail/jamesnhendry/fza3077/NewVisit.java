@@ -13,12 +13,10 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,49 +43,46 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class NewVisit extends AppCompatActivity {
 
-    private EditText bloodpressure,creactive,apolprotA,apolprotB,lipoprotA,hemoA;
+    private EditText bloodPressure, cReactive,apolprotA,apolprotB,lipoprotA,hemoA;
     private Spinner smoker,famhist;
-    private TextView txtclinititanname,txtpatientname,txtpatientGender,txtpatientage,txtpatientlocation,txtreynoldsriskscore;
-    private RecyclerView recyclnotes,recyclRecommendation;
-    private Button btnaddNote,btnaddRecommendation,btnSaveVisit;
+    private TextView txtClinicianName, txtPatientName, txtPatientGender, txtPatientAge, txtPatientLocation, txtReynoldsRiskScore;
+    private RecyclerView recyclerNotes, recyclerRecommendation;
+    private Button btnAddNote, btnAddRecommendation,btnSaveVisit;
     private notes_recommendationadapter adapter;
     private ArrayList<Note> noteArrayList = new ArrayList<>();
     private ArrayList<Recommendation> recommendationArrayList = new ArrayList<>();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Button btnUpdate,btnSimulate,btnGeneratePDF;
-    String usertype,futureorpast;
+    String userType;
     String visitID;
     private MedicalRecord medrec;
     private static final int PERMISSION_REQUEST_CODE = 200;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_visit);
         boolean completed;
-        int isMostRecent;
 
-        declareelements();
+        declareElements();
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updatenotesandrecommendations(noteArrayList,recommendationArrayList);
+                updateNotesAndRecommendations(noteArrayList,recommendationArrayList);
             }
         });
 
-        btnaddNote.setOnClickListener(new View.OnClickListener() {
+        btnAddNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 createNewNote();
             }
         });
 
-        btnaddRecommendation.setOnClickListener(new View.OnClickListener() {
+        btnAddRecommendation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createnewRecommendation();
+                createNewRecommendation();
             }
         });
         btnGeneratePDF.setOnClickListener(new View.OnClickListener() {
@@ -99,72 +94,69 @@ public class NewVisit extends AppCompatActivity {
         btnSimulate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String sbloodp,screac,sapolproA,sapolproB,shemoglo,slipoProt;
+                String sBloodP,SCReac,sApolproA,sApolproB,sHemoglobin,sLipoProt;
                 double rrs;
-                boolean smokerer,famhitoryry;
+                boolean smokerEr,famhistoryRy;
                 String smokes,famhistory;
-                sbloodp =bloodpressure.getText().toString();
-                screac = creactive.getText().toString();
-                sapolproA = (apolprotA.getText().toString());
-                sapolproB=(apolprotB.getText().toString());
-                shemoglo = (hemoA.getText().toString());
-                slipoProt = (lipoprotA.getText().toString());
+                sBloodP = bloodPressure.getText().toString();
+                SCReac = cReactive.getText().toString();
+                sApolproA = (apolprotA.getText().toString());
+                sApolproB=(apolprotB.getText().toString());
+                sHemoglobin = (hemoA.getText().toString());
+                sLipoProt = (lipoprotA.getText().toString());
                 smokes = smoker.getSelectedItem().toString();
                 famhistory = famhist.getSelectedItem().toString();
-                if((sbloodp.equals(""))||(screac.equals(""))||(sapolproA.equals(""))||(sapolproB.equals(""))||(shemoglo.equals(""))||(slipoProt.equals(""))||(smokes.equals("--Select one--"))||famhistory.equals("--Select one--")){
+                if((sBloodP.equals(""))||(SCReac.equals(""))||(sApolproA.equals(""))||(sApolproB.equals(""))||(sHemoglobin.equals(""))||(sLipoProt.equals(""))||(smokes.equals("--Select one--"))||famhistory.equals("--Select one--")){
                     Toast.makeText(NewVisit.this, "Fill in all fields", Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(NewVisit.this, "works", Toast.LENGTH_SHORT).show();
 
                     if(smokes.equals("Yes")){
-                        smokerer = true;
+                        smokerEr = true;
                     }else{
-                        smokerer = false;
+                        smokerEr = false;
                     }
                     if(famhistory.equals("Yes")){
-                        famhitoryry = true;
+                        famhistoryRy = true;
                     }else {
-                        famhitoryry = false;
+                        famhistoryRy = false;
                     }
-                    MedicalRecord medrec = new MedicalRecord(Double.parseDouble(sbloodp),Double.parseDouble(screac),Double.parseDouble(sapolproB),Double.parseDouble(sapolproA),Double.parseDouble(slipoProt),Double.parseDouble(shemoglo),smokerer,famhitoryry);
+                    MedicalRecord medrec = new MedicalRecord(Double.parseDouble(sBloodP),Double.parseDouble(SCReac),Double.parseDouble(sApolproB),Double.parseDouble(sApolproA),Double.parseDouble(sLipoProt),Double.parseDouble(sHemoglobin),smokerEr,famhistoryRy);
                     rrs = medrec.calculateReynoldsRiskScore();
-                    txtreynoldsriskscore.setText(Math.round(rrs)+"%");
+                    txtReynoldsRiskScore.setText(Math.round(rrs)+"%");
                 }
             }});
         Intent intent = getIntent();
 
         visitID = intent.getStringExtra("visitid");//use this to gather from the DB
-        isMostRecent = intent.getIntExtra("value",1);
+        //isMostRecent = intent.getIntExtra("value",1);
         completed = intent.getBooleanExtra("isvisitcompleted",false);
-        usertype = intent.getStringExtra("usertype");
-        Toast.makeText(this, usertype, Toast.LENGTH_SHORT).show();
-        populateemptyfields(visitID);
+        userType = intent.getStringExtra("usertype");
+        Toast.makeText(this, userType, Toast.LENGTH_SHORT).show();
+        populateEmptyFields(visitID);
 
         //isEditable(isMostRecent);
 
-        //TODO make medical record editable for lastest visit for patients
-        //TODO make medical record, notes and recommendations editable of the latest visit for clinitians
 
-        if(usertype!=null) {
-            switch(usertype) {
+        if(userType !=null) {
+            switch(userType) {
                 case "patient":
                     btnSimulate.setVisibility(View.VISIBLE);
                     btnUpdate.setVisibility(View.GONE);
                     btnSaveVisit.setVisibility(View.GONE);
-                    btnaddNote.setVisibility(View.GONE);
-                    btnaddRecommendation.setVisibility(View.GONE);
+                    btnAddNote.setVisibility(View.GONE);
+                    btnAddRecommendation.setVisibility(View.GONE);
                     btnGeneratePDF.setVisibility(View.VISIBLE);
-                    updateviewforcompleted();
+                    updateViewForCompleted();
                     return;
                 case "clinician":
                     if(completed) {
                        btnSaveVisit.setVisibility(View.GONE);
                        btnUpdate.setVisibility(View.VISIBLE);
                        btnSimulate.setVisibility(View.GONE);
-                       updateviewforcompleted();
+                       updateViewForCompleted();
                        makeViewUneditable();
-                        btnGeneratePDF.setVisibility(View.VISIBLE);
-                        return;
+                       btnGeneratePDF.setVisibility(View.VISIBLE);
+                       return;
                     }else {
                         btnSaveVisit.setVisibility(View.VISIBLE);
                         btnUpdate.setVisibility(View.GONE);
@@ -172,31 +164,18 @@ public class NewVisit extends AppCompatActivity {
                     }
                     return;
                 default:
-                    //throw out an error
+
             }
         }
-
-
-
-
-            //get the data from the database and populate notes and medical record as well as write out recommendations.
-
-
-
 
         btnSaveVisit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO:import the pdf viewer and handle the data to the database. PDFs will be local.
-                //TODO: handle notifications for clinitians and patients.
                saveVisit();
             }
         });
 
-
-
-
-        setuprecyclers();
+        setupRecyclerViews();
     }
 
     private void generatePDF() {
@@ -226,23 +205,22 @@ public class NewVisit extends AppCompatActivity {
         title.setColor(ContextCompat.getColor(this, R.color.black));
         canvas.drawText("Document ID :  "+visitID,500,140,title);
 
-
         title.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
         title.setColor(ContextCompat.getColor(this, R.color.black));
         title.setTextSize(15);
 
         title.setTextAlign(Paint.Align.LEFT);
 
-        canvas.drawText("Clinitian : "+txtclinititanname.getText().toString(),100,350,title);
+        canvas.drawText("Clinitian : "+ txtClinicianName.getText().toString(),100,350,title);
 
         title.setTextSize(21);
 
         canvas.drawText("Patient Details : ",100,380,title);
         title.setTextSize(15);
-        canvas.drawText("Name :        "+txtpatientname.getText().toString(),120,420,title);
-        canvas.drawText("Age :            "+txtpatientage.getText().toString(),120,440,title);
-        canvas.drawText("Gender :      "+txtpatientGender.getText().toString(),120,460,title);
-        canvas.drawText("Location :    "+txtpatientlocation.getText().toString(),120,480,title);
+        canvas.drawText("Name :        "+ txtPatientName.getText().toString(),120,420,title);
+        canvas.drawText("Age :            "+ txtPatientAge.getText().toString(),120,440,title);
+        canvas.drawText("Gender :      "+ txtPatientGender.getText().toString(),120,460,title);
+        canvas.drawText("Location :    "+ txtPatientLocation.getText().toString(),120,480,title);
 
         title.setTextSize(21);
 
@@ -251,15 +229,15 @@ public class NewVisit extends AppCompatActivity {
 
         title.setTextSize(15);
 
-        canvas.drawText("Blood pressure :                                        "+bloodpressure.getText().toString(),120,550,title);
-        canvas.drawText("C Reactive protein :                                   "+creactive.getText().toString(),120,570,title);
+        canvas.drawText("Blood pressure :                                        "+ bloodPressure.getText().toString(),120,550,title);
+        canvas.drawText("C Reactive protein :                                   "+ cReactive.getText().toString(),120,570,title);
         canvas.drawText("Apolipo protein A :                                    "+apolprotA.getText().toString(),120,590,title);
         canvas.drawText("Apolipo protein B :                                    "+apolprotB.getText().toString(),120,610,title);
         canvas.drawText("Lipoprotein A :                                           "+lipoprotA.getText().toString(),120,630,title);
         canvas.drawText("Hemoglobin A1 :                                       "+hemoA.getText().toString(),120,650,title);
         canvas.drawText("Is a smoker :                                              "+smoker.getSelectedItem().toString(),120,670,title);
         canvas.drawText("Family History of heart disease :              "+famhist.getSelectedItem().toString(),120,690,title);
-        canvas.drawText("Reynolds risk score :                                  "+txtreynoldsriskscore.getText().toString(),120,710,title);
+        canvas.drawText("Reynolds risk score :                                  "+ txtReynoldsRiskScore.getText().toString(),120,710,title);
 
         title.setTextSize(21);
 
@@ -302,7 +280,7 @@ public class NewVisit extends AppCompatActivity {
             if(!parentDir.exists()) {
                 parentDir.mkdirs();
             }
-            String filename =  txtpatientname.getText().toString().trim().replace(" ", "") + LocalDate.now().toString().replace(":", "").replace("-", "").replace(".", "").replace("/", "") + ".pdf";
+            String filename =  txtPatientName.getText().toString().trim().replace(" ", "") + LocalDate.now().toString().replace(":", "").replace("-", "").replace(".", "").replace("/", "") + ".pdf";
 
             File file = new File(parentDir , filename);
 
@@ -323,9 +301,7 @@ public class NewVisit extends AppCompatActivity {
             // location we are closing our PDF file.
             pdfDocument.close();
 
-
         }
-
 
 
     private boolean checkPermission() {
@@ -357,68 +333,64 @@ public class NewVisit extends AppCompatActivity {
         }
     }
 
-
-    private void updateviewforcompleted() {
+    private void updateViewForCompleted() {
         System.out.println(visitID);
         db.collection("visit").document(visitID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                if(documentSnapshot.exists()) {
-                    double bp, cr, apa, apb, lipa, hem,rrs;
-                    boolean sm, fh;
-                    Map<String,Object> map = documentSnapshot.getData();
-                    Map<String,Object> mr = (Map<String, Object>) map.get("medicalRecord");
-                    ArrayList<Map> notes = (ArrayList<Map>) map.get("notes");
-                    ArrayList<Map> recos =(ArrayList<Map>) map.get("recommendations");
+            if(documentSnapshot.exists()) {
+                double bp, cr, apa, apb, lipa, hem,rrs;
+                boolean sm, fh;
+                Map<String,Object> map = documentSnapshot.getData();
+                Map<String,Object> mr = (Map<String, Object>) map.get("medicalRecord");
+                ArrayList<Map> notes = (ArrayList<Map>) map.get("notes");
+                ArrayList<Map> recos =(ArrayList<Map>) map.get("recommendations");
 
-                     bp = (double) mr.get("bloodPressure");
-                    cr = (double) mr.get("creactive");
-                    apa = (double) mr.get("apolprotA");
-                    apb = (double) mr.get("apolprotB");
-                    lipa = (double) mr.get("lipoprotA");
-                    hem = (double) mr.get("hemoglobin");
-                    sm = (boolean) mr.get("smoker");
-                    fh = (boolean) mr.get("familyHistory");
-                    rrs = (double) mr.get("reynoldsRiskScore");
-                    MedicalRecord medicalRecord = new MedicalRecord(bp, cr, apb, apa, lipa, hem, sm, fh);//put shit here
+                 bp = (double) mr.get("bloodPressure");
+                cr = (double) mr.get("creactive");
+                apa = (double) mr.get("apolprotA");
+                apb = (double) mr.get("apolprotB");
+                lipa = (double) mr.get("lipoprotA");
+                hem = (double) mr.get("hemoglobin");
+                sm = (boolean) mr.get("smoker");
+                fh = (boolean) mr.get("familyHistory");
+                rrs = (double) mr.get("reynoldsRiskScore");
+                MedicalRecord medicalRecord = new MedicalRecord(bp, cr, apb, apa, lipa, hem, sm, fh);//put shit here
 
+                for(Map maps : notes) {
+                    String body,description;
+                    body = maps.get("body").toString();
+                    description=maps.get("subject").toString();
+                    Note note = new Note(body, description);
+                    noteArrayList.add(note);
+                }
+                for(Map maps : recos) {
+                    Recommendation recommendation = new Recommendation(maps.get("body").toString(), maps.get("subject").toString());
+                    recommendationArrayList.add(recommendation);
+                }
 
-                    for(Map maps : notes) {
-                        String body,description;
-                        body = maps.get("body").toString();
-                        description=maps.get("subject").toString();
-                        Note note = new Note(body, description);
-                        noteArrayList.add(note);
-                    }
-                    for(Map maps : recos) {
-                        Recommendation recommendation = new Recommendation(maps.get("body").toString(), maps.get("subject").toString());
-                        recommendationArrayList.add(recommendation);
-                    }
+                setupRecyclerViews();
+                bloodPressure.setText(bp+"");
+                cReactive.setText( cr+"");
+                apolprotA.setText( apa+"");
+                apolprotB.setText(apb+"");
+                lipoprotA.setText( lipa+"");
+                hemoA.setText(hem+"");
+                txtReynoldsRiskScore.setText(Math.round(rrs)+"%");
 
-                    setuprecyclers();
-                    bloodpressure.setText(bp+"");
-                    creactive.setText( cr+"");
-                    apolprotA.setText( apa+"");
-                    apolprotB.setText(apb+"");
-                    lipoprotA.setText( lipa+"");
-                    hemoA.setText(hem+"");
-                    txtreynoldsriskscore.setText(Math.round(rrs)+"%");
-
-                    if(medicalRecord.isSmoker()) {
-                        smoker.setSelection(1);
-                    } else {
-                        smoker.setSelection(2);
-                    }
-                    if(medicalRecord.isFamhist()) {
-                        famhist.setSelection(1);
-                    } else {
-                        famhist.setSelection(2);
-
-                    }
-
+                if(medicalRecord.isSmoker()) {
+                    smoker.setSelection(1);
+                } else {
+                    smoker.setSelection(2);
+                }
+                if(medicalRecord.isFamhist()) {
+                    famhist.setSelection(1);
+                } else {
+                    famhist.setSelection(2);
 
                 }
+            }
                 }
 
         });
@@ -426,51 +398,46 @@ public class NewVisit extends AppCompatActivity {
     }
 
 
-
-    private void populateemptyfields(String visitID) {
+    private void populateEmptyFields(String visitID) {
         db.collection("visit").document(visitID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                txtclinititanname.setText(documentSnapshot.get("clinicianName").toString());
-                txtpatientname.setText(documentSnapshot.get("patientName").toString());
+            txtClinicianName.setText(documentSnapshot.get("clinicianName").toString());
+            txtPatientName.setText(documentSnapshot.get("patientName").toString());
 
-                db.collection("patient").document(documentSnapshot.get("patientId").toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        txtpatientGender.setText(documentSnapshot.get("gender").toString());
-                        txtpatientlocation.setText(documentSnapshot.get("suburb").toString());
-                        DateAge age = new DateAge((long)documentSnapshot.get("dateOfBirth"));
+            db.collection("patient").document(documentSnapshot.get("patientId").toString()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                txtPatientGender.setText(documentSnapshot.get("gender").toString());
+                txtPatientLocation.setText(documentSnapshot.get("suburb").toString());
+                DateAge age = new DateAge((long)documentSnapshot.get("dateOfBirth"));
 
-                        txtpatientage.setText(age.getAge()+"");
-
-                    }
-                });
+                txtPatientAge.setText(age.getAge()+"");
+                }
+            });
             }
         });
     }
 
-
-
-    private void declareelements() {
-        //please do this
-        bloodpressure = findViewById(R.id.bloodpressureMedRec);
-        creactive = findViewById(R.id.creactiveMedRec);
+    private void declareElements() {
+        bloodPressure = findViewById(R.id.bloodpressureMedRec);
+        cReactive = findViewById(R.id.creactiveMedRec);
         apolprotA = findViewById(R.id.apolipoproteinAMedRec);
         apolprotB = findViewById(R.id.apolipoproteinBMedRec);
         lipoprotA = findViewById(R.id.lipoproteinAMedRec);
         hemoA = findViewById(R.id.HemoglobinA1MedRec);
         smoker = findViewById(R.id.spnSmokerMedRec);
         famhist = findViewById(R.id.spnFamilyHistory);
-        txtclinititanname = findViewById(R.id.txtClintiannameMedRec);
-        txtpatientname = findViewById(R.id.patientnameMedRec);
-        txtpatientGender = findViewById(R.id.patientGenderMedRec);
-        txtpatientage = findViewById(R.id.txtPatientAgeMedical);
-        txtpatientlocation = findViewById(R.id.patientLocationMedRec);
-        txtreynoldsriskscore = findViewById(R.id.reynoldsriskscoreMedRec);
-        recyclnotes = findViewById(R.id.recyclNotes);
-        recyclRecommendation = findViewById(R.id.recyclRecommendations);
-        btnaddNote = findViewById(R.id.addNote);
-        btnaddRecommendation = findViewById(R.id.addRecom);
+        txtClinicianName = findViewById(R.id.txtClintiannameMedRec);
+        txtPatientName = findViewById(R.id.patientnameMedRec);
+        txtPatientGender = findViewById(R.id.patientGenderMedRec);
+        txtPatientAge = findViewById(R.id.txtPatientAgeMedical);
+        txtPatientLocation = findViewById(R.id.patientLocationMedRec);
+        txtReynoldsRiskScore = findViewById(R.id.reynoldsriskscoreMedRec);
+        recyclerNotes = findViewById(R.id.recyclNotes);
+        recyclerRecommendation = findViewById(R.id.recyclRecommendations);
+        btnAddNote = findViewById(R.id.addNote);
+        btnAddRecommendation = findViewById(R.id.addRecom);
         btnSaveVisit = findViewById(R.id.btnSaveVisit);
         btnUpdate = findViewById(R.id.btnUpdate);
         btnSimulate = findViewById(R.id.btnSimulate);
@@ -478,40 +445,39 @@ public class NewVisit extends AppCompatActivity {
     }
 
 
-
+    //Add a new note to the arraylist and update the recycler view to show the changes.
     public void createNewNote(){
-        //add a new note to the arraylist and update the recycler view. notifydatsetchanged
-        final EditText nBody, nDescription;
+
+        final EditText edtBody, edtDescription;
         Button saveNote;
         final Dialog popup = new Dialog(this);
         popup.setContentView(R.layout.notes_popup);
 
-        nBody = popup.findViewById(R.id.noteBody);
-        nDescription = popup.findViewById(R.id.noteSubject);
+        edtBody = popup.findViewById(R.id.noteBody);
+        edtDescription = popup.findViewById(R.id.noteSubject);
         saveNote = popup.findViewById(R.id.newNote);
         popup.show();
 
         saveNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String nbody, nsubject;
-                nbody = nBody.getText().toString();
-                nsubject = nDescription.getText().toString();
-                if (nbody.equals("")||nsubject.equals("")){
-                    Toast.makeText(NewVisit.this, "Do not leave fields empty", Toast.LENGTH_SHORT).show();
-                }else {
-                    Note note = new Note(nbody,nsubject);
-                    noteArrayList.add(note);
-                }
-
-                popup.hide();
-                adapter.notifyDataSetChanged();
+            String noteBody, noteSubject;
+            noteBody = edtBody.getText().toString();
+            noteSubject = edtDescription.getText().toString();
+            if (noteBody.equals("")||noteSubject.equals("")){
+                Toast.makeText(NewVisit.this, "Do not leave fields empty", Toast.LENGTH_SHORT).show();
+            }else {
+                Note note = new Note(noteBody,noteSubject);
+                noteArrayList.add(note);
+            }
+            popup.hide();
+            adapter.notifyDataSetChanged();
             }
         });
     }
 
-    public void createnewRecommendation(){
-        //add a new recommendation to the arraylist and update the recycler view. notifydatsetchanged
+    //Add a new recommendation to the arraylist and update the recycler view to show the changes.
+    public void createNewRecommendation(){
         final Dialog dialog = new Dialog( NewVisit.this);
         dialog.setContentView(R.layout.notes_popup);
         final EditText body,description;
@@ -525,13 +491,13 @@ public class NewVisit extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String notebody,notesubject;
-                notebody = body.getText().toString();
-                notesubject = description.getText().toString();
-                if(notebody.equals("")||notesubject.equals("")){
+                String noteBody,noteSubject;
+                noteBody = body.getText().toString();
+                noteSubject = description.getText().toString();
+                if(noteBody.equals("")||noteSubject.equals("")){
                     Toast.makeText(NewVisit.this, "Do not leave fields empty", Toast.LENGTH_SHORT).show();
                 }else{
-                Recommendation recommendation = new Recommendation(notebody,notesubject);
+                Recommendation recommendation = new Recommendation(noteBody,noteSubject);
                 recommendationArrayList.add(recommendation);
                     dialog.hide();
             }}
@@ -540,14 +506,14 @@ public class NewVisit extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    public void setuprecyclers(){
-        recyclnotes.setLayoutManager(new LinearLayoutManager(NewVisit.this));
+    public void setupRecyclerViews(){
+        recyclerNotes.setLayoutManager(new LinearLayoutManager(NewVisit.this));
         adapter = new notes_recommendationadapter(NewVisit.this,noteArrayList);
-        recyclnotes.setAdapter(adapter);
+        recyclerNotes.setAdapter(adapter);
 
-        recyclRecommendation.setLayoutManager(new LinearLayoutManager(NewVisit.this));
+        recyclerRecommendation.setLayoutManager(new LinearLayoutManager(NewVisit.this));
         adapter = new notes_recommendationadapter(recommendationArrayList,NewVisit.this);
-        recyclRecommendation.setAdapter(adapter);
+        recyclerRecommendation.setAdapter(adapter);
     }
 
     public void saveVisit(){
@@ -555,8 +521,8 @@ public class NewVisit extends AppCompatActivity {
         double rrs;
         boolean smokerer,famhitoryry;
         String smokes,famhistory;
-        sbloodp =bloodpressure.getText().toString();
-        screac = creactive.getText().toString();
+        sbloodp = bloodPressure.getText().toString();
+        screac = cReactive.getText().toString();
         sapolproA = (apolprotA.getText().toString());
         sapolproB=(apolprotB.getText().toString());
         shemoglo = (hemoA.getText().toString());
@@ -580,17 +546,15 @@ public class NewVisit extends AppCompatActivity {
             }
              medrec = new MedicalRecord(Double.parseDouble(sbloodp),Double.parseDouble(screac),Double.parseDouble(sapolproB),Double.parseDouble(sapolproA),Double.parseDouble(slipoProt),Double.parseDouble(shemoglo),smokerer,famhitoryry);
             rrs = medrec.calculateReynoldsRiskScore()+10;
-            txtreynoldsriskscore.setText(Math.round(rrs)+"%");
+            txtReynoldsRiskScore.setText(Math.round(rrs)+"%");
 
             updateVisitMedicalRecord(visitID, medrec);
-            updatenotesandrecommendations(noteArrayList,recommendationArrayList);
+            updateNotesAndRecommendations(noteArrayList,recommendationArrayList);
             btnGeneratePDF.setVisibility(View.VISIBLE);
-            // newvisit.put("")
         }
     }
-    private void updatenotesandrecommendations(ArrayList<Note> noteArrayList, ArrayList<Recommendation> recommendationArrayList) {
+    private void updateNotesAndRecommendations(ArrayList<Note> noteArrayList, ArrayList<Recommendation> recommendationArrayList) {
         ArrayList<Map> notesArrayToSave = new ArrayList<>();
-
 
         for (int i = 0; i < noteArrayList.size(); i++){
             Map<String,Object> singleNote= new HashMap<>();
@@ -600,9 +564,7 @@ public class NewVisit extends AppCompatActivity {
         }
 
         // Prepare Recommendations
-
         ArrayList<Map> RecommendationArrayToSave = new ArrayList<>();
-
         for (int i = 0; i < recommendationArrayList.size(); i++){
             Map<String,Object> singleRecommendation= new HashMap<>();
             singleRecommendation.put("subject", recommendationArrayList.get(i).getDescription());
@@ -611,9 +573,7 @@ public class NewVisit extends AppCompatActivity {
         }
 
         //Updating The Visit
-
         DocumentReference currentVisit = db.collection("visit").document(visitID);
-
         currentVisit.update( "notes", notesArrayToSave, "recommendations", RecommendationArrayToSave).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
@@ -633,8 +593,6 @@ public class NewVisit extends AppCompatActivity {
     }
 
     private void updateVisitMedicalRecord(String visitId, MedicalRecord medrec) {
-
-
         Map<String,Object> medicalRecordMap = new HashMap<>();
         medicalRecordMap.put("bloodPressure",medrec.getBloodpressure());
         medicalRecordMap.put("creactive", medrec.getcReactive());
@@ -645,9 +603,6 @@ public class NewVisit extends AppCompatActivity {
         medicalRecordMap.put("smoker", medrec.isSmoker());
         medicalRecordMap.put("familyHistory", medrec.isFamhist());
         medicalRecordMap.put("reynoldsRiskScore", medrec.getReynoldsRiskScore());
-
-
-
 
         DocumentReference currentVisit = db.collection("visit").document(visitId);
 
@@ -670,8 +625,8 @@ public class NewVisit extends AppCompatActivity {
     }
 
     private void makeViewUneditable() {
-        bloodpressure.setKeyListener(null);
-        creactive.setKeyListener(null);
+        bloodPressure.setKeyListener(null);
+        cReactive.setKeyListener(null);
         apolprotA.setKeyListener(null);
         apolprotB.setKeyListener(null);
         hemoA.setKeyListener(null);
@@ -680,13 +635,13 @@ public class NewVisit extends AppCompatActivity {
         famhist.setEnabled(false);
     }
 
-    public void isEditable(int val){//set intent to grab a boolean of true if first element of recycler view is selected in PatientHome.class else, set nothing.
-        if(val==0&&usertype.equals("patient")){
-                btnSaveVisit.setVisibility(View.GONE);
-                btnUpdate.setVisibility(View.GONE);
-                btnSimulate.setVisibility(View.VISIBLE);
-        }else{
-               makeViewUneditable();
-        }
-    }
+//    public void isEditable(int val){//set intent to grab a boolean of true if first element of recycler view is selected in PatientHome.class else, set nothing.
+//        if(val==0&& userType.equals("patient")){
+//                btnSaveVisit.setVisibility(View.GONE);
+//                btnUpdate.setVisibility(View.GONE);
+//                btnSimulate.setVisibility(View.VISIBLE);
+//        }else{
+//               makeViewUneditable();
+//        }
+//    }
 }

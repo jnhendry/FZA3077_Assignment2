@@ -36,7 +36,6 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -50,9 +49,9 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class ClinicianHome extends AppCompatActivity {
 
-    private RecyclerView recyclPatients, recyclerPastVisit, recyclerFutureVisit;
+    private RecyclerView recyclerPatients, recyclerPastVisit, recyclerFutureVisit;
     private patientAdapter patientAdapter;
-    private visitAdapter visitPastAdapter, visitFutureAdapter;
+    private visitAdapter pastVisitsAdapter, futureVisitsAdapter;
     private TextView edtClinicianName;
     private String name;
     private FirebaseAuth mAuth;
@@ -67,7 +66,7 @@ public class ClinicianHome extends AppCompatActivity {
     final ArrayList<Visit> visitFutureArrayList = new ArrayList<>();
     private MaterialToolbar topAppBar;
     int counter = 0;
-    private SearchView svsView;
+    private SearchView searchView;
     private Spinner spnSearch;
     private String searchStuff, queryForSearch;
     private int thisIsTheBreaker;
@@ -75,12 +74,11 @@ public class ClinicianHome extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
         counter+=1;
         if(counter>1){
             super.onBackPressed();
         }else{
-            Toast.makeText(this, "press back again to exit", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -93,7 +91,7 @@ public class ClinicianHome extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         btnSearch = findViewById(R.id.btnsearchpatients);
         spnSearch = findViewById(R.id.spnsearchpatient);
-        svsView = findViewById(R.id.svsearchpatient);
+        searchView = findViewById(R.id.svsearchpatient);
         btnStatistics = findViewById(R.id.btnStatistics);
         edtClinicianName = findViewById(R.id.user_name_banner);
         DocumentReference snap = db.collection("clinician").document(user.getUid());
@@ -103,23 +101,22 @@ public class ClinicianHome extends AppCompatActivity {
         topAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                System.out.println("You Clicked Log Out");
-                mAuth.signOut();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                finish();
+            mAuth.signOut();
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
 
-                return true;
+            return true;
             }
         });
 
         snap.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.exists()) {
-                    edtClinicianName.setText(documentSnapshot.get("name").toString());
-                    name = documentSnapshot.get("name").toString();
-                }
+            if(documentSnapshot.exists()) {
+                edtClinicianName.setText(documentSnapshot.get("name").toString());
+                name = documentSnapshot.get("name").toString();
+            }
             }
         });
 
@@ -133,28 +130,27 @@ public class ClinicianHome extends AppCompatActivity {
         });
 
         // The btnSearch button is used to handle patient search requests.
-        
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btnStatistics.setVisibility(View.VISIBLE);
+            btnStatistics.setVisibility(View.VISIBLE);
 
-                switch(spnSearch.getSelectedItem().toString()) {
-                    case "Name":
-                        searchPatients(svsView.getQuery().toString(),"name");
-                        return;
-                    case "Age":
-                        searchPatients(svsView.getQuery().toString(),"age");
-                        return;
-                    case "Location":
-                        searchPatients(svsView.getQuery().toString(),"suburb");
-                        return;
-                    case "My Patients":
-                        searchPatients(svsView.getQuery().toString(),"patients");
-                        return;
-                    default:
+            switch(spnSearch.getSelectedItem().toString()) {
+                case "Name":
+                    searchPatients(searchView.getQuery().toString(),"name");
+                    return;
+                case "Age":
+                    searchPatients(searchView.getQuery().toString(),"age");
+                    return;
+                case "Location":
+                    searchPatients(searchView.getQuery().toString(),"suburb");
+                    return;
+                case "My Patients":
+                    searchPatients(searchView.getQuery().toString(),"patients");
+                    return;
+                default:
 
-                }
+            }
             }
         });
         setRecycle();
@@ -166,55 +162,55 @@ public class ClinicianHome extends AppCompatActivity {
        db.collection("visit").whereEqualTo("visitCompleted",true).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
            @Override
            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-               ArrayList<Stats> stats = new ArrayList<>();
-               ArrayList<Stats> temp = new ArrayList<>();
-               for(DocumentSnapshot snap : queryDocumentSnapshots) {
-                   Stats stat = new Stats();
-                   stat.setName(snap.get("patientName").toString());
-                   stat.setRrs((Double) snap.get("medicalRecord.reynoldsRiskScore"));
-                   stat.setBloodpressure((Double) snap.get("medicalRecord.bloodPressure"));
-                   stat.setSmokes((Boolean) snap.get("medicalRecord.smoker"));
-                   stat.setFamhist((Boolean) snap.get("medicalRecord.familyHistory"));
-                   temp.add(stat);
-               }
+           ArrayList<Stats> stats = new ArrayList<>();
+           ArrayList<Stats> temp = new ArrayList<>();
+           for(DocumentSnapshot snap : queryDocumentSnapshots) {
+               Stats stat = new Stats();
+               stat.setName(snap.get("patientName").toString());
+               stat.setRrs((Double) snap.get("medicalRecord.reynoldsRiskScore"));
+               stat.setBloodpressure((Double) snap.get("medicalRecord.bloodPressure"));
+               stat.setSmokes((Boolean) snap.get("medicalRecord.smoker"));
+               stat.setFamhist((Boolean) snap.get("medicalRecord.familyHistory"));
+               temp.add(stat);
+           }
 
-               for(int j = 0; j < temp.size(); j++) {
-                   for(int i = 0; i < patients.size(); i++) {
-                       if(patients.get(i).getName().equals(temp.get(j).getName())){
-                           Stats tempStat = new Stats();
-                           tempStat.setName(patients.get(i).getName());
-                           tempStat.setFamhist(temp.get(j).isFamhist());
-                           tempStat.setSmokes(temp.get(j).isSmokes());
-                           tempStat.setBloodpressure(temp.get(j).getBloodpressure());
-                           tempStat.setRrs(temp.get(j).getRrs());
-                           tempStat.setLocation(patients.get(i).getLocation());
-                           tempStat.setAge(patients.get(i).getPhoneNumber());
-                           tempStat.setGender(patients.get(i).getSex());
-                           stats.add(tempStat);
-                       }
+           for(int j = 0; j < temp.size(); j++) {
+               for(int i = 0; i < patients.size(); i++) {
+                   if(patients.get(i).getName().equals(temp.get(j).getName())){
+                       Stats tempStat = new Stats();
+                       tempStat.setName(patients.get(i).getName());
+                       tempStat.setFamhist(temp.get(j).isFamhist());
+                       tempStat.setSmokes(temp.get(j).isSmokes());
+                       tempStat.setBloodpressure(temp.get(j).getBloodpressure());
+                       tempStat.setRrs(temp.get(j).getRrs());
+                       tempStat.setLocation(patients.get(i).getLocation());
+                       tempStat.setAge(patients.get(i).getPhoneNumber());
+                       tempStat.setGender(patients.get(i).getSex());
+                       stats.add(tempStat);
                    }
                }
+           }
 
-               double rrs = 0,smokes = 0,famhist = 0,bloodpressure = 0,age = 0;
-                System.out.println(stats.size()+"");
-                for(Stats st:stats){
-                   age+=st.getAge();
-                   rrs+=st.getRrs();
-                   if(st.isSmokes()){
-                       smokes+=1;
-                   }
-                   if(st.isFamhist()){
-                       famhist+=1;
-                   }
-                   bloodpressure+=st.getBloodpressure();
+           double rrs = 0,smokes = 0,famhist = 0,bloodpressure = 0,age = 0;
+            System.out.println(stats.size()+"");
+            for(Stats st:stats){
+               age+=st.getAge();
+               rrs+=st.getRrs();
+               if(st.isSmokes()){
+                   smokes+=1;
                }
+               if(st.isFamhist()){
+                   famhist+=1;
+               }
+               bloodpressure+=st.getBloodpressure();
+           }
 
-               rrs /= stats.size();
-               age /= stats.size();
-               smokes /= stats.size();
-               famhist /= stats.size();
-               bloodpressure /= stats.size();
-              generatePDF(rrs,smokes,famhist,bloodpressure,age);
+           rrs /= stats.size();
+           age /= stats.size();
+           smokes /= stats.size();
+           famhist /= stats.size();
+           bloodpressure /= stats.size();
+          generatePDF(rrs,smokes,famhist,bloodpressure,age);
            }
        });
     }
@@ -230,48 +226,48 @@ public class ClinicianHome extends AppCompatActivity {
         db.collection("patient").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if(!queryDocumentSnapshots.isEmpty()){
-                    for(DocumentSnapshot snap:queryDocumentSnapshots){
+            if(!queryDocumentSnapshots.isEmpty()){
+                for(DocumentSnapshot snap:queryDocumentSnapshots){
 
-                        Map<String,Object> map = snap.getData();
-                        DateAge test = new DateAge((long)map.get("dateOfBirth"));
-                        int age = test.getAge() ;
-                        Patient patient1 = new Patient(map.get("name").toString(),age,map.get("gender").toString(),snap.getId(),user.getUid(),map.get("suburb").toString());
+                    Map<String,Object> map = snap.getData();
+                    DateAge test = new DateAge((long)map.get("dateOfBirth"));
+                    int age = test.getAge() ;
+                    Patient patient1 = new Patient(map.get("name").toString(),age,map.get("gender").toString(),snap.getId(),user.getUid(),map.get("suburb").toString());
 
-                        switch(queryForSearch){
-                            case "name":
-                                if(patient1.getName().toLowerCase().startsWith(searchStuff.toLowerCase())) {
-                                    patients.add(patient1);
-                                    System.out.println( patient1.getName() + searchStuff);
-                                    patientAdapter.notifyDataSetChanged();
-                                }
-                                break;
-                            case "age":
-                                if(patient1.getPhoneNumber()==(Integer.parseInt(searchStuff))) {
-                                    patients.add(patient1);
-                                    System.out.println( patient1.getName() + searchStuff);
-                                    patientAdapter.notifyDataSetChanged();
-                                }
-                                break;
-                            case "suburb":
-                                if(patient1.getLocation().toLowerCase().startsWith(searchStuff.toLowerCase())) {
-                                    patients.add(patient1);
-                                    System.out.println( patient1.getName() + searchStuff);
-                                    patientAdapter.notifyDataSetChanged();
-                                }
-                                break;
-                            case "patients":
-                                while(thisIsTheBreaker == 0) {
-                                    populateArray();
-                                    patientAdapter.notifyDataSetChanged();
-                                    thisIsTheBreaker +=1;
-                                }
-                                break;
-                            default:
+                    switch(queryForSearch){
+                        case "name":
+                            if(patient1.getName().toLowerCase().startsWith(searchStuff.toLowerCase())) {
+                                patients.add(patient1);
+                                System.out.println( patient1.getName() + searchStuff);
+                                patientAdapter.notifyDataSetChanged();
+                            }
+                            break;
+                        case "age":
+                            if(patient1.getPhoneNumber()==(Integer.parseInt(searchStuff))) {
+                                patients.add(patient1);
+                                System.out.println( patient1.getName() + searchStuff);
+                                patientAdapter.notifyDataSetChanged();
+                            }
+                            break;
+                        case "suburb":
+                            if(patient1.getLocation().toLowerCase().startsWith(searchStuff.toLowerCase())) {
+                                patients.add(patient1);
+                                System.out.println( patient1.getName() + searchStuff);
+                                patientAdapter.notifyDataSetChanged();
+                            }
+                            break;
+                        case "patients":
+                            while(thisIsTheBreaker == 0) {
+                                populateArray();
+                                patientAdapter.notifyDataSetChanged();
+                                thisIsTheBreaker +=1;
+                            }
+                            break;
+                        default:
 
-                        }
                     }
                 }
+            }
             }
         });
     }
@@ -393,7 +389,7 @@ public class ClinicianHome extends AppCompatActivity {
 
                 if (writeStorage && readStorage) {
                 } else {
-                    Toast.makeText(this, "Permission Denined.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Permission Denied.", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
@@ -402,106 +398,101 @@ public class ClinicianHome extends AppCompatActivity {
 
     //This method retrieves all the patients that have their main clinician assigned as the currently logged in clinician.
     //This list of patients
-
     private void populateArray() {
 
         db.collection("patient").whereEqualTo("clinicianId", user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if(error != null) {
-                    return;
+            if(error != null) {
+                return;
+            }
+            for(DocumentSnapshot documentSnapshot : value) {
+                DateAge dateAge = new DateAge((long) documentSnapshot.get("dateOfBirth"));
+                int age = dateAge.getAge();
+                Patient pat = new Patient(documentSnapshot.get("name").toString(), age , documentSnapshot.get("gender").toString(), documentSnapshot.getId(),name);
+
+                patients.add(pat);
+            }
+
+            recyclerPatients = findViewById(R.id.recyclMedicalRecord);
+            recyclerPatients.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            patientAdapter = new patientAdapter(ClinicianHome.this, patients);
+            recyclerPatients.setAdapter(patientAdapter);
+
+            patientAdapter.setonItemClicklistener(new patientAdapter.onItemClickListener() {
+                @Override
+                public void onItemClicked(int position) {
+                    Intent intent = new Intent(ClinicianHome.this,PatientHome.class);
+                    intent.putExtra("UserID",patients.get(position).getPatientID());
+                    intent.putExtra("isClinitian",true);
+                    intent.putExtra("clinitianname", edtClinicianName.getText().toString());
+                    startActivity(intent);
                 }
-                for(DocumentSnapshot documentSnapshot : value) {
-                    DateAge dateAge = new DateAge((long) documentSnapshot.get("dateOfBirth"));
-                    int age = dateAge.getAge();
-                    Patient pat = new Patient(documentSnapshot.get("name").toString(), age , documentSnapshot.get("gender").toString(), documentSnapshot.getId(),name);
-
-                    patients.add(pat);
-                }
-
-                recyclPatients = findViewById(R.id.recyclMedicalRecord);
-                recyclPatients.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                patientAdapter = new patientAdapter(ClinicianHome.this, patients);
-                recyclPatients.setAdapter(patientAdapter);
-
-                patientAdapter.setonItemClicklistener(new patientAdapter.onItemClickListener() {
-                    @Override
-                    public void onItemClicked(int position) {
-                        Intent intent = new Intent(ClinicianHome.this,PatientHome.class);
-                        intent.putExtra("UserID",patients.get(position).getPatientID());
-                        intent.putExtra("isClinitian",true);
-                        intent.putExtra("clinitianname", edtClinicianName.getText().toString());
-                        startActivity(intent);
-                    }
-                });
+            });
             }
         });
     }
 
-    //
-
+    //This method the retrieving of the logged in clinician's past and future visits.
     public void setRecycle() {
-
         db.collection("visit").whereEqualTo("clinicianId", user.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if(error != null) {
-                    return;
+            if(error != null) {
+                return;
+            }
+            visitPastArrayList.clear();
+            visitFutureArrayList.clear();
+            for( final DocumentSnapshot documentSnapshot : value) {
+
+                String date = documentSnapshot.get("date").toString();
+                String time = documentSnapshot.get("scheduleStart").toString();
+                String clinicianId = documentSnapshot.get("clinicianName").toString();
+                String patientID = documentSnapshot.get("patientName").toString();
+                boolean visitCompleted = (boolean) documentSnapshot.get("visitCompleted");
+
+                Visit visit = new Visit(clinicianId,patientID , date, time,documentSnapshot.getId(),visitCompleted);
+
+                if (visitCompleted){
+                    visitPastArrayList.add(visit);
                 }
-                visitPastArrayList.clear();
-                visitFutureArrayList.clear();
-                for( final DocumentSnapshot documentSnapshot : value) {
-
-                    String date = documentSnapshot.get("date").toString();
-                    String time = documentSnapshot.get("scheduleStart").toString();
-                    String clinicianId = documentSnapshot.get("clinicianName").toString();
-                    String patientID = documentSnapshot.get("patientName").toString();
-                    boolean visitCompleted = (boolean) documentSnapshot.get("visitCompleted");
-
-                    Visit visit = new Visit(clinicianId,patientID , date, time,documentSnapshot.getId(),visitCompleted);
-
-                    if (visitCompleted){
-                        visitPastArrayList.add(visit);
-                    }
-                    else{
-                        visitFutureArrayList.add(visit);
-                    }
+                else{
+                    visitFutureArrayList.add(visit);
                 }
-                recyclerFutureVisit = findViewById(R.id.recycFutureVisitclinitian);
-                recyclerFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                visitFutureAdapter = new visitAdapter(visitFutureArrayList, ClinicianHome.this);
-                recyclerFutureVisit.setAdapter(visitFutureAdapter);
+            }
+            recyclerFutureVisit = findViewById(R.id.recycFutureVisitclinitian);
+            recyclerFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            futureVisitsAdapter = new visitAdapter(visitFutureArrayList, ClinicianHome.this);
+            recyclerFutureVisit.setAdapter(futureVisitsAdapter);
 
-                visitFutureAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
-                    @Override
-                    public void onItemClicked(int position) {
-                        //TODO: handle the visit onclick
-                        Intent futurevis = new Intent(ClinicianHome.this,NewVisit.class);
-                        futurevis.putExtra("visitid",visitFutureArrayList.get(position).getVisitid());
-                        futurevis.putExtra("value",position);//if position>0 then do nothing;
-                        futurevis.putExtra("isvisitcompleted",visitFutureArrayList.get(position).isIscompleted());
-                        futurevis.putExtra("usertype","clinitian");
-                        startActivity(futurevis);
-                    }
-                });
+            futureVisitsAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
+                @Override
+                public void onItemClicked(int position) {
+                    Intent futureVisit = new Intent(ClinicianHome.this,NewVisit.class);
+                    futureVisit.putExtra("visitid",visitFutureArrayList.get(position).getVisitid());
+                    futureVisit.putExtra("value",position);//if position>0 then do nothing;
+                    futureVisit.putExtra("isvisitcompleted",visitFutureArrayList.get(position).isIscompleted());
+                    futureVisit.putExtra("usertype","clinitian");
+                    startActivity(futureVisit);
+                }
+            });
 
-                recyclerPastVisit = findViewById(R.id.recycPastVisitclinitian);
-                recyclerPastVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                visitPastAdapter = new visitAdapter(visitPastArrayList, ClinicianHome.this);
-                recyclerPastVisit.setAdapter(visitPastAdapter);
+            recyclerPastVisit = findViewById(R.id.recycPastVisitclinitian);
+            recyclerPastVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            pastVisitsAdapter = new visitAdapter(visitPastArrayList, ClinicianHome.this);
+            recyclerPastVisit.setAdapter(pastVisitsAdapter);
 
-                visitPastAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
-                    @Override
-                    public void onItemClicked(int position) {
-                        //TODO: handle the data transfer
-                        Intent pastvis = new Intent(ClinicianHome.this,NewVisit.class);
-                        pastvis.putExtra("visitid",visitPastArrayList.get(position).getVisitid());
-                        pastvis.putExtra("value",position);//if position>0 then do nothing;
-                        pastvis.putExtra("isvisitcompleted",visitPastArrayList.get(position).isIscompleted());
-                        pastvis.putExtra("usertype","clinician");
-                        startActivity(pastvis);
-                    }
-                });
+            pastVisitsAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
+                @Override
+                public void onItemClicked(int position) {
+                    Intent pastVisit = new Intent(ClinicianHome.this,NewVisit.class);
+                    pastVisit.putExtra("visitid",visitPastArrayList.get(position).getVisitid());
+                    pastVisit.putExtra("value",position);//if position>0 then do nothing;
+                    pastVisit.putExtra("isvisitcompleted",visitPastArrayList.get(position).isIscompleted());
+                    pastVisit.putExtra("usertype","clinician");
+                    startActivity(pastVisit);
+                }
+            });
             }
         });
     }
