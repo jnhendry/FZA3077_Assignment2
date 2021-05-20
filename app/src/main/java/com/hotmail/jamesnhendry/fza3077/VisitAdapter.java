@@ -11,13 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class visitAdapter extends RecyclerView.Adapter<visitAdapter.subholder>{
+public class VisitAdapter extends RecyclerView.Adapter<VisitAdapter.subholder>{
 
     private ArrayList<Visit> list;
     private onItemClickListener mListener;
     Context cr;
 
-    public visitAdapter(ArrayList<Visit> list, Context cr) {
+    public VisitAdapter(ArrayList<Visit> list, Context cr) {
         this.list = list;
         this.cr = cr;
     }
@@ -34,7 +34,7 @@ public class visitAdapter extends RecyclerView.Adapter<visitAdapter.subholder>{
     @Override
     public subholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.visitcard, parent,false);
-        visitAdapter.subholder holder = new visitAdapter.subholder(view,mListener);
+        VisitAdapter.subholder holder = new VisitAdapter.subholder(view,mListener);
         return holder;
     }
 
@@ -42,17 +42,13 @@ public class visitAdapter extends RecyclerView.Adapter<visitAdapter.subholder>{
     public void onBindViewHolder(@NonNull subholder holder, int position) {
                 holder.txtVisitDate.setText(list.get(position).getDate().toString());
                 String clinician , patient;
-                clinician = list.get(position).getClinitianID();
+                clinician = list.get(position).getClinicianID();
                 patient = list.get(position).getPatientID();
                 holder.txtVisitClinician.setText(clinician);
                 holder.txtVisitPatient.setText(patient);
                 holder.txtVisitTime.setText(list.get(position).getTime());
 
     }
-
-
-
-
 
     @Override
     public int getItemCount() {

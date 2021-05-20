@@ -49,7 +49,7 @@ public class PatientHome extends AppCompatActivity {
     private MaterialToolbar topAppBar;
 
     private RecyclerView  recyclerPastVisit, recyclerFutureVisit;
-    private visitAdapter pastVisitsAdapter, futureVisitsAdapter;
+    private VisitAdapter pastVisitsAdapter, futureVisitsAdapter;
 
     final ArrayList<Visit> visitPastArrayList = new ArrayList<>();
     final ArrayList<Visit> visitFutureArrayList = new ArrayList<>();
@@ -237,19 +237,19 @@ public class PatientHome extends AppCompatActivity {
                 ArrayList<Visit> aPast = new ArrayList<>();
 
                 for(int i = 0;i<visitFutureArrayList.size();i++){
-                    if(visitFutureArrayList.get(i).getClinitianID().equals(clinicianIntent)){
+                    if(visitFutureArrayList.get(i).getClinicianID().equals(clinicianIntent)){
                         aFuture.add(visitFutureArrayList.get(i));
                     }
                 }
-                futureVisitsAdapter = new visitAdapter(aFuture,PatientHome.this);
+                futureVisitsAdapter = new VisitAdapter(aFuture,PatientHome.this);
                 recyclerFutureVisit.setAdapter(futureVisitsAdapter);
 
                 for(int i = 0;i<visitPastArrayList.size();i++){
-                    if(visitPastArrayList.get(i).getClinitianID().equals(clinicianIntent)){
+                    if(visitPastArrayList.get(i).getClinicianID().equals(clinicianIntent)){
                         aPast.add(visitPastArrayList.get(i));
                     }
                 }
-                pastVisitsAdapter = new visitAdapter(aPast,PatientHome.this);
+                pastVisitsAdapter = new VisitAdapter(aPast,PatientHome.this);
                 recyclerPastVisit.setAdapter(pastVisitsAdapter);
             }
         }
@@ -286,17 +286,17 @@ public class PatientHome extends AppCompatActivity {
             }
 
             recyclerFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-            futureVisitsAdapter = new visitAdapter(visitFutureArrayList, PatientHome.this);
+            futureVisitsAdapter = new VisitAdapter(visitFutureArrayList, PatientHome.this);
             recyclerFutureVisit.setAdapter(futureVisitsAdapter);
 
             if(isClinician){
-                futureVisitsAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
+                futureVisitsAdapter.setonItemClicklistener(new VisitAdapter.onItemClickListener() {
                     @Override
                     public void onItemClicked(int position) {
-                    Intent futureVisit = new Intent(PatientHome.this,NewVisit.class);
-                    futureVisit.putExtra("visitid",visitFutureArrayList.get(position).getVisitid());
+                    Intent futureVisit = new Intent(PatientHome.this, VisitScreen.class);
+                    futureVisit.putExtra("visitid",visitFutureArrayList.get(position).getVisitId());
                     futureVisit.putExtra("value",position);//if position>0 then do nothing;
-                    futureVisit.putExtra("isvisitcompleted",visitFutureArrayList.get(position).isIscompleted());
+                    futureVisit.putExtra("isvisitcompleted",visitFutureArrayList.get(position).isIsCompleted());
                     futureVisit.putExtra("usertype","clinician");
                     startActivity(futureVisit);
                     }
@@ -304,16 +304,16 @@ public class PatientHome extends AppCompatActivity {
             }
 
             recyclerPastVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-            pastVisitsAdapter = new visitAdapter(visitPastArrayList, PatientHome.this);
+            pastVisitsAdapter = new VisitAdapter(visitPastArrayList, PatientHome.this);
             recyclerPastVisit.setAdapter(pastVisitsAdapter);
 
-            pastVisitsAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
+            pastVisitsAdapter.setonItemClicklistener(new VisitAdapter.onItemClickListener() {
                 @Override
                 public void onItemClicked(int position) {
-                Intent futureVisit = new Intent(PatientHome.this,NewVisit.class);
-                futureVisit.putExtra("visitid",visitPastArrayList.get(position).getVisitid());
+                Intent futureVisit = new Intent(PatientHome.this, VisitScreen.class);
+                futureVisit.putExtra("visitid",visitPastArrayList.get(position).getVisitId());
                 futureVisit.putExtra("value",position);//if position>0 then do nothing;
-                futureVisit.putExtra("isvisitcompleted",visitPastArrayList.get(position).isIscompleted());
+                futureVisit.putExtra("isvisitcompleted",visitPastArrayList.get(position).isIsCompleted());
                 futureVisit.putExtra("usertype","patient");
                 startActivity(futureVisit);
                 }

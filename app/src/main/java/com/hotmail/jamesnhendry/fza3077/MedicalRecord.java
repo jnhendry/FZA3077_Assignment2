@@ -1,11 +1,12 @@
 package com.hotmail.jamesnhendry.fza3077;
 
+//This class Represents the data model structure of a Medical Record of this platform.
 public class MedicalRecord {
-    private String dateUpdated,time,clinitianName,patientName,clinitiannotes;//remove clinitian notes and make a seperate database declaration
+    private String dateUpdated,time, clinicianName,patientName;
     private int age;
-    private double bloodpressure,reynoldsRiskScore,cReactive,apolprotB,apolprotA,lipProteinA,hemoglobin;
+    private double bloodPressure,reynoldsRiskScore,cReactive,apolprotB,apolprotA,lipProteinA,hemoglobin;
     private boolean smoker;
-    private boolean famhist;
+    private boolean familyHistory;
 
     public int getAge() {
         return age;
@@ -15,19 +16,18 @@ public class MedicalRecord {
         this.age = age;
     }
 
-
     public MedicalRecord() {
     }
 
-    public MedicalRecord( double bloodpressure, double cReactive, double apolprotB, double apolprotA, double lipProteinA,double hemoglobin, boolean smoker, boolean famhist) {
+    public MedicalRecord( double bloodPressure, double cReactive, double apolprotB, double apolprotA, double lipProteinA,double hemoglobin, boolean smoker, boolean familyHistory) {
 
-        this.bloodpressure = bloodpressure;
+        this.bloodPressure = bloodPressure;
         this.cReactive = cReactive;
         this.apolprotB = apolprotB;
         this.apolprotA = apolprotA;
         this.lipProteinA = lipProteinA;
         this.smoker = smoker;
-        this.famhist = famhist;
+        this.familyHistory = familyHistory;
         this.hemoglobin = hemoglobin;
     }
 
@@ -55,12 +55,12 @@ public class MedicalRecord {
         this.time = time;
     }
 
-    public String getClinitianName() {
-        return clinitianName;
+    public String getClinicianName() {
+        return clinicianName;
     }
 
-    public void setClinitianName(String clinitianName) {
-        this.clinitianName = clinitianName;
+    public void setClinicianName(String clinicianName) {
+        this.clinicianName = clinicianName;
     }
 
     public String getPatientName() {
@@ -71,22 +71,12 @@ public class MedicalRecord {
         this.patientName = patientName;
     }
 
-    public String getClinitiannotes() {
-        return clinitiannotes;
+    public double getBloodPressure() {
+        return bloodPressure;
     }
 
-    public void setClinitiannotes(String clinitiannotes) {
-        this.clinitiannotes = clinitiannotes;
-    }
-
-
-
-    public double getBloodpressure() {
-        return bloodpressure;
-    }
-
-    public void setBloodpressure(double bloodpressure) {
-        this.bloodpressure = bloodpressure;
+    public void setBloodPressure(double bloodpressure) {
+        this.bloodPressure = bloodpressure;
     }
 
     public double getReynoldsRiskScore() {
@@ -137,12 +127,12 @@ public class MedicalRecord {
         this.smoker = smoker;
     }
 
-    public boolean isFamhist() {
-        return famhist;
+    public boolean isFamilyHistory() {
+        return familyHistory;
     }
 
-    public void setFamhist(boolean famhist) {
-        this.famhist = famhist;
+    public void setFamilyHistory(boolean familyHistory) {
+        this.familyHistory = familyHistory;
     }
 
     public double calculateReynoldsRiskScore(){
@@ -150,13 +140,13 @@ public class MedicalRecord {
         if(age<40) {
             age += (65 - age);
         }
-        double A = (((0.0785)*(age)+(3.271)*Math.log(bloodpressure)+(0.202)*Math.log(cReactive)+(0.00820)*(apolprotB)));
+        double A = (((0.0785)*(age)+(3.271)*Math.log(bloodPressure)+(0.202)*Math.log(cReactive)+(0.00820)*(apolprotB)));
         A=A-(0.00769)*(apolprotA+0.134);
 
         if(smoker){
             A=A+0.825;
         }
-        if(famhist){
+        if(familyHistory){
             A=A+0.427;
         }
         if(lipProteinA>10&&apolprotB>=100){

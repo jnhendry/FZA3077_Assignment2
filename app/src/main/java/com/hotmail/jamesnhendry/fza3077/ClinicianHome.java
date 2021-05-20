@@ -51,7 +51,7 @@ public class ClinicianHome extends AppCompatActivity {
 
     private RecyclerView recyclerPatients, recyclerPastVisit, recyclerFutureVisit;
     private patientAdapter patientAdapter;
-    private visitAdapter pastVisitsAdapter, futureVisitsAdapter;
+    private VisitAdapter pastVisitsAdapter, futureVisitsAdapter;
     private TextView edtClinicianName;
     private String name;
     private FirebaseAuth mAuth;
@@ -173,9 +173,9 @@ public class ClinicianHome extends AppCompatActivity {
                Stats stat = new Stats();
                stat.setName(snap.get("patientName").toString());
                stat.setRrs((Double) snap.get("medicalRecord.reynoldsRiskScore"));
-               stat.setBloodpressure((Double) snap.get("medicalRecord.bloodPressure"));
+               stat.setBloodPressure((Double) snap.get("medicalRecord.bloodPressure"));
                stat.setSmokes((Boolean) snap.get("medicalRecord.smoker"));
-               stat.setFamhist((Boolean) snap.get("medicalRecord.familyHistory"));
+               stat.setFamilyHistory((Boolean) snap.get("medicalRecord.familyHistory"));
                temp.add(stat);
            }
 
@@ -184,9 +184,9 @@ public class ClinicianHome extends AppCompatActivity {
                    if(patients.get(i).getName().equals(temp.get(j).getName())){
                        Stats tempStat = new Stats();
                        tempStat.setName(patients.get(i).getName());
-                       tempStat.setFamhist(temp.get(j).isFamhist());
+                       tempStat.setFamilyHistory(temp.get(j).isFamilyHistory());
                        tempStat.setSmokes(temp.get(j).isSmokes());
-                       tempStat.setBloodpressure(temp.get(j).getBloodpressure());
+                       tempStat.setBloodPressure(temp.get(j).getBloodPressure());
                        tempStat.setRrs(temp.get(j).getRrs());
                        tempStat.setLocation(patients.get(i).getLocation());
                        tempStat.setAge(patients.get(i).getPhoneNumber());
@@ -204,10 +204,10 @@ public class ClinicianHome extends AppCompatActivity {
                if(st.isSmokes()){
                    smokes+=1;
                }
-               if(st.isFamhist()){
+               if(st.isFamilyHistory()){
                    famhist+=1;
                }
-               bloodpressure+=st.getBloodpressure();
+               bloodpressure+=st.getBloodPressure();
            }
 
            rrs /= stats.size();
@@ -467,16 +467,16 @@ public class ClinicianHome extends AppCompatActivity {
             }
             recyclerFutureVisit = findViewById(R.id.recycFutureVisitclinitian);
             recyclerFutureVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-            futureVisitsAdapter = new visitAdapter(visitFutureArrayList, ClinicianHome.this);
+            futureVisitsAdapter = new VisitAdapter(visitFutureArrayList, ClinicianHome.this);
             recyclerFutureVisit.setAdapter(futureVisitsAdapter);
 
-            futureVisitsAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
+            futureVisitsAdapter.setonItemClicklistener(new VisitAdapter.onItemClickListener() {
                 @Override
                 public void onItemClicked(int position) {
-                    Intent futureVisit = new Intent(ClinicianHome.this,NewVisit.class);
-                    futureVisit.putExtra("visitid",visitFutureArrayList.get(position).getVisitid());
+                    Intent futureVisit = new Intent(ClinicianHome.this, VisitScreen.class);
+                    futureVisit.putExtra("visitid",visitFutureArrayList.get(position).getVisitId());
                     futureVisit.putExtra("value",position);//if position>0 then do nothing;
-                    futureVisit.putExtra("isvisitcompleted",visitFutureArrayList.get(position).isIscompleted());
+                    futureVisit.putExtra("isvisitcompleted",visitFutureArrayList.get(position).isIsCompleted());
                     futureVisit.putExtra("usertype","clinitian");
                     startActivity(futureVisit);
                 }
@@ -484,16 +484,16 @@ public class ClinicianHome extends AppCompatActivity {
 
             recyclerPastVisit = findViewById(R.id.recycPastVisitclinitian);
             recyclerPastVisit.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-            pastVisitsAdapter = new visitAdapter(visitPastArrayList, ClinicianHome.this);
+            pastVisitsAdapter = new VisitAdapter(visitPastArrayList, ClinicianHome.this);
             recyclerPastVisit.setAdapter(pastVisitsAdapter);
 
-            pastVisitsAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
+            pastVisitsAdapter.setonItemClicklistener(new VisitAdapter.onItemClickListener() {
                 @Override
                 public void onItemClicked(int position) {
-                    Intent pastVisit = new Intent(ClinicianHome.this,NewVisit.class);
-                    pastVisit.putExtra("visitid",visitPastArrayList.get(position).getVisitid());
+                    Intent pastVisit = new Intent(ClinicianHome.this, VisitScreen.class);
+                    pastVisit.putExtra("visitid",visitPastArrayList.get(position).getVisitId());
                     pastVisit.putExtra("value",position);//if position>0 then do nothing;
-                    pastVisit.putExtra("isvisitcompleted",visitPastArrayList.get(position).isIscompleted());
+                    pastVisit.putExtra("isvisitcompleted",visitPastArrayList.get(position).isIsCompleted());
                     pastVisit.putExtra("usertype","clinician");
                     startActivity(pastVisit);
                 }
