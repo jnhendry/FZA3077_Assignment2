@@ -309,7 +309,6 @@ public class NewVisit extends AppCompatActivity {
             if(files.length > 0) {
                 for(File file : files) {
                     dir = file.getPath();
-
                 }
             }
         }
