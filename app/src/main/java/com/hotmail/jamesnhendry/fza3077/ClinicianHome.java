@@ -62,7 +62,7 @@ public class ClinicianHome extends AppCompatActivity {
     FirebaseFirestore db;
     FirebaseUser user;
     private Stats stat;
-    ArrayList<Stats> stats;
+    ArrayList<Stats> stats = new ArrayList<>();;
     private static final int PERMISSION_REQUEST_CODE = 200;
 
     private Button btnSearch,btnStatistics;
@@ -75,8 +75,8 @@ public class ClinicianHome extends AppCompatActivity {
     private Spinner spnsearch;
     private String searchstuff,queryforsearch;
     private int thisisthebreaker;
-    int counts;
-
+    int counts,plswork;
+    ArrayList<Stats> temp = new ArrayList<>();
 
 
 
@@ -170,7 +170,10 @@ public class ClinicianHome extends AppCompatActivity {
                         return;
                     default:
 
+
+
                 }
+
 
             }
         });
@@ -185,73 +188,74 @@ public class ClinicianHome extends AppCompatActivity {
     }
 
     private void generatedate() {
-
-        stats = new ArrayList<>();
-        for( counts = 0;counts<patients.size();counts++){
-            stat = new Stats();
-            stat.setName(patients.get(counts).getName());
-            stat.setAge(patients.get(counts).getPhoneNumber());
-            stat.setGender(patients.get(counts).getSex());
-            stat.setLocation(patients.get(counts).getLocation());
-        db.collection("visit").whereEqualTo("patientId",patients.get(counts).getPatientID()).whereEqualTo("visitCompleted",true).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                @Override
-                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                    if(queryDocumentSnapshots.size() > 0) {
-                        Toast.makeText(ClinicianHome.this, "WORKS", Toast.LENGTH_SHORT).show();
-                        DocumentSnapshot snap = queryDocumentSnapshots.getDocuments().get(0);
-                        if(snap.exists()) {
-                            // name , age, gender, rrs, blood pressure, smokes, family history;
-                            stat.setRrs((Double) snap.get("medicalRecord.reynoldsRiskScore"));
-                            stat.setBloodpressure((Double) snap.get("medicalRecord.bloodPressure"));
-                            stat.setSmokes((Boolean) snap.get("medicalRecord.smoker"));
-                            stat.setFamhist((Boolean) snap.get("medicalRecord.familyHistory"));
-                            stats.add(stat);
-                            if(counts==patients.size()){
-                                getAverages(stats);
-                            }
-
-                        } else {
-                            Toast.makeText(ClinicianHome.this, "OOOOOOOOOOF", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                }
-
-            });
-
-        }
-        Toast.makeText(this, counts + "     "+ patients.size()+"", Toast.LENGTH_SHORT).show();
+       db.collection("visit").whereEqualTo("visitCompleted",true).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+           @Override
+           public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+               ArrayList<Stats> stats = new ArrayList<>();
+               ArrayList<Stats> temp = new ArrayList<>();
+               for(DocumentSnapshot snap : queryDocumentSnapshots) {
+                   Stats stat = new Stats();
+                   stat.setName(snap.get("patientName").toString());
+                   stat.setRrs((Double) snap.get("medicalRecord.reynoldsRiskScore"));
+                   stat.setBloodpressure((Double) snap.get("medicalRecord.bloodPressure"));
+                   stat.setSmokes((Boolean) snap.get("medicalRecord.smoker"));
+                   stat.setFamhist((Boolean) snap.get("medicalRecord.familyHistory"));
+                   temp.add(stat);
+               }
 
 
+               for(int j = 0; j < temp.size(); j++) {
+                   for(int i = 0; i < patients.size(); i++) {
+                       if(patients.get(i).getName().equals(temp.get(j).getName())){
+                           Stats tempstat = new Stats();
+                           tempstat.setName(patients.get(i).getName());
+                           tempstat.setFamhist(temp.get(j).isFamhist());
+                           tempstat.setSmokes(temp.get(j).isSmokes());
+                           tempstat.setBloodpressure(temp.get(j).getBloodpressure());
+                           tempstat.setRrs(temp.get(j).getRrs());
+                           tempstat.setLocation(patients.get(i).getLocation());
+                           tempstat.setAge(patients.get(i).getPhoneNumber());
+                           tempstat.setGender(patients.get(i).getSex());
+                           stats.add(tempstat);
+                       }
+
+                   }
+
+               }
+
+               double rrs = 0,smokes = 0,famhist = 0,bloodpressure = 0,age = 0;
+System.out.println(stats.size()+"");
+for(Stats st:stats){
+                   age+=st.getAge();
+                   rrs+=st.getRrs();
+                   if(st.isSmokes()){
+                       smokes+=1;
+                   }
+                   if(st.isFamhist()){
+                       famhist+=1;
+                   }
+                   bloodpressure+=st.getBloodpressure();
+               }
+
+               rrs /= stats.size();
+               age /= stats.size();
+               smokes /= stats.size();
+               famhist /= stats.size();
+               bloodpressure /= stats.size();
+              generatePDF(rrs,smokes,famhist,bloodpressure,age);
 
 
+           }
 
+       });
 
     }
 
+
+
     private void getAverages(ArrayList<Stats> stats) {
-        double rrs = 0,smokes = 0,famhist = 0,bloodpressure = 0,age = 0;
 
-        for(Stats st:stats){
-            age+=st.getAge();
-            rrs+=st.getRrs();
-            if(st.isSmokes()){
-                smokes+=1;
-            }
-            if(st.isFamhist()){
-                famhist+=1;
-            }
-            bloodpressure+=st.getBloodpressure();
-        }
 
-        Toast.makeText(this, stats.size()+"", Toast.LENGTH_SHORT).show();
-        rrs=rrs/stats.size();
-        age = age/stats.size();
-        smokes = smokes/stats.size();
-        famhist = famhist/stats.size();
-        bloodpressure = bloodpressure/stats.size();
-
-        generatePDF(rrs,smokes,famhist,bloodpressure,age);
     }
 
 
@@ -308,7 +312,6 @@ public class ClinicianHome extends AppCompatActivity {
                                     patientAdapter.notifyDataSetChanged();
                                     thisisthebreaker+=1;
                                 }
-
                                 break;
                             default:
 
