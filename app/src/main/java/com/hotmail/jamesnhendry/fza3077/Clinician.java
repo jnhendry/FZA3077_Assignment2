@@ -2,7 +2,8 @@ package com.hotmail.jamesnhendry.fza3077;
 
 import java.util.ArrayList;
 
-public class Clinitian {
+//This class Represents the data model structure of a clinician user of this platform.
+public class Clinician {
     private String name,username,password;
     private ArrayList<Patient> patients;
     private ArrayList<Visit> pastVisits;
@@ -17,8 +18,7 @@ public class Clinitian {
     }
 
 
-
-    public Clinitian(String name, String username, String password, ArrayList<Patient> patients, ArrayList<Visit> pv) {
+    public Clinician(String name, String username, String password, ArrayList<Patient> patients, ArrayList<Visit> pv) {
         this.name = name;
         this.username = username;
         this.password = password;

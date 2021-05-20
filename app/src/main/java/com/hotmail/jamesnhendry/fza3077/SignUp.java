@@ -13,8 +13,8 @@ public class SignUp extends AppCompatActivity {
 
     private FragmentTransaction ft;
 
-    private final Fragment signUpClinician = signupClinician.newInstance("","");
-    private final Fragment signUpPatients = signupPatient.newInstance("","");
+    private final Fragment signUpClinician = SignUpClinician.newInstance("","");
+    private final Fragment signUpPatients = SignUpPatient.newInstance("","");
 
     private Button btnPatient, btnClinician;
     int counter = 0;

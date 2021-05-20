@@ -27,8 +27,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
-
-public class signupClinician extends Fragment {
+//This fragment is used to handle clinician users signing up on the platform.
+public class SignUpClinician extends Fragment {
 
     private EditText edtFirstName;
     private EditText edtSurname;
@@ -48,12 +48,12 @@ public class signupClinician extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public signupClinician() {
+    public SignUpClinician() {
         // Required empty public constructor
     }
 
-    public static signupClinician newInstance(String param1, String param2) {
-        signupClinician fragment = new signupClinician();
+    public static SignUpClinician newInstance(String param1, String param2) {
+        SignUpClinician fragment = new SignUpClinician();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

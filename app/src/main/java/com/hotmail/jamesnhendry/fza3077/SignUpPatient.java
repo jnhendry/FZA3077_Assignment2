@@ -1,5 +1,6 @@
 package com.hotmail.jamesnhendry.fza3077;
 
+//This fragment is used to handle patient users signing up on the platform.
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -39,10 +40,10 @@ import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link signupPatient#newInstance} factory method to
+ * Use the {@link SignUpPatient#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class signupPatient extends Fragment {
+public class SignUpPatient extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -63,13 +64,13 @@ public class signupPatient extends Fragment {
     private FirebaseAuth mAuth;
     private long dateSelected = 0;
 
-    public signupPatient() {
+    public SignUpPatient() {
         // Required empty public constructor
     }
 
     // TODO: Rename and change types and number of parameters
-    public static signupPatient newInstance(String param1, String param2) {
-        signupPatient fragment = new signupPatient();
+    public static SignUpPatient newInstance(String param1, String param2) {
+        SignUpPatient fragment = new SignUpPatient();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -164,7 +165,7 @@ public class signupPatient extends Fragment {
                         Toast.makeText(getActivity().getApplicationContext(),"Password & Re-type Password do not match",Toast.LENGTH_SHORT).show();
                     }else {
                         //getClinicianID
-                        String clinicianId = signupPatient.this.clinician.get(spnClinician.getSelectedItemPosition());
+                        String clinicianId = SignUpPatient.this.clinician.get(spnClinician.getSelectedItemPosition());
                         signUpNewPatient(firstName, surname, gender, suburb, clinicianId, email, password, dateOfBirth);
                     }
                 }

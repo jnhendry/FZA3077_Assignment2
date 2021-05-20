@@ -1,5 +1,6 @@
 package com.hotmail.jamesnhendry.fza3077;
 
+//This class serves as the data mode for the Note object used throughout this platform.
 public class Note {
 
     private String body,description;

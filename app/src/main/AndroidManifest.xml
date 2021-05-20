@@ -13,7 +13,7 @@
 
         <activity android:name=".SignUp"
             android:screenOrientation="landscape"/>
-        <activity android:name=".NewVisit"
+        <activity android:name=".VisitScreen"
             android:screenOrientation="landscape"/>
         <activity android:name=".PatientHome"
             android:screenOrientation="landscape"/>

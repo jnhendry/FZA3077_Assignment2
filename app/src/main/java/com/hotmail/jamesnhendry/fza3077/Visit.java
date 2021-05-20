@@ -1,13 +1,10 @@
 package com.hotmail.jamesnhendry.fza3077;
 
-import java.util.Date;
-
 public class Visit {
-    private String clinitianID, patientID,visitid;
+    private String clinicianID, patientId, visitId;
     private MedicalRecord medicalRecord;
     private String date,time;
-    private Patient patty;
-    private boolean iscompleted;
+    private boolean isCompleted;
 
     /*
     Every visit will have basic requirements. date, time doc username and patient username.
@@ -20,46 +17,46 @@ public class Visit {
         return time;
     }
 
-    public Visit(String clinitianID, String date, String patientID, MedicalRecord medicalRecord) {
-        this.clinitianID = clinitianID;
-        this.patientID = patientID;
+    public Visit(String clinicianID, String date, String patientID, MedicalRecord medicalRecord) {
+        this.clinicianID = clinicianID;
+        this.patientId = patientID;
         this.medicalRecord = medicalRecord;
         this.date = date;
 
     }
 
-    public String getVisitid() {
-        return visitid;
+    public String getVisitId() {
+        return visitId;
     }
 
-    public void setVisitid(String visitid) {
-        this.visitid = visitid;
+    public void setVisitId(String visitId) {
+        this.visitId = visitId;
     }
 
-    public boolean isIscompleted() {
-        return iscompleted;
+    public boolean isIsCompleted() {
+        return isCompleted;
     }
 
-    public void setIscompleted(boolean iscompleted) {
-        this.iscompleted = iscompleted;
+    public void setIsCompleted(boolean isCompleted) {
+        this.isCompleted = isCompleted;
     }
 
-    public Visit(String clinitianID, String patientID, String date, String time, String visitId, boolean iscompleted) {
-        this.clinitianID = clinitianID;
-        this.patientID = patientID;
+    public Visit(String clinicianID, String patientID, String date, String time, String visitId, boolean iscompleted) {
+        this.clinicianID = clinicianID;
+        this.patientId = patientID;
         this.date = date;
         this.time = time;
-        this.visitid = visitId;
-        this.iscompleted = iscompleted;
+        this.visitId = visitId;
+        this.isCompleted = iscompleted;
 
     }
 
-    public String getClinitianID() {
-        return clinitianID;
+    public String getClinicianID() {
+        return clinicianID;
     }
 
     public String getPatientID() {
-        return patientID;
+        return patientId;
     }
 
     public MedicalRecord getMedicalRecord() {

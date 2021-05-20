@@ -12,19 +12,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class notes_recommendationadapter extends RecyclerView.Adapter<notes_recommendationadapter.subholder>{
+public class NotesRecommendationAdapter extends RecyclerView.Adapter<NotesRecommendationAdapter.SubHolder>{
 
     private ArrayList<Note> notes;
     private ArrayList<Recommendation> recommended;
     private Context cr;
     private onitemClickListener listener;
 
-    public notes_recommendationadapter(Context cr,ArrayList<Note> notes) {
+    public NotesRecommendationAdapter(Context cr, ArrayList<Note> notes) {
         this.notes = notes;
         this.cr = cr;
     }
 
-    public void setonitemClickListener(onitemClickListener listener){
+    public void setOnItemClickListener(onitemClickListener listener){
         this.listener = listener;
     }
 
@@ -32,20 +32,20 @@ public class notes_recommendationadapter extends RecyclerView.Adapter<notes_reco
         void onItemClicked(int position);
     }
 
-    public notes_recommendationadapter(ArrayList<Recommendation> recommended, Context cr) {
+    public NotesRecommendationAdapter(ArrayList<Recommendation> recommended, Context cr) {
         this.recommended = recommended;
         this.cr = cr;
     }
 
     @NonNull
     @Override
-    public subholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public SubHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.notes_popup, parent,false);
-        return new subholder(view,listener);
+        return new SubHolder(view,listener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull subholder holder, int position) {
+    public void onBindViewHolder(@NonNull SubHolder holder, int position) {
             if(notes!=null){
                 holder.btnAdd.setVisibility(View.GONE);
                 holder.description.setText(notes.get(position).getDescription());
@@ -74,10 +74,10 @@ public class notes_recommendationadapter extends RecyclerView.Adapter<notes_reco
         }
     }
 
-    public static class subholder extends RecyclerView.ViewHolder{
+    public static class SubHolder extends RecyclerView.ViewHolder{
         EditText description,body;
         Button btnAdd;
-        public subholder(@NonNull View itemView, final onitemClickListener listener) {
+        public SubHolder(@NonNull View itemView, final onitemClickListener listener) {
             super(itemView);
             description = itemView.findViewById(R.id.noteSubject);
             body = itemView.findViewById(R.id.noteBody);
@@ -92,7 +92,6 @@ public class notes_recommendationadapter extends RecyclerView.Adapter<notes_reco
                     if(position!= RecyclerView.NO_POSITION){
                         listener.onItemClicked(position);
                     }
-
                 }
             }
         });
