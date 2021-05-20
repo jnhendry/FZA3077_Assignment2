@@ -125,7 +125,12 @@ public class ClinicianHome extends AppCompatActivity {
         btnStatistics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                generateDate();
+                if(patients.size() > 0){
+                    generateDate();
+                }
+                else {
+                    Toast.makeText(ClinicianHome.this, "Search Results are Empty", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

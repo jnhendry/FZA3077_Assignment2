@@ -2,6 +2,7 @@ package com.hotmail.jamesnhendry.fza3077;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +28,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -45,14 +49,16 @@ public class NewVisit extends AppCompatActivity {
 
     private EditText bloodPressure, cReactive,apolprotA,apolprotB,lipoprotA,hemoA;
     private Spinner smoker,famhist;
-    private TextView txtClinicianName, txtPatientName, txtPatientGender, txtPatientAge, txtPatientLocation, txtReynoldsRiskScore;
+    private TextView txtClinicianName, txtPatientName, txtPatientGender, txtPatientAge, txtPatientLocation, txtReynoldsRiskScore, bannerName;
     private RecyclerView recyclerNotes, recyclerRecommendation;
     private Button btnAddNote, btnAddRecommendation,btnSaveVisit;
     private notes_recommendationadapter adapter;
     private ArrayList<Note> noteArrayList = new ArrayList<>();
     private ArrayList<Recommendation> recommendationArrayList = new ArrayList<>();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private Button btnUpdate,btnSimulate,btnGeneratePDF;
+    private MaterialToolbar topAppBar;
     String userType;
     String visitID;
     private MedicalRecord medrec;
@@ -69,6 +75,43 @@ public class NewVisit extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 updateNotesAndRecommendations(noteArrayList,recommendationArrayList);
+            }
+        });
+
+        DocumentReference patient = db.document("patient/"+mAuth.getCurrentUser().getUid());
+        DocumentReference clinician = db.document("clinician/"+mAuth.getCurrentUser().getUid());
+
+        patient.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists()) {
+                    bannerName = findViewById(R.id.user_name_banner);
+                    bannerName.setText(documentSnapshot.get("name").toString());
+                }
+            }
+        });
+
+        clinician.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists()) {
+                    bannerName = findViewById(R.id.user_name_banner);
+                    bannerName.setText(documentSnapshot.get("name").toString());
+                }
+            }
+        });
+
+        topAppBar = findViewById(R.id.topAppBar);
+
+        topAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                mAuth.signOut();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
+
+                return true;
             }
         });
 
@@ -128,14 +171,9 @@ public class NewVisit extends AppCompatActivity {
         Intent intent = getIntent();
 
         visitID = intent.getStringExtra("visitid");//use this to gather from the DB
-        //isMostRecent = intent.getIntExtra("value",1);
         completed = intent.getBooleanExtra("isvisitcompleted",false);
         userType = intent.getStringExtra("usertype");
-        Toast.makeText(this, userType, Toast.LENGTH_SHORT).show();
         populateEmptyFields(visitID);
-
-        //isEditable(isMostRecent);
-
 
         if(userType !=null) {
             switch(userType) {
@@ -180,7 +218,7 @@ public class NewVisit extends AppCompatActivity {
 
     private void generatePDF() {
         int pageHeight = 1120;
-        int pagewidth = 792;
+        int pageWidth = 792;
         Bitmap bmp, scaledbmp;
         bmp = BitmapFactory.decodeResource(getResources(), R.drawable.gfgimage);
         scaledbmp = Bitmap.createScaledBitmap(bmp, 280, 280, false);
@@ -194,8 +232,8 @@ public class NewVisit extends AppCompatActivity {
         Paint paint = new Paint();
         Paint title = new Paint();
 
-        PdfDocument.PageInfo mypageInfo = new PdfDocument.PageInfo.Builder(pagewidth, pageHeight, 1).create();
-        PdfDocument.Page myPage = pdfDocument.startPage(mypageInfo);
+        PdfDocument.PageInfo myPageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
+        PdfDocument.Page myPage = pdfDocument.startPage(myPageInfo);
         Canvas canvas = myPage.getCanvas();
         canvas.drawBitmap(scaledbmp, 56, 40, paint);
 
@@ -211,7 +249,7 @@ public class NewVisit extends AppCompatActivity {
 
         title.setTextAlign(Paint.Align.LEFT);
 
-        canvas.drawText("Clinitian : "+ txtClinicianName.getText().toString(),100,350,title);
+        canvas.drawText("Clinician : "+ txtClinicianName.getText().toString(),100,350,title);
 
         title.setTextSize(21);
 
@@ -291,7 +329,7 @@ public class NewVisit extends AppCompatActivity {
 
                 // below line is to print toast message
                 // on completion of PDF generation.
-                Toast.makeText(NewVisit.this, "PDF file generated succesfully.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NewVisit.this, "PDF file generated Successfully.", Toast.LENGTH_SHORT).show();
             } catch(IOException e) {
                 // below line is used
                 // to handle error
@@ -326,7 +364,7 @@ public class NewVisit extends AppCompatActivity {
                 if (writeStorage && readStorage) {
                     Toast.makeText(this, "Permission Granted..", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(this, "Permission Denined.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Permission Denied.", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
@@ -347,7 +385,7 @@ public class NewVisit extends AppCompatActivity {
                 ArrayList<Map> notes = (ArrayList<Map>) map.get("notes");
                 ArrayList<Map> recos =(ArrayList<Map>) map.get("recommendations");
 
-                 bp = (double) mr.get("bloodPressure");
+                bp = (double) mr.get("bloodPressure");
                 cr = (double) mr.get("creactive");
                 apa = (double) mr.get("apolprotA");
                 apb = (double) mr.get("apolprotB");
@@ -532,7 +570,6 @@ public class NewVisit extends AppCompatActivity {
         if((sbloodp.equals(""))||(screac.equals(""))||(sapolproA.equals(""))||(sapolproB.equals(""))||(shemoglo.equals(""))||(slipoProt.equals(""))||(smokes.equals("--Select one--"))||famhistory.equals("--Select one--")){
             Toast.makeText(NewVisit.this, "Fill in all fields", Toast.LENGTH_SHORT).show();
         }else{
-            Toast.makeText(NewVisit.this, "works", Toast.LENGTH_SHORT).show();
 
             if(smokes.equals("Yes")){
                 smokerer = true;
@@ -635,13 +672,4 @@ public class NewVisit extends AppCompatActivity {
         famhist.setEnabled(false);
     }
 
-//    public void isEditable(int val){//set intent to grab a boolean of true if first element of recycler view is selected in PatientHome.class else, set nothing.
-//        if(val==0&& userType.equals("patient")){
-//                btnSaveVisit.setVisibility(View.GONE);
-//                btnUpdate.setVisibility(View.GONE);
-//                btnSimulate.setVisibility(View.VISIBLE);
-//        }else{
-//               makeViewUneditable();
-//        }
-//    }
 }
