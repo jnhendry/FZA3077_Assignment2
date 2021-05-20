@@ -55,8 +55,8 @@ public class PatientHome extends AppCompatActivity {
     final ArrayList<Visit> visitFutureArrayList = new ArrayList<>();
     private FirebaseAuth mAuth;
     private String userID;
-    private boolean isClinitian;
-    private String clinitianintent;
+    private boolean isClinician;
+    private String clinicianIntent;
     private Button btnSchedule;
 
     FirebaseFirestore db;
@@ -67,12 +67,11 @@ public class PatientHome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_home);
 
-
-
         Intent intent = getIntent();
         userID = intent.getStringExtra("UserID");
-        isClinitian = intent.getBooleanExtra("isClinitian", false);
-        clinitianintent = intent.getStringExtra("clinitianname");
+        isClinician = intent.getBooleanExtra("isClinitian", false);
+        clinicianIntent = intent.getStringExtra("clinitianname");
+
         // View Components Binding
         patientId = findViewById(R.id.patientIdTxt);
         patientFullName = findViewById(R.id.fullNameTxt);
@@ -82,19 +81,15 @@ public class PatientHome extends AppCompatActivity {
         patientLocation = findViewById(R.id.locationTxt);
         patientClinician = findViewById(R.id.clinicianNameTxt);
         btnSchedule = findViewById(R.id.btnSchedule);
-
         edtPatientName = findViewById(R.id.user_name_banner);
-
         recyclerFutureVisit = findViewById(R.id.patientFuturerecyclerView);
         recyclerPastVisit = findViewById(R.id.patientRecyclePast);
-
 
         topAppBar = findViewById(R.id.topAppBarPatientHome);
 
         topAppBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-
                 System.out.println("You Clicked Log Out");
                 mAuth.signOut();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -105,7 +100,11 @@ public class PatientHome extends AppCompatActivity {
             }
         });
 
-        if(isClinitian) {
+        //This if statement bellow is what allows for clinician's to schedule visits directly from this patient details page.
+        //This screen is viewable by both clinician and patients, hence the need to control  the visibility of this functionality,
+        // as clinicians are the only users that are able to schedule visits.
+
+        if(isClinician) {
             btnSchedule.setVisibility(View.VISIBLE);
             btnSchedule.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -116,7 +115,7 @@ public class PatientHome extends AppCompatActivity {
                     final Spinner edtTime = dialog.findViewById(R.id.spnTimes);
                     Button btnConfirm = dialog.findViewById(R.id.btnConfirm);
                     TextView txtAppointment = dialog.findViewById(R.id.txtAppointment);
-                    //TODO: make calendar events for visits.
+
                     dialog.show();
                     txtAppointment.setText("Create a new visit with: " + patientFullName.getText().toString());
                     final String[] dateString = new String[1];
@@ -159,7 +158,6 @@ public class PatientHome extends AppCompatActivity {
                                             visit.put("visitCancelled", false);
                                             visit.put("visitCompleted", false);
 
-
                                             db.collection("visit").document().set(visit).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
@@ -168,31 +166,25 @@ public class PatientHome extends AppCompatActivity {
                                             }).addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
-
                                                 }
                                             });
                                         }
                                     }
                                 }
                             });
-
                         }
                     });
-
                     String time;
                     long date;
-
-
                 }
             });
-
         }
-            //Get and Display Patient Details
+            //The process of getting and display patient details is invoked here.
             populatePatientDetails();
             populatePatientVisits();
-
-
     }
+
+
 
     private void populatePatientDetails(){
         mAuth = FirebaseAuth.getInstance();
@@ -216,15 +208,14 @@ public class PatientHome extends AppCompatActivity {
                     db.document("clinician/"+documentSnapshot.get("clinicianId")).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            if(documentSnapshot.exists()){
+                        if(documentSnapshot.exists()){
 
-                                edtPatientName.setText(fullName);
-                                displayPatientDetails(id, fullName,gender, age + " ", datOfBirth, location,documentSnapshot.get("name").toString());
-                            }
+                            edtPatientName.setText(fullName);
+                            displayPatientDetails(id, fullName,gender, age + " ", datOfBirth, location,documentSnapshot.get("name").toString());
+                        }
                         }
                     });
                 }
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -232,9 +223,9 @@ public class PatientHome extends AppCompatActivity {
                 Toast.makeText(PatientHome.this, "Error: Something went Wrong getting data.", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
+    //This method is used to present patient details to the user interface.
     private void displayPatientDetails(String id, String fullName, String gender, String age, String dateOfBirth, String location, String clinicianName ){
         patientId.setText(id);
         patientFullName.setText(fullName);
@@ -243,38 +234,32 @@ public class PatientHome extends AppCompatActivity {
         patientDateOfBirth.setText(dateOfBirth);
         patientLocation.setText(location);
         patientClinician.setText(clinicianName);
-        if(isClinitian){
-            edtPatientName.setText(clinitianintent);
-            if(!patientClinician.getText().equals(clinitianintent)){
+        if(isClinician){
+            edtPatientName.setText(clinicianIntent);
+            if(!patientClinician.getText().equals(clinicianIntent)){
                 ArrayList<Visit> afuture = new ArrayList<>();
                 ArrayList<Visit> apast = new ArrayList<>();
 
-
                 for(int i = 0;i<visitFutureArrayList.size();i++){
-                    if(visitFutureArrayList.get(i).getClinitianID().equals(clinitianintent)){
+                    if(visitFutureArrayList.get(i).getClinitianID().equals(clinicianIntent)){
                         afuture.add(visitFutureArrayList.get(i));
                     }
                 }
                 visitFutureAdapter = new visitAdapter(afuture,PatientHome.this);
                 recyclerFutureVisit.setAdapter(visitFutureAdapter);
 
-
                 for(int i = 0;i<visitPastArrayList.size();i++){
-                    if(visitPastArrayList.get(i).getClinitianID().equals(clinitianintent)){
+                    if(visitPastArrayList.get(i).getClinitianID().equals(clinicianIntent)){
                         apast.add(visitPastArrayList.get(i));
                     }
                 }
                 visitPastAdapter = new visitAdapter(apast,PatientHome.this);
                 recyclerPastVisit.setAdapter(visitPastAdapter);
-
-
             }
         }
-
-
     }
 
-
+    //This method captures all the visits associated with the current patient being displayed on this acticity.
     private void populatePatientVisits() {
 
         db.collection("visit").whereEqualTo("patientId", userID).addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -288,17 +273,15 @@ public class PatientHome extends AppCompatActivity {
                 for (final DocumentSnapshot documentSnapshot : value) {
 
                     String visitId = documentSnapshot.getId();
-
                     String date = documentSnapshot.get("date").toString();
                     String time = documentSnapshot.get("scheduleStart").toString();
                     String clinicianId = documentSnapshot.get("clinicianName").toString();
                     String patientID = documentSnapshot.get("patientName").toString();
                     boolean visitCompleted = (boolean) documentSnapshot.get("visitCompleted");
 
-
                     Visit visit = new Visit(clinicianId, patientID, date, time,documentSnapshot.getId(),visitCompleted);
 
-
+                    // This if statement separates completed visits from visits that have only be scheduled.
                     if (visitCompleted) {
                         visitPastArrayList.add(visit);
                     } else {
@@ -310,12 +293,10 @@ public class PatientHome extends AppCompatActivity {
                 visitFutureAdapter = new visitAdapter(visitFutureArrayList, PatientHome.this);
                 recyclerFutureVisit.setAdapter(visitFutureAdapter);
 
-
-                if(isClinitian){
+                if(isClinician){
                     visitFutureAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
                         @Override
                         public void onItemClicked(int position) {
-                            //TODO handle only clinitian ONCLICKS. ignore patient clicks here.
                             Intent futureVisit = new Intent(PatientHome.this,NewVisit.class);
                             futureVisit.putExtra("visitid",visitFutureArrayList.get(position).getVisitid());
                             futureVisit.putExtra("value",position);//if position>0 then do nothing;
@@ -333,7 +314,6 @@ public class PatientHome extends AppCompatActivity {
                 visitPastAdapter.setonItemClicklistener(new visitAdapter.onItemClickListener() {
                     @Override
                     public void onItemClicked(int position) {
-                        //TODO:handle patient view of visits for patients. handle the IF STATEMENT that will distinguish clinitian or patient.
                         Intent futureVisit = new Intent(PatientHome.this,NewVisit.class);
                         futureVisit.putExtra("visitid",visitPastArrayList.get(position).getVisitid());
                         futureVisit.putExtra("value",position);//if position>0 then do nothing;
@@ -342,8 +322,6 @@ public class PatientHome extends AppCompatActivity {
                         startActivity(futureVisit);
                     }
                 });
-
-
             }
         });
     }

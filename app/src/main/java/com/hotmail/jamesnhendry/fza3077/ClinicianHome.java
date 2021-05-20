@@ -50,7 +50,6 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class ClinicianHome extends AppCompatActivity {
 
-    private Gson gson = new Gson();
     private RecyclerView recyclPatients, recyclerPastVisit, recyclerFutureVisit;
     private patientAdapter patientAdapter;
     private visitAdapter visitPastAdapter, visitFutureAdapter;
@@ -132,6 +131,8 @@ public class ClinicianHome extends AppCompatActivity {
                 generateDate();
             }
         });
+
+        // The btnSearch button is used to handle patient search requests.
         
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,7 +161,7 @@ public class ClinicianHome extends AppCompatActivity {
     }
 
 
-    //Generate statistical data for the search criteria that has been used.
+    //Generate statistical data for the search results produced by the clinician's patient search.
     private void generateDate() {
        db.collection("visit").whereEqualTo("visitCompleted",true).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
            @Override
@@ -180,16 +181,16 @@ public class ClinicianHome extends AppCompatActivity {
                for(int j = 0; j < temp.size(); j++) {
                    for(int i = 0; i < patients.size(); i++) {
                        if(patients.get(i).getName().equals(temp.get(j).getName())){
-                           Stats tempstat = new Stats();
-                           tempstat.setName(patients.get(i).getName());
-                           tempstat.setFamhist(temp.get(j).isFamhist());
-                           tempstat.setSmokes(temp.get(j).isSmokes());
-                           tempstat.setBloodpressure(temp.get(j).getBloodpressure());
-                           tempstat.setRrs(temp.get(j).getRrs());
-                           tempstat.setLocation(patients.get(i).getLocation());
-                           tempstat.setAge(patients.get(i).getPhoneNumber());
-                           tempstat.setGender(patients.get(i).getSex());
-                           stats.add(tempstat);
+                           Stats tempStat = new Stats();
+                           tempStat.setName(patients.get(i).getName());
+                           tempStat.setFamhist(temp.get(j).isFamhist());
+                           tempStat.setSmokes(temp.get(j).isSmokes());
+                           tempStat.setBloodpressure(temp.get(j).getBloodpressure());
+                           tempStat.setRrs(temp.get(j).getRrs());
+                           tempStat.setLocation(patients.get(i).getLocation());
+                           tempStat.setAge(patients.get(i).getPhoneNumber());
+                           tempStat.setGender(patients.get(i).getSex());
+                           stats.add(tempStat);
                        }
                    }
                }
@@ -275,17 +276,17 @@ public class ClinicianHome extends AppCompatActivity {
         });
     }
 
-    //Generate PDF document to display statistical data
+    //Generate PDF document to display statistical data.
      private void generatePDF(double rrsa, double smokes, double famhist, double bloodpressure,double age) {
 
          String id = "search for clinician:"+ edtClinicianName.getText().toString()+" on: " + LocalTime.now();
          String time = LocalTime.now()+"";
          time = time.replace(":","");
          time = time.replace(".","");
-         String filenamed = edtClinicianName.getText().toString().trim()+time+".pdf";
+         String filename = edtClinicianName.getText().toString().trim()+time+".pdf";
 
         int pageHeight = 1120;
-        int pagewidth = 792;
+        int pageWidth = 792;
         Bitmap bmp, scaledbmp;
         bmp = BitmapFactory.decodeResource(getResources(), R.drawable.gfgimage);
         scaledbmp = Bitmap.createScaledBitmap(bmp, 280, 280, false);
@@ -297,8 +298,8 @@ public class ClinicianHome extends AppCompatActivity {
         Paint paint = new Paint();
         Paint title = new Paint();
 
-        PdfDocument.PageInfo mypageInfo = new PdfDocument.PageInfo.Builder(pagewidth, pageHeight, 1).create();
-        PdfDocument.Page myPage = pdfDocument.startPage(mypageInfo);
+        PdfDocument.PageInfo myPageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
+        PdfDocument.Page myPage = pdfDocument.startPage(myPageInfo);
         Canvas canvas = myPage.getCanvas();
         canvas.drawBitmap(scaledbmp, 56, 40, paint);
 
@@ -339,17 +340,17 @@ public class ClinicianHome extends AppCompatActivity {
             if(files.length > 0) {
                 for(File file : files) {
                     dir = file.getPath();
-
                 }
             }
         }
+
         File parentDir = new File(dir + File.separator + getString(R.string.app_name) + File.separator + "PDF's");
         if(!parentDir.exists()) {
             parentDir.mkdirs();
         }
 
 
-        File file = new File(parentDir , filenamed);
+        File file = new File(parentDir , filename);
 
         try {
             // after creating a file name we will
@@ -367,9 +368,10 @@ public class ClinicianHome extends AppCompatActivity {
         // after storing our pdf to that
         // location we are closing our PDF file.
         pdfDocument.close();
-
     }
 
+    // Storing a PDF document on Users device requires having access to the users storage. The methods bellow handle this issue by
+    // checking for this permission and requesting for permission in the event that it has not been supplied.
     private boolean checkPermission() {
         // checking of permissions.
         int permission1 = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
@@ -398,7 +400,8 @@ public class ClinicianHome extends AppCompatActivity {
         }
     }
 
-
+    //This method retrieves all the patients that have their main clinician assigned as the currently logged in clinician.
+    //This list of patients
 
     private void populateArray() {
 
@@ -429,17 +432,13 @@ public class ClinicianHome extends AppCompatActivity {
                         intent.putExtra("isClinitian",true);
                         intent.putExtra("clinitianname", edtClinicianName.getText().toString());
                         startActivity(intent);
-
                     }
                 });
-
-
             }
         });
-
     }
 
-
+    //
 
     public void setRecycle() {
 
