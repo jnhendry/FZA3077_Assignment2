@@ -2,9 +2,9 @@ package com.hotmail.jamesnhendry.fza3077;
 
 public class Stats {
     private String name,gender,location;
-    private double rrs,bloodpressure;
+    private double rrs, bloodPressure;
     private int age;
-    private boolean smokes,famhist;
+    private boolean smokes, familyHistory;
 
     public Stats() {
 
@@ -42,12 +42,12 @@ public class Stats {
         this.rrs = rrs;
     }
 
-    public double getBloodpressure() {
-        return bloodpressure;
+    public double getBloodPressure() {
+        return bloodPressure;
     }
 
-    public void setBloodpressure(double bloodpressure) {
-        this.bloodpressure = bloodpressure;
+    public void setBloodPressure(double bloodPressure) {
+        this.bloodPressure = bloodPressure;
     }
 
     public int getAge() {
@@ -66,22 +66,22 @@ public class Stats {
         this.smokes = smokes;
     }
 
-    public boolean isFamhist() {
-        return famhist;
+    public boolean isFamilyHistory() {
+        return familyHistory;
     }
 
-    public void setFamhist(boolean famhist) {
-        this.famhist = famhist;
+    public void setFamilyHistory(boolean familyHistory) {
+        this.familyHistory = familyHistory;
     }
 
-    public Stats(String name, String gender, String location, double rrs, double bloodpressure, int age, boolean smokes, boolean famhist) {
+    public Stats(String name, String gender, String location, double rrs, double bloodPressure, int age, boolean smokes, boolean famhist) {
         this.name = name;
         this.gender = gender;
         this.location = location;
         this.rrs = rrs;
-        this.bloodpressure = bloodpressure;
+        this.bloodPressure = bloodPressure;
         this.age = age;
         this.smokes = smokes;
-        this.famhist = famhist;
+        this.familyHistory = famhist;
     }
 }

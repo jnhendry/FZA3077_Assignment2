@@ -45,14 +45,15 @@ import java.util.Map;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class NewVisit extends AppCompatActivity {
+
+public class VisitScreen extends AppCompatActivity {
 
     private EditText bloodPressure, cReactive,apolprotA,apolprotB,lipoprotA,hemoA;
     private Spinner smoker,famhist;
     private TextView txtClinicianName, txtPatientName, txtPatientGender, txtPatientAge, txtPatientLocation, txtReynoldsRiskScore, bannerName;
     private RecyclerView recyclerNotes, recyclerRecommendation;
     private Button btnAddNote, btnAddRecommendation,btnSaveVisit;
-    private notes_recommendationadapter adapter;
+    private NotesRecommendationAdapter adapter;
     private ArrayList<Note> noteArrayList = new ArrayList<>();
     private ArrayList<Recommendation> recommendationArrayList = new ArrayList<>();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -150,7 +151,7 @@ public class NewVisit extends AppCompatActivity {
                 smokes = smoker.getSelectedItem().toString();
                 famhistory = famhist.getSelectedItem().toString();
                 if((sBloodP.equals(""))||(SCReac.equals(""))||(sApolproA.equals(""))||(sApolproB.equals(""))||(sHemoglobin.equals(""))||(sLipoProt.equals(""))||(smokes.equals("--Select one--"))||famhistory.equals("--Select one--")){
-                    Toast.makeText(NewVisit.this, "Fill in all fields", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VisitScreen.this, "Fill in all fields", Toast.LENGTH_SHORT).show();
                 }else{
 
                     if(smokes.equals("Yes")){
@@ -329,7 +330,7 @@ public class NewVisit extends AppCompatActivity {
 
                 // below line is to print toast message
                 // on completion of PDF generation.
-                Toast.makeText(NewVisit.this, "PDF file generated Successfully.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(VisitScreen.this, "PDF file generated Successfully.", Toast.LENGTH_SHORT).show();
             } catch(IOException e) {
                 // below line is used
                 // to handle error
@@ -422,7 +423,7 @@ public class NewVisit extends AppCompatActivity {
                 } else {
                     smoker.setSelection(2);
                 }
-                if(medicalRecord.isFamhist()) {
+                if(medicalRecord.isFamilyHistory()) {
                     famhist.setSelection(1);
                 } else {
                     famhist.setSelection(2);
@@ -503,7 +504,7 @@ public class NewVisit extends AppCompatActivity {
             noteBody = edtBody.getText().toString();
             noteSubject = edtDescription.getText().toString();
             if (noteBody.equals("")||noteSubject.equals("")){
-                Toast.makeText(NewVisit.this, "Do not leave fields empty", Toast.LENGTH_SHORT).show();
+                Toast.makeText(VisitScreen.this, "Do not leave fields empty", Toast.LENGTH_SHORT).show();
             }else {
                 Note note = new Note(noteBody,noteSubject);
                 noteArrayList.add(note);
@@ -516,7 +517,7 @@ public class NewVisit extends AppCompatActivity {
 
     //Add a new recommendation to the arraylist and update the recycler view to show the changes.
     public void createNewRecommendation(){
-        final Dialog dialog = new Dialog( NewVisit.this);
+        final Dialog dialog = new Dialog( VisitScreen.this);
         dialog.setContentView(R.layout.notes_popup);
         final EditText body,description;
         Button save;
@@ -533,7 +534,7 @@ public class NewVisit extends AppCompatActivity {
                 noteBody = body.getText().toString();
                 noteSubject = description.getText().toString();
                 if(noteBody.equals("")||noteSubject.equals("")){
-                    Toast.makeText(NewVisit.this, "Do not leave fields empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VisitScreen.this, "Do not leave fields empty", Toast.LENGTH_SHORT).show();
                 }else{
                 Recommendation recommendation = new Recommendation(noteBody,noteSubject);
                 recommendationArrayList.add(recommendation);
@@ -545,12 +546,12 @@ public class NewVisit extends AppCompatActivity {
     }
 
     public void setupRecyclerViews(){
-        recyclerNotes.setLayoutManager(new LinearLayoutManager(NewVisit.this));
-        adapter = new notes_recommendationadapter(NewVisit.this,noteArrayList);
+        recyclerNotes.setLayoutManager(new LinearLayoutManager(VisitScreen.this));
+        adapter = new NotesRecommendationAdapter(VisitScreen.this,noteArrayList);
         recyclerNotes.setAdapter(adapter);
 
-        recyclerRecommendation.setLayoutManager(new LinearLayoutManager(NewVisit.this));
-        adapter = new notes_recommendationadapter(recommendationArrayList,NewVisit.this);
+        recyclerRecommendation.setLayoutManager(new LinearLayoutManager(VisitScreen.this));
+        adapter = new NotesRecommendationAdapter(recommendationArrayList, VisitScreen.this);
         recyclerRecommendation.setAdapter(adapter);
     }
 
@@ -568,7 +569,7 @@ public class NewVisit extends AppCompatActivity {
         smokes = smoker.getSelectedItem().toString();
         famhistory = famhist.getSelectedItem().toString();
         if((sbloodp.equals(""))||(screac.equals(""))||(sapolproA.equals(""))||(sapolproB.equals(""))||(shemoglo.equals(""))||(slipoProt.equals(""))||(smokes.equals("--Select one--"))||famhistory.equals("--Select one--")){
-            Toast.makeText(NewVisit.this, "Fill in all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(VisitScreen.this, "Fill in all fields", Toast.LENGTH_SHORT).show();
         }else{
 
             if(smokes.equals("Yes")){
@@ -617,28 +618,28 @@ public class NewVisit extends AppCompatActivity {
                 btnSaveVisit.setVisibility(View.GONE);
                 btnUpdate.setVisibility(View.VISIBLE);
                 makeViewUneditable();
-                Toast.makeText(NewVisit.this, "Visit Updated", Toast.LENGTH_SHORT).show();
+                Toast.makeText(VisitScreen.this, "Visit Updated", Toast.LENGTH_SHORT).show();
 
 
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(NewVisit.this, "Failed To Update Visit", Toast.LENGTH_SHORT).show();
+                Toast.makeText(VisitScreen.this, "Failed To Update Visit", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void updateVisitMedicalRecord(String visitId, MedicalRecord medrec) {
         Map<String,Object> medicalRecordMap = new HashMap<>();
-        medicalRecordMap.put("bloodPressure",medrec.getBloodpressure());
+        medicalRecordMap.put("bloodPressure",medrec.getBloodPressure());
         medicalRecordMap.put("creactive", medrec.getcReactive());
         medicalRecordMap.put("apolprotA", medrec.getApolprotA());
         medicalRecordMap.put("apolprotB", medrec.getApolprotB());
         medicalRecordMap.put("hemoglobin", medrec.getHemoglobin());
         medicalRecordMap.put("lipoprotA", medrec.getLipProteinA());
         medicalRecordMap.put("smoker", medrec.isSmoker());
-        medicalRecordMap.put("familyHistory", medrec.isFamhist());
+        medicalRecordMap.put("familyHistory", medrec.isFamilyHistory());
         medicalRecordMap.put("reynoldsRiskScore", medrec.getReynoldsRiskScore());
 
         DocumentReference currentVisit = db.collection("visit").document(visitId);
@@ -649,14 +650,14 @@ public class NewVisit extends AppCompatActivity {
                 btnSaveVisit.setVisibility(View.GONE);
                 btnUpdate.setVisibility(View.VISIBLE);
                 makeViewUneditable();
-                Toast.makeText(NewVisit.this, "Visit Updated", Toast.LENGTH_SHORT).show();
+                Toast.makeText(VisitScreen.this, "Visit Updated", Toast.LENGTH_SHORT).show();
 
 
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(NewVisit.this, "Failed To Update Visit", Toast.LENGTH_SHORT).show();
+                Toast.makeText(VisitScreen.this, "Failed To Update Visit", Toast.LENGTH_SHORT).show();
             }
         });
     }

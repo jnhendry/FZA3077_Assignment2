@@ -39,15 +39,14 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
     private ArrayList<Patient> list;
     private onItemClickListener mListener;
     Context cr;
-    private String clinitianname;
+    private String clinitianName;
 
 
     public patientAdapter(Context cr, ArrayList<Patient> pat){
         this.cr = cr;
         list = pat;
-
-
     }
+
     public void setonItemClicklistener(onItemClickListener listener) {
         mListener = listener;
     }
@@ -72,88 +71,82 @@ public class patientAdapter extends RecyclerView.Adapter<patientAdapter.subholde
         holder.btnSchedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                 final Dialog dialog = new Dialog(cr);
-                dialog.setContentView(R.layout.popupvisit);
-                FirebaseAuth auth = FirebaseAuth.getInstance();
-                final FirebaseUser user = auth.getCurrentUser();
+            final Dialog dialog = new Dialog(cr);
+            dialog.setContentView(R.layout.popupvisit);
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            final FirebaseUser user = auth.getCurrentUser();
 
-                final CalendarView calendarView = dialog.findViewById(R.id.clvDate);
-                final Spinner edtTime = dialog.findViewById(R.id.spnTimes);
-                Button btnConfirm = dialog.findViewById(R.id.btnConfirm);
-                TextView txtAppointment = dialog.findViewById(R.id.txtAppointment);
-                //TODO: make calendar events for visits.
+            final CalendarView calendarView = dialog.findViewById(R.id.clvDate);
+            final Spinner edtTime = dialog.findViewById(R.id.spnTimes);
+            Button btnConfirm = dialog.findViewById(R.id.btnConfirm);
+            TextView txtAppointment = dialog.findViewById(R.id.txtAppointment);
 
-                
-                dialog.show();
+            dialog.show();
 
+            txtAppointment.setText("Create a new visit with: " + list.get(position).getName());
+            final String[] dateString = new String[1];
 
-                txtAppointment.setText("Create a new visit with: " + list.get(position).getName());
-                final String[] dateString = new String[1];
+            calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+                @Override
+                public void onSelectedDayChange(CalendarView view, int year, int month,
+                                                int dayOfMonth) {
+                    String  curDate = String.valueOf(dayOfMonth);
+                    String  Year = String.valueOf(year);
+                    String  Month = String.valueOf(month+1);
+                    dateString[0] = curDate + "-" +Month + "-" + Year;
+                }
+            });
 
-                calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            btnConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                dialog.dismiss();
+                final String time = edtTime.getSelectedItem().toString();
+                final FirebaseFirestore db = FirebaseFirestore.getInstance();
+                final String clinicianID = user.getUid();
+                final String patientID = list.get(position).getPatientID();
+
+                db.collection("clinician").document(clinicianID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onSelectedDayChange(CalendarView view, int year, int month,
-                                                    int dayOfMonth) {
-                        String  curDate = String.valueOf(dayOfMonth);
-                        String  Year = String.valueOf(year);
-                        String  Month = String.valueOf(month+1);
-                        dateString[0] = curDate + "-" +Month + "-" + Year;
-                    }
-                });
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                btnConfirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                        final String time = edtTime.getSelectedItem().toString();
-                        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-                        final String clinicianID = user.getUid();
-                        final String patientID = list.get(position).getPatientID();
+                    if(task.isSuccessful()){
+                        DocumentSnapshot document = task.getResult();
+                        if(document.exists()){
 
-                        db.collection("clinician").document(clinicianID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            String cName = document.getData().get("name").toString();
 
-                                if(task.isSuccessful()){
-                                    DocumentSnapshot document = task.getResult();
-                                    if(document.exists()){
+                            Map<String,Object> visit = new HashMap<>();
+                            visit.put("patientId",patientID);
+                            visit.put("patientName",list.get(position).getName());
+                            visit.put("clinicianId", clinicianID);
+                            visit.put("clinicianName",cName);
+                            visit.put("scheduleStart",time);
+                            visit.put("date",dateString[0]);
+                            visit.put("visitCancelled",false);
+                            visit.put("visitCompleted",false);
 
-                                        String cName = document.getData().get("name").toString();
-
-                                        Map<String,Object> visit = new HashMap<>();
-                                        visit.put("patientId",patientID);
-                                        visit.put("patientName",list.get(position).getName());
-                                        visit.put("clinicianId", clinicianID);
-                                        visit.put("clinicianName",cName);
-                                        visit.put("scheduleStart",time);
-                                        visit.put("date",dateString[0]);
-                                        visit.put("visitCancelled",false);
-                                        visit.put("visitCompleted",false);
-
-
-                                        db.collection("visit").document().set(visit).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                Toast.makeText(cr, "Visit Created Successfully", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-
-                                            }
-                                        });
-                                    }
+                            db.collection("visit").document().set(visit).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Toast.makeText(cr, "Visit Created Successfully", Toast.LENGTH_SHORT).show();
                                 }
-                            }
-                        });
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
 
+                                }
+                            });
+                        }
+                    }
                     }
                 });
 
-                String time;
-                long date;
+                }
+            });
 
-
+            String time;
+            long date;
             }
         });
     }

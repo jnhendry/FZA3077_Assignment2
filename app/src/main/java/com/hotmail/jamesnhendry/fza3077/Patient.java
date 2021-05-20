@@ -2,8 +2,9 @@ package com.hotmail.jamesnhendry.fza3077;
 
 import java.util.ArrayList;
 
+//This class Represents the data model structure of a patient user of this platform.
 public class Patient {
-    private String clinitianUsername,name,username,password,sex,patientID,location;
+    private String clinicianUsername,name,username,password,sex,patientID,location;
     private int phoneNumber;
     private ArrayList<Visit> pastVisits;
     private ArrayList<Visit> futureVisits;
@@ -18,11 +19,11 @@ public class Patient {
         this.phoneNumber = phoneNumber;
         this.sex = sex;
         this.patientID = patientid;
-        this.clinitianUsername = clinitianUsername;
+        this.clinicianUsername = clinitianUsername;
     }
 
     public Patient(String name, int phoneNumber, String sex, String patientID, String clinitianUsername,String location) {
-        this.clinitianUsername = clinitianUsername;
+        this.clinicianUsername = clinitianUsername;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.sex = sex;
@@ -42,8 +43,8 @@ public class Patient {
         return patientID;
     }
 
-    public String getClinitianUsername() {
-        return clinitianUsername;
+    public String getClinicianUsername() {
+        return clinicianUsername;
     }
 
     public ArrayList<Visit> getPastVisits() {
@@ -62,8 +63,8 @@ public class Patient {
         this.futureVisits = futureVisits;
     }
 
-    public void setClinitianUsername(String clinitianUsername) {
-        this.clinitianUsername = clinitianUsername;
+    public void setClinicianUsername(String clinicianUsername) {
+        this.clinicianUsername = clinicianUsername;
     }
 
     public String getName() {
